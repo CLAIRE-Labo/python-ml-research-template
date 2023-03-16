@@ -1,3 +1,0 @@
-# Conda first.
-
-# Then pip.

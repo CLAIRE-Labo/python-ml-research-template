@@ -1,2 +1,0 @@
-# These dependencies are otherwise provided in the docker base image.
-# E.g. pytorch::pytorch=1.13

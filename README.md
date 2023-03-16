@@ -1,70 +1,40 @@
 # python-package-template
 
+## [_DELETE ME_] Template Info
+
 A template for starting a new Python project, inspired from the
 [PyPA packaging tutorial](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
-It contains the minimal files needed to start a project with good practices and avoid the common
-import workarounds.
+It contains the minimal files needed to start a project with good practices.
 
-Feel free to copy the content of this repository and
+Feel free to `Use this template` (GitHub button) and
 
-1. Fill the template variables in `fill_template.sh` and run the script.
-
+1. Fill the template variables in `template/template_variables.sh` and run the script
    ```bash
-   source fill_template.sh
+   source template/fill_template.sh
    ```
+   Then, delete the `template` directory.
+2. Edit the `LICENCE`
+   file. [(Some help here.)](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
+3. Setup and edit the development environment instructions for the platforms you'll use/support.
+   We support 1 platform for now:
+    - macOS with Apple Silicon (`osx-arm64`): refer to `installation/osx-arm64/README.md`.
 
-2. Edit this `README.md` file.
-3. Edit the `LICENCE` file.
+   Delete the _Template info_ section in the installation instructions of the platforms you plan to support, and the
+   whole installation directory for the platforms you don't use.
+4. Edit this `README.md` file.
+    1. Add a description of your project in the [_Overview_](#overview) section.
+    2. Delete the [installation instructions](#development-environment) for the platforms you don't support.
+    3. Delete this section.
+
+## Overview
+
+[_EDIT ME_] Description of your project.
 
 ## Getting Started
 
-### Installation
+### Development environment
 
-We support the following options for installing the project dependencies and running the code.
+We support the following platforms for installing the project dependencies and running the code.
 
-1. [WIP] Docker:
-    - No system dependencies required.
-    - Tested on Ubuntu 20.04.
-2. Conda directly on your machine:
-    - May require you to install system dependencies.
-    - Tested on macOS, arm64 (Apple Silicon).
-
-#### 1. [WIP] Docker
-
-#### 2. Conda directly on your machine:
-
-Prerequisites
-
-- `conda`: we recommend [miniforge](https://github.com/conda-forge/miniforge).
-
-Create the environment:
-
-```bash
-source installation/conda/create_env.sh
-```
-
-Install the dependencies:
-
-_System dependencies:_
-We provide a way to install most of the system dependencies via conda, but we may miss some and
-depending on your system you may still need to install other ones.
-Feel free to use this script or install the system dependencies on your machine directly.
-
-```bash
-conda install --file installation/conda/system_dependencies.txt
-````
-
-_The rest of the dependencies:_
-The dependencies will be packaged by both `conda` and `pip`
-. [(Here is a guide for managing `conda` + `pip` environments)](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment)
-.
-
-```bash
-source installation/conda/install_dependencies.sh
-```
-
-Install your package
-
-```bash
-pip install -e .
-```
+* macOS with Apple Silicon (`osx-arm64`); using a [Conda](https://docs.conda.io/en/latest/) environment.
+    - Refer to `installation/osx-arm64/README.md`.
