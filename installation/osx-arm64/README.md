@@ -18,9 +18,11 @@ the [instructions to maintain the environment](#instructions-to-maintain-the-env
 
 ## Instructions to install the environment
 
-Prerequisites
+**Prerequisites**
 
 - `conda`: we recommend [miniforge](https://github.com/conda-forge/miniforge).
+
+**Installation**
 
 System dependencies:
 

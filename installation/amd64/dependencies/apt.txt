@@ -1,0 +1,5 @@
+# `apt` requirements file.
+# `sudo` and `zsh` are required packages.
+sudo
+zsh
+openssh-server  # Needed for remote IDEs.

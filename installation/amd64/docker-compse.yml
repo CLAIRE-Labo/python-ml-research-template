@@ -1,0 +1,43 @@
+services:
+  # Base service to build the image.
+  build-non-interactive:
+    env_file:
+    image: ${LAB_NAME}/<project-name>:${USR}
+    build:
+      args:
+        PROJECT_NAME: <project-name>
+        BASE_IMAGE: ubuntu:22.04                # Ubuntu: https://hub.docker.com/_/ubuntu
+        CURL_IMAGE: curlimages/curl:8.00.1      # https://hub.docker.com/r/curlimages/curl/tags
+        GIT_IMAGE: alpine/git:edge-2.38.1       # https://hub.docker.com/r/alpine/git/tags
+        CONDA_URL:
+          https://github.com/conda-forge/miniforge/releases/download/23.1.0-1/Mambaforge-23.1.0-1-Linux-x86_64.sh
+           # https://github.com/conda-forge/miniforge/releases/
+        CONDA_MANAGER: mamba
+        GID: ${GID}
+        UID: ${UID}
+        GRP: ${GRP}
+        USR: ${USR}
+        PROJECT_ROOT: /opt/project
+        CODE_DIR: /opt/project/code
+        DATA_DIR: /opt/project/data
+        LOGS_DIR: /opt/project/logs
+
+  # Base
+
+  # Service to run the image.
+  run-local:
+    extends:
+        service: build
+    tty: true
+    stdin_open: true
+    volumes:
+      - ${LOCAL_CODE_DIR}:/opt/project/code
+      - ${LOCAL_DATA_DIR}:/opt/project/data
+      - ${LOCAL_LOGS_DIR}:/opt/project/logs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [ gpu ]
+
