@@ -1,14 +1,8 @@
 name: <project-name>
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
 dependencies:
-  - python=<python-version>
-  - pytorch # Refer to command here https://pytorch.org/get-started/previous-versions/
-  - torchvision
-  - torchaudio
-  - pytorch-cuda=11.8
+  - python=3.9
   - pip
   - pip:
       - tqdm  # for demonstration of how to install pip packages. TQDM has no dependencies.
