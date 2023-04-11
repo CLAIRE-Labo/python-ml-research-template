@@ -20,6 +20,9 @@ the [instructions to maintain the environment](#instructions-to-maintain-the-env
 
 ## [_DELETE ME_] More details on the setup
 
+Big acknowledgements to Cresset.
+
+
 ## Instructions to install the environment
 
 Steps prefixed with [CUDA] are only required for the CUDA option.
@@ -37,24 +40,58 @@ To check if you have each of them run `<command-name> --version` or `<command-na
 
 **Installation**
 
+All commands should be run from the installation directory.
+```bash
+cd installation/amd64
+```
+
+1. Create an environment file for your personal configuration with
+   ```bash
+   make env
+   ```
+   The creates a `.env` file with pre-filled values.
+   The `UID/GID` are used to allow the container read/write access to the mounted volumes.
+2. Build the image with
+   ```bash
+   make build
+   ```
+3. You can then use the image in multiple ways.
+   1. Locally
+   2. In a managed cluster
+
 ## Instructions to maintain the environment
 
 System dependencies are managed by both`apt` and `conda`.
-Python dependencies are be managed by both `conda`
-and `pip`.
-[(Here is a guide for managing `conda` + `pip` environments)](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment).
+Python dependencies are be managed by both `conda` and `pip`.
 
 Use `apt` for system programs (e.g. `sudo`, `zsh`).
-Use `conda` for non-python dependencies needed to run the project code (e.g. `swig`),
-dependencies packaged with more that just python code (
-e.g. `pytorch`),
-and most python dependencies (as much as possible).
+Use `conda` for non-python dependencies needed to run the project code (e.g. `mkl`, `swig`)
+and dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
+These will typically be your main dependencies and will likely not change as your project grows.
 Use `pip` for the rest of the python dependencies.
-[(Here are reasons why you should use `conda` whenever possible)](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
 
-To add conda or apt dependencies run `conda install <package>` or `sudo apt-istall install <package>` respectively.
+Here are references and reasons to follow the above claims:
+* [A guide for managing `conda` + `pip` environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment).
+* [Reasons to  use `conda` for not-python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
+* [Ways of combining `conda` and `pip`](https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
+
+You can add/upgrade dependencies interactively while running a shell in the container to experiment with which dependency is needed.
+In that case you need to persist those changes and build the image again for subsequent runs.
+We provide a script for that.
+Otherwise, you can manually edit the dependencies files and build the image again.
+This will be needed if you run into conflicts and have to restart from scratch.
+
+### While developing
+
+`conda` dependencies should all be installed before any `pip` dependency.
+This will cause conflicts otherwise as id doesn't track the `pip` dependencies.
+So if you need to add a `conda` dependency after you already installed some `pip` dependencies, you need to recreate
+the environment. (See how to in the next section.)
+
+To add `apt` or `conda`/`pip` dependencies run `sudo apt-istall install <package>`
+or `(conda | pip) install <package>` respectively.
 Whenever you add a dependency interactively (e.g. `conda install <package>` or `pip install <package>`)
-update the `environment.yml` file with
+update/freeze the `environment.yml` file with
 
 ```bash
 source dependencies/update_env_file.sh
@@ -62,12 +99,4 @@ source dependencies/update_env_file.sh
 
 For `apt` dependencies add them manually to `apt.txt`.
 
-`conda` dependencies should all be installed before any `pip` dependency.
-So if you need to add a `conda` dependency after you already installed some `pip` dependencies, you need to recreate
-the environment.
-For that, add the dependency to the `conda` section of the `environment.yml` file and recreate the environment as in the
-previous section.
-
-You might also need users to install system dependencies.
-Use `conda` for those if possible, otherwise specify how to install those in the system dependencies section of
-[_Instructions to install the environment_](#instructions-to-install-the-environment).
+### While building

@@ -36,12 +36,8 @@ FROM ${BASE_IMAGE} AS install-conda
 
 # `CONDA_MANAGER` may be either `mamba` or `conda`.
 ARG CONDA_MANAGER
-
-# Clean out package directories and `__pycache__` files to save space.
 RUN --mount=type=bind,from=get-conda,source=/tmp/conda,target=/tmp/conda \
-    /bin/bash /tmp/conda/miniconda.sh -b -p /opt/conda && \
-    /opt/conda/bin/${CONDA_MANAGER} clean -ya --force-pkgs-dirs && \
-    find /opt/conda -name '__pycache__' | xargs rm -rf
+    /bin/bash /tmp/conda/miniconda.sh -b -p /opt/conda
 
 ########################################################################
 # Install apt packages.
@@ -85,28 +81,36 @@ RUN mkdir /var/run/sshd && \
 FROM train-apt-base AS conda-env
 
 ARG CONDA_MANAGER
-ARG PATH=/opt/conda/bin:${PATH}
 ARG PYTHONDONTWRITEBYTECODE=1
 ARG PYTHONUNBUFFERED=1
 ARG PIP_CACHE_DIR=/root/.cache/pip
 ARG CONDA_PKGS_DIRS=/opt/conda/pkgs
 ARG CONDA_ENV_FILE=/tmp/dependencies/environment.yml
+ENV PATH=/opt/conda/condabin:${PATH}
 
 COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
-RUN --mount=type=bind,from=install-conda,source=/opt/conda,target=/opt/conda \
-    --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
+COPY --link --from=install-conda /opt/conda /opt/conda
+# Update the shared library cache as we copy conda.
+RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && ldconfig
+# Using the conda run command to emulate the `base` environment being activated.
+RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     --mount=type=cache,target=${CONDA_PKGS_DIRS},sharing=locked \
-    /opt/conda/bin/${CONDA_MANAGER} env create --file ${CONDA_ENV_FILE}
+    /opt/conda/bin/$CONDA_MANAGER run -n base env create --file ${CONDA_ENV_FILE}
 
 # Cleaning must be in a separate `RUN` command to preserve the Docker cache.
 RUN /opt/conda/bin/${CONDA_MANAGER} clean -fya && \
     find /opt/conda/envs/${PROJECT_NAME} -name '__pycache__' | xargs rm -rf
 
 ########################################################################
+# Here you can install other software starting from train-apt-base.
+
+
+########################################################################
 # Setting up a user.
 
 FROM train-apt-base AS train-base
 
+ARG PROJECT_NAME
 ARG GID
 ARG UID
 ARG GRP
@@ -116,18 +120,22 @@ ENV PASSWD=${PASSWD}
 # Persisting the user password for later use.
 
 RUN groupadd -f -g ${GID} ${GRP} && \
-    useradd --shell /bin/zsh --create-home -u ${UID} -g ${GRP} -p ${PASSWD} ${USR} && \
+    useradd --shell /bin/zsh --create-home -u ${UID} -g ${GRP} -p "${PASSWD}" ${USR} && \
     usermod -aG sudo ${USR}
 
 # Get conda with the directory ownership given to the user.
 # This is to be able to install more packages in interactive mode.
 COPY --link --from=conda-env --chown=${UID}:${GID} /opt/conda /opt/conda
-RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && ldconfig
+# Update the shared library cache as we copy conda.
+RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && \
+    echo /opt/conda/envs/${PROJECT_NAME}/lib >> /etc/ld.so.conf.d/conda.project.conf && \
+    ldconfig
 
 # Create a directory for the project.
 ARG PROJECT_ROOT
-RUN mkdir ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
+RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
 
+# Set the user.
 USER ${USR}
 ARG HOME=/home/${USR}
 
@@ -138,11 +146,11 @@ COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/pure ${PURE_PATH}
 RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "autoload -Uz promptinit; promptinit"; \
         echo "prompt pure"; \
-    } >> ${HOME}/.zshrc \
+    } >> ${HOME}/.zshrc
 
 ## Add syntax highlighting. This must be activated after auto-suggestions.
 ARG ZSHS_PATH=${HOME}/.zsh/zsh-syntax-highlighting
-COPY --link --from=stash --chown=${UID}:${GID} \
+COPY --link --from=get-pure --chown=${UID}:${GID} \
     /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
 RUN echo "source ${ZSHS_PATH}/zsh-syntax-highlighting.zsh" >> ${HOME}/.zshrc
 
@@ -152,12 +160,13 @@ RUN {   echo "alias ll='ls -lh'"; \
         echo "alias hist='history 1'"; \
     } >> ${HOME}/.zshrc
 
-# Initialize conda.
+# Initialize conda for interactive shells.
 ARG PROJECT_NAME
-ENV PROJECT_NAME=${PROJECT_NAME}
 ARG CONDA_MANAGER
-RUN /bin/zsh -c "/opt/conda/bin/${CONDA_MANAGER} init zsh" &&\
+RUN /bin/zsh -i  "/opt/conda/bin/${CONDA_MANAGER} init zsh" && \
     echo "${CONDA_MANAGER} activate ${PROJECT_NAME}" >> ${HOME}/.zshrc
+# Alias the conda manager.
+RUN echo "alias conda='${CONDA_MANAGER}'" >> ${HOME}/.zshrc
 
 ########################################################################
 # Final layer.
@@ -167,19 +176,24 @@ FROM train-base AS train
 # If using your own .zshrc, mount it to ${HOME}/.local_zshrc and uncomment the following line.
 # RUN echo "source ${HOME}/.local_zshrc" >> ${HOME}/.zshrc
 
-# The following is for EPFL specific configuration.
-ENV EPFL_CONFIG_DIR=/opt/EPFL_config
-COPY --link EPFL_config $EPFL_CONFIG_DIR
-
 ARG PROJECT_ROOT
+ARG PROJECT_NAME
 ARG CODE_DIR
 ARG DATA_DIR
 ARG LOGS_DIR
 ENV PROJECT_ROOT=${PROJECT_ROOT}
+ENV PROJECT_NAME=${PROJECT_NAME}
 ENV CODE_DIR=${CODE_DIR}
 ENV DATA_DIR=${DATA_DIR}
 ENV LOGS_DIR=${LOGS_DIR}
 
 WORKDIR ${PROJECT_ROOT}
-ENTRYPOINT ["/bin/zsh", "-c"]
-CMD ["sleep infinity"]
+
+# Force entrypoint to be an interactive shell to activatet the conda environment.
+COPY --link entrypoint.sh ${PROJECT_ROOT}/entrypoint.sh
+ENTRYPOINT ["/bin/zsh", "-i", "entrypoint.sh"]
+CMD ["/bin/zsh"]
+
+# The following is for EPFL specific configuration.
+ENV EPFL_CONFIG_DIR=/opt/EPFL_config
+COPY --link EPFL_config $EPFL_CONFIG_DIRm

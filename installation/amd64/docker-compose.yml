@@ -1,9 +1,12 @@
 services:
   # Base service to build the image.
   build-non-interactive:
-    env_file:
     image: ${LAB_NAME}/<project-name>:${USR}
+    platform: "linux/amd64"
     build:
+      platforms:
+        - "linux/amd64"
+      target: train
       args:
         PROJECT_NAME: <project-name>
         BASE_IMAGE: ubuntu:22.04                # Ubuntu: https://hub.docker.com/_/ubuntu
@@ -17,17 +20,16 @@ services:
         UID: ${UID}
         GRP: ${GRP}
         USR: ${USR}
+        PASSWD: ${PASSWD}
         PROJECT_ROOT: /opt/project
         CODE_DIR: /opt/project/code
         DATA_DIR: /opt/project/data
         LOGS_DIR: /opt/project/logs
 
-  # Base
-
   # Service to run the image.
   run-local:
     extends:
-        service: build
+        service: build-non-interactive
     tty: true
     stdin_open: true
     volumes:

@@ -1,0 +1,6 @@
+docker-compose.yml
+Dockerfile
+Makefile
+README.md
+EPFL_config/README.md
+EPFL_config/runai-submit-example.sh

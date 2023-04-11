@@ -15,14 +15,14 @@ GRP=${GRP}\n$\
 USR=${USR}\n$\
 PASSWD=${USR}\n$\
 LAB_NAME=${USR}\n$\
-WANDB_API_KEY=\n$\
+WANDB_API_KEY=0\n$\
 "
 # PASSWD is only there to avoid running password-less sudo commands accidentally.
 
 ENV_FILE = .env
 -include ${ENV_FILE}
 
-_COMPOSE_PROJECT = "${PROJECT_NAME}-${SERVICE}-${USR}"
+_COMPOSE_PROJECT = "<project-name>-${USR}"
 COMPOSE_PROJECT = $(shell echo ${_COMPOSE_PROJECT} | tr "[:upper:]" "[:lower:]")
 
 env:  # Creates the `.env` file if it does not exist.
@@ -37,9 +37,17 @@ check:  # Checks if the `.env` file exists.
 
 build: check # Build the image without creating a new container.
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
-	docker compose -p ${PROJECT} build ${SERVICE}
+	docker compose -p ${COMPOSE_PROJECT} build ${SERVICE}
 up: check  # Start service. Creates a new container from the image.
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
-	docker compose -p ${PROJECT} up -d ${SERVICE}
-run: check # Used for debugging cases where the service will not start.
-	docker compose -p ${PROJECT} run --rm ${SERVICE} ${COMMAND}
+	docker compose -p ${COMPOSE_PROJECT} up -d ${SERVICE}
+exec:  # Enter interactive shell.
+	DOCKER_BUILDKIT=1 \
+	docker compose -p ${COMPOSE_PROJECT} exec ${SERVICE} /bin/zsh
+run: check	# Run a command in a new container.
+	docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE}
+# Useful if the previous container must not be deleted.
+start:  # Start a stopped service without recreating the container.
+	docker compose -p ${COMPOSE_PROJECT} start ${SERVICE}
+down:  # Shut down the service and delete containers, volumes, networks, etc.
+	docker compose -p ${COMPOSE_PROJECT} down

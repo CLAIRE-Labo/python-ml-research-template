@@ -15,6 +15,7 @@ for file in \
   "$OSX64_DIR/environment.yml"\
   "$AMD64_DIR/dependencies/environment.yml"\
   "$AMD64_DIR/docker-compose.yml"\
+  "$AMD64_DIR/Makefile.yml"\
   pyproject.toml
 do
   sed -i '' "s/<project-name>/${PROJECT_NAME}/g" $file

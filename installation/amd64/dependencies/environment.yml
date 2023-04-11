@@ -2,7 +2,7 @@ name: <project-name>
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
+  - python=<python-version>
   - pip
   - pip:
       - tqdm  # for demonstration of how to install pip packages. TQDM has no dependencies.
