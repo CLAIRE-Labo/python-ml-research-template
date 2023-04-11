@@ -1,10 +1,15 @@
-# Handle errors. (I.e. forwards SO SIGNALS to the child process.)
-# install the package
+# Halt in case of errors. https://gist.github.com/vncsna/64825d5609c146e80de8b1fd623011ca
+set -euxo pipefail
+
+# if user sets EPFL_RUNAI=1, call the EPFL setup script.
+if [ -n "${EPFL_RUNAI}" ]; then
+  source "${EPFL_CONFIG_DIR}"/setup.sh
+fi
 
 # Install the package in editable mode.
-pip install -e "${CODE_DIR}"
+conda run -n ${PROJECT_NAME} pip install -e .
 # Test that the template works. Feel free to remove this.
-python -c "import <package-name>"
+conda run -n ${PROJECT_NAME} python -c "import <package-name>"
 
-
-
+# Exec and --live-stream so that the child process receives the OS signals.
+exec conda run --live-streaming -n ${PROJECT_NAME} "$@"

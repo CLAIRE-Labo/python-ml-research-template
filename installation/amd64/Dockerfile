@@ -120,7 +120,7 @@ ENV PASSWD=${PASSWD}
 # Persisting the user password for later use.
 
 RUN groupadd -f -g ${GID} ${GRP} && \
-    useradd --shell /bin/zsh --create-home -u ${UID} -g ${GRP} -p "${PASSWD}" ${USR} && \
+    useradd --shell /bin/zsh --create-home -u ${UID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
     usermod -aG sudo ${USR}
 
 # Get conda with the directory ownership given to the user.
@@ -187,13 +187,15 @@ ENV CODE_DIR=${CODE_DIR}
 ENV DATA_DIR=${DATA_DIR}
 ENV LOGS_DIR=${LOGS_DIR}
 
-WORKDIR ${PROJECT_ROOT}
+WORKDIR ${CODE_DIR}
 
 # Force entrypoint to be an interactive shell to activatet the conda environment.
 COPY --link entrypoint.sh ${PROJECT_ROOT}/entrypoint.sh
-ENTRYPOINT ["/bin/zsh", "-i", "entrypoint.sh"]
+# Try with -i and if -i runs okay, fine.
+# Othetwise try to remove it and run conda run.
+ENTRYPOINT ["/bin/zsh", "entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 # The following is for EPFL specific configuration.
 ENV EPFL_CONFIG_DIR=/opt/EPFL_config
-COPY --link EPFL_config $EPFL_CONFIG_DIRm
+COPY --link EPFL_runai_setup ${EPFL_CONFIG_DIR}
