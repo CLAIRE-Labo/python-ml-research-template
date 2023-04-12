@@ -15,7 +15,7 @@ for file in \
   "$AMD64_DIR/dependencies/update_env_file.sh" \
   "$AMD64_DIR/EPFL_runai_setup/runai-submit-example.sh" \
   "$AMD64_DIR/docker-compose.yml" \
-  "$AMD64_DIR/Makefile.yml" \
+  "$AMD64_DIR/Makefile" \
   "$AMD64_DIR/README.md" \
   "$OSX64_DIR/environment.yml"; do
   sed -i '' "s/<project-name>/${PROJECT_NAME}/g" $file
