@@ -34,10 +34,9 @@ RUN mkdir /tmp/conda && \
 
 FROM ${BASE_IMAGE} AS install-conda
 
-# `CONDA_MANAGER` may be either `mamba` or `conda`.
-ARG CONDA_MANAGER
+ARG CONDA_INSTALL_PATH
 RUN --mount=type=bind,from=get-conda,source=/tmp/conda,target=/tmp/conda \
-    /bin/bash /tmp/conda/miniconda.sh -b -p /opt/conda
+    /bin/bash /tmp/conda/miniconda.sh -b -p ${CONDA_INSTALL_PATH}
 
 ########################################################################
 # Install apt packages.
@@ -80,31 +79,27 @@ RUN mkdir /var/run/sshd && \
 
 FROM train-apt-base AS conda-env
 
-ARG CONDA_MANAGER
 ARG PROJECT_NAME
 ARG PYTHONDONTWRITEBYTECODE=1
 ARG PYTHONUNBUFFERED=1
 ARG PIP_CACHE_DIR=/root/.cache/pip
-ARG CONDA_PKGS_DIRS=/opt/conda/pkgs
+ARG CONDA_INSTALL_PATH
+ARG CONDA_PKGS_DIRS=${CONDA_INSTALL_PATH}/pkgs
 ARG CONDA_ENV_FILE=/tmp/dependencies/environment.yml
-ARG PATH=/opt/conda/condabin:${PATH}
+ARG PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 
 COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
-COPY --link --from=install-conda /opt/conda /opt/conda
-# Update the shared library cache as we copy conda.
-RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && ldconfig
-# Using the conda run command to emulate the `base` environment being activated.
+COPY --link --from=install-conda ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     --mount=type=cache,target=${CONDA_PKGS_DIRS},sharing=locked \
-    $CONDA_MANAGER run -n base $CONDA_MANAGER env create --file ${CONDA_ENV_FILE}
+    mamba env create --file ${CONDA_ENV_FILE}
 
 # Cleaning must be in a separate `RUN` command to preserve the Docker cache.
-RUN ${CONDA_MANAGER} clean -fya && \
-    find /opt/conda/envs/${PROJECT_NAME} -name '__pycache__' | xargs rm -rf
+RUN mamba clean -fya && \
+    find ${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME} -name '__pycache__' | xargs rm -rf
 
 ########################################################################
 # Here you can install other software starting from train-apt-base.
-
 
 ########################################################################
 # Setting up a user.
@@ -118,7 +113,6 @@ ARG GRP
 ARG USR
 ARG PASSWD
 ENV PASSWD=${PASSWD}
-# Persisting the user password for later use.
 
 RUN groupadd -f -g ${GID} ${GRP} && \
     useradd --shell /bin/zsh --create-home -u ${UID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
@@ -129,11 +123,9 @@ RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
 
 # Get conda with the directory ownership given to the user.
 # This is to be able to install more packages in interactive mode.
-COPY --link --from=conda-env --chown=${UID}:${GID} /opt/conda /opt/conda
-# Update the shared library cache as we copy conda.
-RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && \
-    echo /opt/conda/envs/${PROJECT_NAME}/lib >> /etc/ld.so.conf.d/conda.project.conf && \
-    ldconfig
+ARG CONDA_INSTALL_PATH
+ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
+COPY --link --from=conda-env --chown=${UID}:${GID} ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
 
 # Set the user.
 USER ${USR}
@@ -141,17 +133,16 @@ ARG HOME=/home/${USR}
 
 # Initialize conda for interactive shells.
 ARG PROJECT_NAME
-ARG CONDA_MANAGER
-ENV PATH=/opt/conda/condabin:${PATH}
-RUN /bin/zsh -i -c "${CONDA_MANAGER} init zsh" && \
-    {   echo "${CONDA_MANAGER} activate ${PROJECT_NAME}"; \
-        echo "alias conda='${CONDA_MANAGER}'"; \
+ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
+RUN /bin/zsh -i -c "mamba init zsh" && \
+    {   echo "mamba activate ${PROJECT_NAME}"; \
+        echo "alias conda=mamba # For those who still think it's conda :)"; \
     } >> ${HOME}/.zshrc
 
 # Zsh configuration.
 ARG PURE_PATH=${HOME}/.zsh/pure
 ARG ZSHA_PATH=${HOME}/.zsh/zsh-autosuggestions
-ARG ZSHS_PATH=${HOME}/dwa
+ARG ZSHS_PATH=${HOME}/.zsh/zsh-syntax-highlighting
 COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/pure ${PURE_PATH}
 COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
 COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
@@ -186,7 +177,7 @@ ENV LOGS_DIR=${LOGS_DIR}
 
 WORKDIR ${CODE_DIR}
 
-# Force entrypoint to be an interactive shell to activatet the conda environment.
+# Force entrypoint to be an interactive shell to activate the conda environment.
 # Don't overwrite the entrypoint unless you know what you are doing.
 COPY --link entrypoint.sh ../entrypoint.sh
 # Try with -i and if -i runs okay, fine.

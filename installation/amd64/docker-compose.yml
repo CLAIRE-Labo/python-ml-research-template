@@ -13,8 +13,9 @@ services:
         GIT_IMAGE: alpine/git:edge-2.38.1       # https://hub.docker.com/r/alpine/git/tags
         CONDA_URL:
           https://github.com/conda-forge/miniforge/releases/download/23.1.0-1/Mambaforge-23.1.0-1-Linux-x86_64.sh
-           # https://github.com/conda-forge/miniforge/releases/
-        CONDA_MANAGER: mamba
+                                            # https://github.com/conda-forge/miniforge/releases/
+        CONDA_INSTALL_PATH: /opt/conda      # Should be the same between stages not to brake linking.
+                                            # https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#bb7b
         GID: ${GID}
         UID: ${UID}
         GRP: ${GRP}
