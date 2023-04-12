@@ -1,9 +1,6 @@
 define ENV_TEXT
-# User-specific environment variables only.
-SERVICE=build-non-interactive
-LOCAL_CODE_DIR=../..
-LOCAL_DATA_DIR=../../data
-LOCAL_LOGS_DIR=../../logs
+# All user-specific configurations are here.
+SERVICE=image-only
 GID=$(shell id -g)
 UID=$(shell id -u)
 GRP=$(shell id -gn)
@@ -13,6 +10,10 @@ USR=$(shell id -un)
 PASSWD=$(shell id -un)
 LAB_NAME=$(shell id -un)
 WANDB_API_KEY=0
+# Used for local deployment only.
+LOCAL_CODE_DIR=../..
+LOCAL_DATA_DIR=../../data
+LOCAL_LOGS_DIR=../../logs
 endef
 export ENV_TEXT
 

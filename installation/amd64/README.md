@@ -12,7 +12,7 @@ It remains to
    user [instructions to install the environment](#instructions-to-install-the-environment).
 2. Pin the initial dependencies you just got.
     ```bash
-    source installation/osx-arm64/update_env_file.sh 
+    TODO
     ```
 
 You can then add more dependencies as your project grows following
@@ -25,7 +25,7 @@ Big acknowledgements to Cresset.
 
 ## Instructions to install the environment
 
-Steps prefixed with [CUDA] are only required for the CUDA option.
+Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 
 **Prerequisites**
 
@@ -50,7 +50,19 @@ cd installation/amd64
    make env
    ```
    The creates a `.env` file with pre-filled values.
-   The `UID/GID` are used to allow the container read/write access to the mounted volumes.
+   The `SERVICE_NAME` variable determines how you'll deploy your image.
+   We provide 2 options.
+      1. `image-only` does not specify any deployment options. 
+         It is there if you only need to build the image and can then deploy it however you want.
+         *: Use this option for deploying on the RunAI Kubernetes Cluster.
+      2. `run-local` specifies a deployment with Docker Compose on your local machine.
+         *: Use this option to run the container locally. E.g. on your WSL machine, EPFL HaaS lab machine.
+   The `UID/GID` are used to give the container user read/write access to the mounted volumes 
+   containing the code of the project, the data, and where you'll write your outputs.
+   These need to match the user permissions on the mounted volumes.
+   If you're deploying locally these values should be filled correctly by default.
+   If you're deploying locally with Docker Compose, `LOCAL_*_DIR` are the paths to volumes to mount.
+   Otherwise, they're not used.
 2. Build the image with
    ```bash
    make build
