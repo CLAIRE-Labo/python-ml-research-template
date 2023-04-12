@@ -177,13 +177,12 @@ ENV LOGS_DIR=${LOGS_DIR}
 
 WORKDIR ${CODE_DIR}
 
-# Force entrypoint to be an interactive shell to activate the conda environment.
-# Don't overwrite the entrypoint unless you know what you are doing.
+# Entrypoint is an interactive shell to activate the conda environment.
+# Don't overwrite the entrypoint it is installing the project
+# and testing that you correctly mounted your volume.
+# It only needs to run once, so you can attach shells later without running it.
 COPY --link entrypoint.sh ../entrypoint.sh
-# Try with -i and if -i runs okay, fine.
 ENTRYPOINT ["/bin/zsh", "-i", "../entrypoint.sh"]
-# Othetwise try to remove it and run conda run.
-#ENTRYPOINT ["/bin/zsh", "entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 # The following is for EPFL specific configuration.

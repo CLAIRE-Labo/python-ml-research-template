@@ -9,11 +9,10 @@ fi
 
 # With login shell, wouldn't need the conda run
 # Install the package in editable mode.
-#conda run -n ${PROJECT_NAME} pip install -e .
 echo "Installing the project."
 pip install -e .
+
 # Test that the template works. Feel free to remove this.
-#conda run -n ${PROJECT_NAME} python -c "import <package-name>"
 python -c "import <package_name>"
 
 # Exec and --live-stream so that the child process receives the OS signals.
