@@ -1,10 +1,23 @@
-# python-package-template
+# lab_name-project-template
 
-## [_DELETE ME_] Template Info
+## Overview
 
-A template for starting a new Python project, inspired from the
-[PyPA packaging tutorial](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
-It contains the minimal files needed to start a project with good practices.
+_[EDIT ME. A description of your project.]_
+
+A template for starting news research project at the <lab-name> lab with hardware acceleration.
+It features and encourages good practices for:
+
+- Reproducible research through
+    - reproducible environments that can be used/deployed on multiple platforms.
+      E.g. your local computer, the lab server, the RunAI Kubernetes platform, and someone else's server or local
+      computer.
+- Experiment management, tracking, and sharing with `wandb` and `hydra`.
+- Python project packaging inspired from
+  the [PyPA packaging tutorial](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
+
+## Getting started with the template
+
+[DELETE ME. Delete this section afterwards, and keep the "Getting started" below.]
 
 Feel free to `Use this template` (GitHub button) and
 
@@ -16,19 +29,18 @@ Feel free to `Use this template` (GitHub button) and
 2. Edit the `LICENCE`
    file. [(Some help here.)](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
 3. Setup and edit the development environment instructions for the platforms you'll use/support.
-   We support 1 platform for now:
-    - macOS with Apple Silicon (`osx-arm64`): refer to `installation/osx-arm64/README.md`.
-
-   Delete the _Template info_ section in the installation instructions of the platforms you plan to support, and the
-   whole installation directory for the platforms you don't use.
+   We support the following platforms:
+    - macOS with Apple Silicon (`osx-arm64`), leveraging the MPS backend if relevant.
+      Refer to `installation/osx-arm64/README.md`.
+    - Docker on AMD64 platforms (e.g. linux server like the EPFL HaaS servers, WSL on you local machine, Kubernetes
+      platforms like the EPFL runai Platform).
+      Refer to `installation/docker-amd64/README.md`
+      Delete the _Template info_ section in the installation instructions of the platforms you plan to support, and the
+      whole installation directory for the platforms you don't use.
 4. Edit this `README.md` file.
-    1. Add a description of your project in the [_Overview_](#overview) section.
+    1. Replace the [_Overview_](#overview) section with description of your project.
     2. Delete the [installation instructions](#development-environment) for the platforms you don't support.
-    3. Delete this section.
-
-## Overview
-
-[_EDIT ME_] Description of your project.
+    3. Delete this section [(Getting started with the template)](#getting-started-with-the-template).
 
 ## Getting Started
 
