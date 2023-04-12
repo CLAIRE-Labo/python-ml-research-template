@@ -96,7 +96,7 @@ RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && ldconfig
 # Using the conda run command to emulate the `base` environment being activated.
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     --mount=type=cache,target=${CONDA_PKGS_DIRS},sharing=locked \
-    $CONDA_MANAGER run -n base env create --file ${CONDA_ENV_FILE}
+    $CONDA_MANAGER run -n base $CONDA_MANAGER env create --file ${CONDA_ENV_FILE}
 
 # Cleaning must be in a separate `RUN` command to preserve the Docker cache.
 RUN ${CONDA_MANAGER} clean -fya && \
@@ -122,7 +122,7 @@ ENV PASSWD=${PASSWD}
 
 RUN groupadd -f -g ${GID} ${GRP} && \
     useradd --shell /bin/zsh --create-home -u ${UID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
-    usermod -aG sudo ${USR} \
+    usermod -aG sudo ${USR}
 # Create a directory for the project.
 ARG PROJECT_ROOT
 RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
@@ -164,7 +164,7 @@ RUN {   echo "alias ll='ls -lh'"; \
 ARG PROJECT_NAME
 ARG CONDA_MANAGER
 ENV PATH=/opt/conda/condabin:${PATH}
-RUN /bin/zsh -i  "${CONDA_MANAGER} init zsh" && \
+RUN /bin/zsh -i -c "${CONDA_MANAGER} init zsh" && \
     echo "${CONDA_MANAGER} activate ${PROJECT_NAME}" >> ${HOME}/.zshrc && \
     echo "alias conda='${CONDA_MANAGER}'" >> ${HOME}/.zshrc
 
