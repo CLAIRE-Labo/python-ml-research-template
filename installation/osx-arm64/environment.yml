@@ -5,4 +5,7 @@ dependencies:
   - python=<python-version>
   - pip
   - pip:
+      - hydra-core
+      - tqdm
+      - wandb
       -  -e ../..

@@ -5,5 +5,7 @@ dependencies:
   - python=<python-version>
   - pip
   - pip:
-      - tqdm  # for demonstration of how to install pip packages. TQDM has no dependencies.
+      - hydra-core
+      - tqdm
+      - wandb
 prefix: /opt/conda/envs/<project-name>
