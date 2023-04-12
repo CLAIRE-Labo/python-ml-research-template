@@ -1,5 +1,5 @@
 # Halt in case of errors. https://gist.github.com/vncsna/64825d5609c146e80de8b1fd623011ca
-set -euxo pipefail
+set -eo pipefail
 
 # if user sets EPFL_RUNAI=1, call the EPFL setup script.
 if [ -n "${EPFL_RUNAI}" ]; then

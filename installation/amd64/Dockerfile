@@ -139,34 +139,31 @@ RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && \
 USER ${USR}
 ARG HOME=/home/${USR}
 
-# Zsh configuration.
-## Setting the prompt to `pure`.
-ARG PURE_PATH=${HOME}/.zsh/pure
-COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/pure ${PURE_PATH}
-RUN {   echo "fpath+=${PURE_PATH}"; \
-        echo "autoload -Uz promptinit; promptinit"; \
-        echo "prompt pure"; \
-    } >> ${HOME}/.zshrc
-
-## Add syntax highlighting. This must be activated after auto-suggestions.
-ARG ZSHS_PATH=${HOME}/.zsh/zsh-syntax-highlighting
-COPY --link --from=get-pure --chown=${UID}:${GID} \
-    /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
-RUN echo "source ${ZSHS_PATH}/zsh-syntax-highlighting.zsh" >> ${HOME}/.zshrc
-
-## Add custom aliases and settings.
-RUN {   echo "alias ll='ls -lh'"; \
-        echo "alias wns='watch nvidia-smi'"; \
-        echo "alias hist='history 1'"; \
-    } >> ${HOME}/.zshrc
-
 # Initialize conda for interactive shells.
 ARG PROJECT_NAME
 ARG CONDA_MANAGER
 ENV PATH=/opt/conda/condabin:${PATH}
 RUN /bin/zsh -i -c "${CONDA_MANAGER} init zsh" && \
-    echo "${CONDA_MANAGER} activate ${PROJECT_NAME}" >> ${HOME}/.zshrc && \
-    echo "alias conda='${CONDA_MANAGER}'" >> ${HOME}/.zshrc
+    {   echo "${CONDA_MANAGER} activate ${PROJECT_NAME}"; \
+        echo "alias conda='${CONDA_MANAGER}'"; \
+    } >> ${HOME}/.zshrc
+
+# Zsh configuration.
+ARG PURE_PATH=${HOME}/.zsh/pure
+ARG ZSHA_PATH=${HOME}/.zsh/zsh-autosuggestions
+ARG ZSHS_PATH=${HOME}/dwa
+COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/pure ${PURE_PATH}
+COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
+COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
+RUN {   echo "fpath+=${PURE_PATH}"; \
+        echo "autoload -Uz promptinit; promptinit"; \
+        echo "prompt pure"; \
+        echo "source ${ZSHA_PATH}/zsh-autosuggestions.zsh"; \
+        echo "source ${ZSHS_PATH}/zsh-syntax-highlighting.zsh"; \
+        echo "alias ll='ls -lh'"; \
+        echo "alias wns='watch nvidia-smi'"; \
+        echo "alias hist='history 1'"; \
+    } >> ${HOME}/.zshrc
 
 ########################################################################
 # Final layer.
@@ -190,9 +187,10 @@ ENV LOGS_DIR=${LOGS_DIR}
 WORKDIR ${CODE_DIR}
 
 # Force entrypoint to be an interactive shell to activatet the conda environment.
-COPY --link entrypoint.sh ${PROJECT_ROOT}/entrypoint.sh
+# Don't overwrite the entrypoint unless you know what you are doing.
+COPY --link entrypoint.sh ../entrypoint.sh
 # Try with -i and if -i runs okay, fine.
-ENTRYPOINT ["/bin/zsh", "-i", "entrypoint.sh"]
+ENTRYPOINT ["/bin/zsh", "-i", "../entrypoint.sh"]
 # Othetwise try to remove it and run conda run.
 #ENTRYPOINT ["/bin/zsh", "entrypoint.sh"]
 CMD ["/bin/zsh"]

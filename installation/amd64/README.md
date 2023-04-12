@@ -55,8 +55,10 @@ cd installation/amd64
       1. `image-only` does not specify any deployment options. 
          It is there if you only need to build the image and can then deploy it however you want.
          *: Use this option for deploying on the RunAI Kubernetes Cluster.
-      2. `run-local` specifies a deployment with Docker Compose on your local machine.
+      2. `local-cpu` specifies a deployment with Docker Compose on your local machine with no hardware acceleration.
          *: Use this option to run the container locally. E.g. on your WSL machine, EPFL HaaS lab machine.
+      3. `local-gpu` specifies a deployment with Docker Compose on your local machine with GPU support.
+         *: Use this option to run the container locally with GPU support.
    The `UID/GID` are used to give the container user read/write access to the mounted volumes 
    containing the code of the project, the data, and where you'll write your outputs.
    These need to match the user permissions on the mounted volumes.
