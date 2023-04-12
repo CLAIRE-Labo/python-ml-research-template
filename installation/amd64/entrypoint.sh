@@ -12,7 +12,7 @@ fi
 pip install -e .
 # Test that the template works. Feel free to remove this.
 #conda run -n ${PROJECT_NAME} python -c "import <package-name>"
-python -c "import <package-name>"
+python -c "import <package_name>"
 
 # Exec and --live-stream so that the child process receives the OS signals.
 #exec conda run --live-streaming -n ${PROJECT_NAME} "$@"
