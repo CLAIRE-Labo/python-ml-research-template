@@ -1,4 +1,7 @@
-# Give absolute paths.
+# This is not part of the docker pipeline.
+# This is an example of how to submit a job to runai.
+
+# Read some of the variables from the .env file.
 source ../.env
 
 runai submit \
@@ -11,5 +14,6 @@ runai submit \
   --environment CODE_DIR_IN_NFS=/mlodata1/${USER}/code/${PROJECT_NAME} \
   --environment DATA_DIR_IN_NFS=/mlodata1/${USER}/data/${PROJECT_NAME} \
   --environment LOGS_DIR_IN_NFS=/mlodata1/${USER}/logs/${PROJECT_NAME} \
-  --environment PYCHARM_IDE_LOCATION="/mlodata1/${USER}/remote_development/pycharm"
-  --command -- /opt/EPFL_config/interactive_startup.sh
+  --environment PYCHARM_IDE_LOCATION=/mlodata1/${USER}/remote_development/pycharm \
+  --environment WANDB_API_KEY=${WANDB_API_KEY}  \
+  -- sleep infinity

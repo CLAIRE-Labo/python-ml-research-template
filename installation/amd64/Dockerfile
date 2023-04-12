@@ -81,12 +81,13 @@ RUN mkdir /var/run/sshd && \
 FROM train-apt-base AS conda-env
 
 ARG CONDA_MANAGER
+ARG PROJECT_NAME
 ARG PYTHONDONTWRITEBYTECODE=1
 ARG PYTHONUNBUFFERED=1
 ARG PIP_CACHE_DIR=/root/.cache/pip
 ARG CONDA_PKGS_DIRS=/opt/conda/pkgs
 ARG CONDA_ENV_FILE=/tmp/dependencies/environment.yml
-ENV PATH=/opt/conda/condabin:${PATH}
+ARG PATH=/opt/conda/condabin:${PATH}
 
 COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
 COPY --link --from=install-conda /opt/conda /opt/conda
@@ -95,10 +96,10 @@ RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && ldconfig
 # Using the conda run command to emulate the `base` environment being activated.
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     --mount=type=cache,target=${CONDA_PKGS_DIRS},sharing=locked \
-    /opt/conda/bin/$CONDA_MANAGER run -n base env create --file ${CONDA_ENV_FILE}
+    $CONDA_MANAGER run -n base env create --file ${CONDA_ENV_FILE}
 
 # Cleaning must be in a separate `RUN` command to preserve the Docker cache.
-RUN /opt/conda/bin/${CONDA_MANAGER} clean -fya && \
+RUN ${CONDA_MANAGER} clean -fya && \
     find /opt/conda/envs/${PROJECT_NAME} -name '__pycache__' | xargs rm -rf
 
 ########################################################################
@@ -121,7 +122,10 @@ ENV PASSWD=${PASSWD}
 
 RUN groupadd -f -g ${GID} ${GRP} && \
     useradd --shell /bin/zsh --create-home -u ${UID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
-    usermod -aG sudo ${USR}
+    usermod -aG sudo ${USR} \
+# Create a directory for the project.
+ARG PROJECT_ROOT
+RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
 
 # Get conda with the directory ownership given to the user.
 # This is to be able to install more packages in interactive mode.
@@ -130,10 +134,6 @@ COPY --link --from=conda-env --chown=${UID}:${GID} /opt/conda /opt/conda
 RUN echo /opt/conda/lib >> /etc/ld.so.conf.d/conda.conf && \
     echo /opt/conda/envs/${PROJECT_NAME}/lib >> /etc/ld.so.conf.d/conda.project.conf && \
     ldconfig
-
-# Create a directory for the project.
-ARG PROJECT_ROOT
-RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
 
 # Set the user.
 USER ${USR}
@@ -163,7 +163,8 @@ RUN {   echo "alias ll='ls -lh'"; \
 # Initialize conda for interactive shells.
 ARG PROJECT_NAME
 ARG CONDA_MANAGER
-RUN /bin/zsh -i  "/opt/conda/bin/${CONDA_MANAGER} init zsh" && \
+ENV PATH=/opt/conda/condabin:${PATH}
+RUN /bin/zsh -i  "${CONDA_MANAGER} init zsh" && \
     echo "${CONDA_MANAGER} activate ${PROJECT_NAME}" >> ${HOME}/.zshrc
 # Alias the conda manager.
 RUN echo "alias conda='${CONDA_MANAGER}'" >> ${HOME}/.zshrc
@@ -192,10 +193,11 @@ WORKDIR ${CODE_DIR}
 # Force entrypoint to be an interactive shell to activatet the conda environment.
 COPY --link entrypoint.sh ${PROJECT_ROOT}/entrypoint.sh
 # Try with -i and if -i runs okay, fine.
+ENTRYPOINT ["/bin/zsh", "-i", "entrypoint.sh"]
 # Othetwise try to remove it and run conda run.
-ENTRYPOINT ["/bin/zsh", "entrypoint.sh"]
+#ENTRYPOINT ["/bin/zsh", "entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 # The following is for EPFL specific configuration.
-ENV EPFL_CONFIG_DIR=/opt/EPFL_config
+ENV EPFL_CONFIG_DIR=${PROJECT_ROOT}/EPFL_config
 COPY --link EPFL_runai_setup ${EPFL_CONFIG_DIR}

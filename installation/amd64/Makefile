@@ -5,6 +5,7 @@ USR = $(shell id -un)
 SERVICE = build-non-interactive
 
 ENV_TEXT = "$\
+# User-specific environment variables only.\n$\
 SERVICE=${SERVICE}\n$\
 LOCAL_CODE_DIR=../..\n$\
 LOCAL_DATA_DIR=../../data\n$\
