@@ -1,13 +1,17 @@
 services:
   image-only: # Base service to build the image.
-    image: ${LAB_NAME}/<project-name>:${USR}
+    image: ${LAB_NAME}/${PROJECT_NAME}:${USR}
     platform: "linux/amd64"
+    env_file:
+      - .user.env
+      - .project.env
     build:
       platforms:
         - "linux/amd64"
       target: train
       args:
-        PROJECT_NAME: <project-name>
+        PROJECT_NAME: ${PROJECT_NAME}
+        PACKAGE_NAME: ${PACKAGE_NAME}
         BASE_IMAGE: ubuntu:22.04                # Ubuntu: https://hub.docker.com/_/ubuntu
         CURL_IMAGE: curlimages/curl:8.00.1      # https://hub.docker.com/r/curlimages/curl/tags
         GIT_IMAGE: alpine/git:edge-2.38.1       # https://hub.docker.com/r/alpine/git/tags
@@ -21,10 +25,10 @@ services:
         GRP: ${GRP}
         USR: ${USR}
         PASSWD: ${PASSWD}
-        PROJECT_ROOT: /opt/project
-        CODE_DIR: /opt/project/code
-        DATA_DIR: /opt/project/data
-        LOGS_DIR: /opt/project/logs
+        PROJECT_ROOT: ${PROJECT_ROOT}
+        CODE_DIR: ${CODE_DIR}
+        DATA_DIR: ${DATA_DIR}
+        LOGS_DIR: ${LOGS_DIR}
 
   local-cpu:   # Service to run the image locally with CPU only.
     extends:
@@ -32,9 +36,9 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ${LOCAL_CODE_DIR}:/opt/project/code
-      - ${LOCAL_DATA_DIR}:/opt/project/data
-      - ${LOCAL_LOGS_DIR}:/opt/project/logs
+      - ${LOCAL_CODE_DIR}:${CODE_DIR}
+      - ${LOCAL_DATA_DIR}:${DATA_DIR}
+      - ${LOCAL_LOGS_DIR}:${LOGS_DIR}
     environment:
       WANDB_API_KEY: ${WANDB_API_KEY}
 

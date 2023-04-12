@@ -18,11 +18,11 @@ endef
 export ENV_TEXT
 
 # All variables below are read from the `.env` file.
-ENV_FILE = .env
+ENV_FILE = .user.env
 -include ${ENV_FILE}
+-include .project.env
 
-_COMPOSE_PROJECT = "<project-name>-${USR}"
-COMPOSE_PROJECT = $(shell echo ${_COMPOSE_PROJECT} | tr "[:upper:]" "[:lower:]")
+COMPOSE_PROJECT = $(shell echo ${PROJECT_NAME}-${USR} | tr "[:upper:]" "[:lower:]")
 
 env:  # Creates the `.env` file if it does not exist.
 	@test -f ${ENV_FILE} || printf "$$ENV_TEXT" >> ${ENV_FILE}
@@ -41,8 +41,7 @@ up: check  # Start service. Creates a new container from the image.
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
 	docker compose -p ${COMPOSE_PROJECT} up -d ${SERVICE}
 exec:	# Enter interactive shell.
-	DOCKER_BUILDKIT=1 \
-	docker compose -p ${COMPOSE_PROJECT} exec ${SERVICE} /bin/zsh
+	DOCKER_BUILDKIT=1 docker compose -p ${COMPOSE_PROJECT} exec ${SERVICE}
 run:	# Run a command in a new container.
 	docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE}
 # Useful if the previous container must not be deleted.
