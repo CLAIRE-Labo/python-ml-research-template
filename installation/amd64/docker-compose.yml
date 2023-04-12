@@ -1,6 +1,5 @@
 services:
-  # Base service to build the image.
-  build-non-interactive:
+  image-only: # Base service to build the image.
     image: ${LAB_NAME}/<project-name>:${USR}
     platform: "linux/amd64"
     build:
@@ -26,10 +25,9 @@ services:
         DATA_DIR: /opt/project/data
         LOGS_DIR: /opt/project/logs
 
-  # Service to run the image.
-  run-local:
+  run-local:   # Service to run the image.
     extends:
-        service: build-non-interactive
+        service: image-only
     tty: true
     stdin_open: true
     volumes:
