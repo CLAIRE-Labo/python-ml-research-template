@@ -165,9 +165,8 @@ ARG PROJECT_NAME
 ARG CONDA_MANAGER
 ENV PATH=/opt/conda/condabin:${PATH}
 RUN /bin/zsh -i  "${CONDA_MANAGER} init zsh" && \
-    echo "${CONDA_MANAGER} activate ${PROJECT_NAME}" >> ${HOME}/.zshrc
-# Alias the conda manager.
-RUN echo "alias conda='${CONDA_MANAGER}'" >> ${HOME}/.zshrc
+    echo "${CONDA_MANAGER} activate ${PROJECT_NAME}" >> ${HOME}/.zshrc && \
+    echo "alias conda='${CONDA_MANAGER}'" >> ${HOME}/.zshrc
 
 ########################################################################
 # Final layer.

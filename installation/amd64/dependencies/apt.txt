@@ -3,3 +3,4 @@ sudo                # Required.
 zsh                 # Required.
 openssl             # Required.
 openssh-server      # For remote IDEs.
+htop
