@@ -39,8 +39,6 @@ ENV_FILE = .env
 
 IMAGE_NAME=${LAB_NAME}/${PROJECT_NAME}:${USR}
 COMPOSE_PROJECT = $(shell echo ${PROJECT_NAME}-${USR} | tr "[:upper:]" "[:lower:]")
-export COMPOSE_PROJECT
-export SERVICE
 command="python --version"
 
 .PHONY: env check build up exec run start down
@@ -63,7 +61,7 @@ up: check  # Start service. Creates a new container from the image.
 exec:	# Enter interactive shell.
 	DOCKER_BUILDKIT=1 docker compose -p ${COMPOSE_PROJECT} exec ${SERVICE}
 run:	# Run a command in a new container.
-	docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} $command
+	docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} ${command}
 # Useful if the previous container must not be deleted.
 start:	# Start a stopped service without recreating the container.
 	docker compose -p ${COMPOSE_PROJECT} start ${SERVICE}
