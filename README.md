@@ -16,6 +16,8 @@ It features and encourages good practices for:
   the [PyPA packaging guidelines](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
 - TODO. Code quality and style with `flake8` and `black`.
 
+With this, open-sourcing your code and project will be a breeze.
+
 Because of its focus on reproducibility, this template can readily be used by other labs et EPFL and beyond.
 It can also be adapted to suit many other use cases.
 However, it's maintained form will be tailored to the needs of the <lab-name> lab.
@@ -25,7 +27,7 @@ It also contains extra EPFL-specific instructions for deployment on the RunAI Ku
 
 [DELETE ME. Delete this section afterwards, and keep the "Getting started" below.]
 
-Feel free to `Use this template` (GitHub button) and
+Click on the `Use this template` (GitHub button) to create a new repo, clone it, and
 
 1. Fill the template variables in `template/template_variables.sh` and run the script
    ```bash
@@ -34,20 +36,27 @@ Feel free to `Use this template` (GitHub button) and
    Then, delete the `template` directory.
 2. Edit the `LICENCE`
    file. [(Some help here.)](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
+   TODO: give a minimal change that will make the licence valid. like just changing the name of the author.
 3. Setup and edit the development environment instructions for the platforms you'll use/support.
    We support the following platforms:
     - **macOS with Apple Silicon (`osx-arm64`)**, with support for MPS hardware acceleration.
       Refer to `installation/osx-arm64/README.md`.
     - **Docker on AMD64 platforms** (e.g. linux server like the EPFL HaaS servers, WSL on you local machine, Kubernetes
       platforms like the EPFL runai Platform), with support for NVIDIA GPUs.
-      Refer to `installation/docker-amd64/README.md`
+      Refer to `installation/docker-amd64/README.md`.
       
     Delete the _Template info_ section in the installation instructions of the platforms you plan to support, and the
       whole installation directory for the platforms you don't use.
+
+    In addition, it is good to list your direct dependencies (with versions when relevant) for users with other needs.
+    Edit the section `Dependencies` as described below.
 4. Edit this `README.md` file.
     1. Replace the [_Overview_](#overview) section with description of your project.
     2. Delete the [installation instructions](#development-environment) for the platforms you don't support.
-    3. Delete this section [(Getting started with the template)](#getting-started-with-the-template).
+    3. List your direct dependencies (with versions when relevant) in the Dependencies section. (Todo: link.)
+    4. Delete this section [(Getting started with the template)](#getting-started-with-the-template).
+5. You're off to a good start! Here are a few tips for keeping your project in a good shape.
+   - Todo.
 
 ## Template FAQ
 
@@ -59,6 +68,8 @@ Feel free to `Use this template` (GitHub button) and
 TODO. This will be the public getting started.
 
 ### Development environment
+
+Todo. This will be the public instructions.
 
 We support the following platforms for installing the project dependencies and running the code.
 
