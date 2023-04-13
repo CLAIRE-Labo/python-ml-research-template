@@ -9,7 +9,7 @@ This guide will show you how to deploy your image on the EPFL IC RunAI cluster a
 2. Remote development (as at <lab-name> we use the RunAI platform as our daily drivers).
 
 Using the image on the HaaS lab machines falls into the general reproducible use case and is covered by the
-instructions in the `installation/amd64/README.md` file.
+instructions in the `installation/docker-amd64/README.md` file.
 
 ## Prerequisites
 

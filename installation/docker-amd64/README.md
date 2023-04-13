@@ -41,7 +41,7 @@ platforms.
 All commands should be run from the installation directory.
 
 ```bash
-cd installation/amd64
+cd installation/docker-amd64
 ```
 
 1. Create an environment file for your personal configuration with
