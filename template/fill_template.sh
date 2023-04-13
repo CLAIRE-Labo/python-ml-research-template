@@ -15,8 +15,9 @@ for file in \
   "$AMD64_DIR/dependencies/environment.yml" \
   "$AMD64_DIR/dependencies/update_env_file.sh" \
   "$AMD64_DIR/.project.env" \
-  "$AMD64_DIR/README.md"; do
-  sed -i '' "s/<project-name>/${PROJECT_NAME}/g" $file
-  sed -i '' "s/<package_name>/${PACKAGE_NAME}/g" $file
-  sed -i '' "s/<python-version>/${PYTHON_VERSION}/g" $file
+  "$AMD64_DIR/README.md" \
+  "src/${PACKAGE_NAME}/main.py"; do
+  sed -i '' "s/<project-name>/${PROJECT_NAME}/g" "$file"
+  sed -i '' "s/<package_name>/${PACKAGE_NAME}/g" "$file"
+  sed -i '' "s/<python-version>/${PYTHON_VERSION}/g" "$file"
 done
