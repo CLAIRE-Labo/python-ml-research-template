@@ -1,1 +1,5 @@
-some_variable: some_value
+numpy_benchmark:
+  n: 2000
+pytorch_benchmark:
+  b_cpu: 64
+  b_gpu: 1024
