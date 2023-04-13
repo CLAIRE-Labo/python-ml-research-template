@@ -10,13 +10,16 @@ It features and encourages good practices for:
 - Reproducible environments that can be used/deployed on multiple platforms with hardware acceleration.
   E.g. your local computer (macOS, WSL), the lab server (HaaS), the RunAI Kubernetes platform,
   and (most importantly) someone else's server or local computer.
+  That is, the instructions to install the environment assume users outside the lab.
 - Experiment management, tracking, and sharing with `wandb` and `hydra`.
 - Python project packaging inspired from
   the [PyPA packaging guidelines](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
+- TODO. Code quality and style with `flake8` and `black`.
 
 Because of its focus on reproducibility, this template can readily be used by other labs et EPFL and beyond.
 It can also be adapted to suit many other use cases.
 However, it's maintained form will be tailored to the needs of the <lab-name> lab.
+It also contains extra EPFL-specific instructions for deployment on the RunAI Kubernetes platform.
 
 ## Getting started with the template
 
@@ -45,7 +48,14 @@ Feel free to `Use this template` (GitHub button) and
     2. Delete the [installation instructions](#development-environment) for the platforms you don't support.
     3. Delete this section [(Getting started with the template)](#getting-started-with-the-template).
 
+## Template FAQ
+
+### Can I use this template for an already existing project? How do I do that?
+
+
 ## Getting Started
+
+TODO. This will be the public getting started.
 
 ### Development environment
 

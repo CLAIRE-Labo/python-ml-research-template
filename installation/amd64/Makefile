@@ -1,6 +1,7 @@
+# A workaround to define multiline text.
 define ENV_TEXT
 # All user-specific configurations are here.
-SERVICE=image-only
+## For building:
 GID=$(shell id -g)
 UID=$(shell id -u)
 GRP=$(shell id -gn)
@@ -10,19 +11,24 @@ USR=$(shell id -un)
 PASSWD=$(shell id -un)
 LAB_NAME=$(shell id -un)
 WANDB_API_KEY=0
-# Used for local deployment only.
+## For running:
+SERVICE=image-only
+### For running locally
 LOCAL_CODE_DIR=../..
 LOCAL_DATA_DIR=../../data
 LOCAL_LOGS_DIR=../../logs
 endef
 export ENV_TEXT
 
-# All variables below are read from the `.env` file.
+# All variables below are read from the `.user.env` and `.project.env` files.
 ENV_FILE = .user.env
 -include ${ENV_FILE}
 -include .project.env
 
 COMPOSE_PROJECT = $(shell echo ${PROJECT_NAME}-${USR} | tr "[:upper:]" "[:lower:]")
+export COMPOSE_PROJECT
+export SERVICE
+command="python --version"
 
 env:  # Creates the `.env` file if it does not exist.
 	@test -f ${ENV_FILE} || printf "$$ENV_TEXT" >> ${ENV_FILE}
@@ -43,7 +49,7 @@ up: check  # Start service. Creates a new container from the image.
 exec:	# Enter interactive shell.
 	DOCKER_BUILDKIT=1 docker compose -p ${COMPOSE_PROJECT} exec ${SERVICE}
 run:	# Run a command in a new container.
-	docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE}
+	docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} $command
 # Useful if the previous container must not be deleted.
 start:	# Start a stopped service without recreating the container.
 	docker compose -p ${COMPOSE_PROJECT} start ${SERVICE}

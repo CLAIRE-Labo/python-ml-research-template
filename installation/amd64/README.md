@@ -1,4 +1,4 @@
-# Installation on amd64 with Docker
+# Installation on amd64 platforms with Docker
 
 ## [_DELETE ME_] Template info
 
@@ -20,27 +20,26 @@ the [instructions to maintain the environment](#instructions-to-maintain-the-env
 
 ## [_DELETE ME_] More details on the setup
 
-Big acknowledgements to Cresset.
+Todo. Big acknowledgements to Cresset.
+These acknowledgement should also be in the public instructions, not only the template sections.
 
-
-## Instructions to install the environment
-
-Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
+## Instructions to build the environment
 
 **Prerequisites**
 
+* `make` (`make --version`). [Install here.](https://cmake.org/install/)
+* `docker` (`docker --version`). [Install here.](https://docs.docker.com/engine/)
+* `docker compose` (`docker compose version` >= TODO). [Install here.](https://docs.docker.com/compose/install/)
+
 To check if you have each of them run `<command-name> --version` or `<command-name> version`.
 
-* [`make`](https://cmake.org/install/).
-* [`docker`](https://docs.docker.com/engine/). (v20.10+)
-* [`docker compose`](https://docs.docker.com/compose/install/) (V2)
-* [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc)
-* [CUDA] [`nvidia-docker`](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker) (
-  the NVIDIA Container Toolkit).
+**build**
 
-**Installation**
+We recommend building on an `amd64` platform rather although the Docker BuildKit allows building for different
+platforms.
 
 All commands should be run from the installation directory.
+
 ```bash
 cd installation/amd64
 ```
@@ -49,29 +48,88 @@ cd installation/amd64
    ```bash
    make env
    ```
-   The creates a `.env` file with pre-filled values.
-   The `SERVICE_NAME` variable determines how you'll deploy your image.
-   We provide 2 options.
-      1. `image-only` does not specify any deployment options. 
-         It is there if you only need to build the image and can then deploy it however you want.
-         *: Use this option for deploying on the RunAI Kubernetes Cluster.
-      2. `local-cpu` specifies a deployment with Docker Compose on your local machine with no hardware acceleration.
-         *: Use this option to run the container locally. E.g. on your WSL machine, EPFL HaaS lab machine.
-      3. `local-gpu` specifies a deployment with Docker Compose on your local machine with GPU support.
-         *: Use this option to run the container locally with GPU support.
-   The `UID/GID` are used to give the container user read/write access to the mounted volumes 
-   containing the code of the project, the data, and where you'll write your outputs.
-   These need to match the user permissions on the mounted volumes.
-   If you're deploying locally these values should be filled correctly by default.
-   If you're deploying locally with Docker Compose, `LOCAL_*_DIR` are the paths to volumes to mount.
-   Otherwise, they're not used.
+   This creates a `.user.env` file with pre-filled values.
+
+    - The `SERVICE` variable, doesn't matter at this stage.
+      It doesn't influence the build, it will be used later to run your image.
+    - The `UID/GID` are used to give the container user read/write access to the mounted volumes
+      containing the code of the project, the data, and where you'll write your outputs.
+      These need to match the user permissions on the mounted volumes.
+      (If you're deploying locally, i.e. where you're building, these values should be filled correctly by default.)
+
+      (**EPFL Note:** _These will typically be your GASPAR credentials and will match the permissions
+   on your lab NFS and HaaS machines._)
+
 2. Build the image with
    ```bash
    make build
    ```
 3. You can then use the image in multiple ways.
-   1. Locally
-   2. In a managed cluster
+    1. Locally
+    2. In a managed cluster
+
+## Instructions to run the environment
+
+You can either run the environment locally or on a managed cluster.
+Edit the `SERVICE` variable in the `.user.env` file to match how you want to run the image.
+
+- `image-only` does not specify any deployment options.
+  It is there if you only need to build the image and then deploy it however you want.
+
+  (**EPFL note:** _Use this option for deploying on the RunAI Kubernetes Cluster
+  and refer to the `./EPFL_runai_setup/README.md` for more details._)
+- `local-cpu` specifies a deployment with Docker Compose on your machine with no hardware acceleration.
+  Use this option to run the container on a machine with Docker Compose. E.g. on your ssh server, WSL machine.
+- `local-gpu` same as above with GPU support.
+
+  (**EPFL note:** _Use this option for deploying on HaaS machines._)
+
+For local deployments follow the instructions below.
+For managed cluster deployments, EPFL RunAI cluster users can refer to the `./EPFL_runai_setup/README.md` for more
+details.
+Other users can get inspiration from it too, otherwise we leave it to you to deploy on your managed cluster.
+
+**Prerequisites**
+
+Steps prefixed with [CUDA] are only required to use NVIDIA GPUs with `SERVICE=local-gpu`.
+
+* `make` (`make --version`). [Install here.](https://cmake.org/install/)
+* `docker` (`docker --version`). [Install here.](https://docs.docker.com/engine/)
+* `docker compose` (`docker compose version` >= TODO). [Install here.](https://docs.docker.com/compose/install/)
+* [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc)
+* [CUDA] `nvidia-docker` (the NVIDIA Container
+  Toolkit). [Install here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+
+**Run**
+
+Edit the `.user.env` to specify the local directories to mount the project code, data, and outputs.
+These are specified by the `LOCAL_*_DIR` variables.
+Then you can
+
+Start the container with
+
+```bash
+make up
+```
+
+Open a shell in the container with
+
+```bash
+make exec
+```
+
+Run independent jobs in separate containers with
+
+```bash
+make run command="python --version"
+```
+
+The not-so-nice syntax is due to `make` which is not really made to be used like this.
+Otherwise, you can run
+
+```bash
+docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} python --version
+```
 
 ## Instructions to maintain the environment
 
@@ -85,11 +143,13 @@ These will typically be your main dependencies and will likely not change as you
 Use `pip` for the rest of the python dependencies.
 
 Here are references and reasons to follow the above claims:
+
 * [A guide for managing `conda` + `pip` environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment).
 * [Reasons to  use `conda` for not-python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
 * [Ways of combining `conda` and `pip`](https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
 
-You can add/upgrade dependencies interactively while running a shell in the container to experiment with which dependency is needed.
+You can add/upgrade dependencies interactively while running a shell in the container to experiment with which
+dependency is needed.
 In that case you need to persist those changes and build the image again for subsequent runs.
 We provide a script for that.
 Otherwise, you can manually edit the dependencies files and build the image again.
