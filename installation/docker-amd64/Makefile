@@ -25,6 +25,7 @@ ENV_FILE = .user.env
 -include ${ENV_FILE}
 -include .project.env
 
+IMAGE_NAME=${LAB_NAME}/${PROJECT_NAME}:${USR}
 COMPOSE_PROJECT = $(shell echo ${PROJECT_NAME}-${USR} | tr "[:upper:]" "[:lower:]")
 export COMPOSE_PROJECT
 export SERVICE

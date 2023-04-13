@@ -8,9 +8,12 @@ setup_)](#_delete-me_-more-details-on-the-setup).
 The python version and package name have already been filled by the `fill_template.sh` script.
 It remains to
 
-1. Create the environment following the
-   user [instructions to install the environment](#instructions-to-install-the-environment).
-2. Pin the initial dependencies you just got.
+1. Specify your initial dependencies.
+   Follow the instructions to maintain the environment up to (including) the manual editing section.
+2. Create the environment following the user instructions to build the environment.
+3. Run the environment following the user instructions to run the environment. 
+4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
+   pin the dependencies you just got.
     ```bash
     TODO
     ```
@@ -58,7 +61,7 @@ cd installation/docker-amd64
       (If you're deploying locally, i.e. where you're building, these values should be filled correctly by default.)
 
       (**EPFL Note:** _These will typically be your GASPAR credentials and will match the permissions
-   on your lab NFS and HaaS machines._)
+      on your lab NFS and HaaS machines._)
 
 2. Build the image with
    ```bash
@@ -148,29 +151,50 @@ Here are references and reasons to follow the above claims:
 * [Reasons to  use `conda` for not-python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
 * [Ways of combining `conda` and `pip`](https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
 
-You can add/upgrade dependencies interactively while running a shell in the container to experiment with which
-dependency is needed.
-In that case you need to persist those changes and build the image again for subsequent runs.
-We provide a script for that.
-Otherwise, you can manually edit the dependencies files and build the image again.
-This will be needed if you run into conflicts and have to restart from scratch.
+For more complex dependencies that may require a custom installation or build, use the `Dockerfile` directly.
 
-### While developing
+There are two ways to add dependencies to the environment:
+
+1. **Manually edit the dependencies files.**
+   This will be needed the first time you set up the environment.
+   It will also be useful if you run into conflicts and have to restart from scratch.
+2. **Add/upgrade dependencies interactively** while running a shell in the container to experiment with which
+   dependency is needed.
+   This is probably what you'll be doing after building the image for the first time.
+
+In both cases, after any change, a snapshot of the full environment specification should be written to the dependencies
+files.
+We describe how to do so in the freeze the environment section.
+
+### Manual editing (before/while building)
+
+- To edit the `apt` dependencies, edit the `dependencies/apt.txt` file.
+- To edit the `conda` and `pip` dependencies, edit the `dependencies/environment.yml` file.
+- To edit the more complex dependencies, edit the `Dockerfile`.
+
+### Interactively (while developing)
 
 `conda` dependencies should all be installed before any `pip` dependency.
-This will cause conflicts otherwise as id doesn't track the `pip` dependencies.
+This will cause conflicts otherwise as `conda` doesn't track the `pip` dependencies.
 So if you need to add a `conda` dependency after you already installed some `pip` dependencies, you need to recreate
-the environment. (See how to in the next section.)
+the environment by manually adding the dependencies before the build as described in the previous section.
 
-To add `apt` or `conda`/`pip` dependencies run `sudo apt-istall install <package>`
-or `(conda | pip) install <package>` respectively.
-Whenever you add a dependency interactively (e.g. `conda install <package>` or `pip install <package>`)
-update/freeze the `environment.yml` file with
+* To add `apt`  dependencies run `sudo apt-istall install <package>`
+* To add `conda` dependencies run `(conda | pip) install <package>`
+
+### Freeze the environment
+
+After any change to the dependencies, a snapshot of the full environment specification should be written to the dependencies files.
+This includes changes during a build and changes made interactively.
+This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
+
+To do so, run the following with a shell in the container:
 
 ```bash
 source dependencies/update_env_file.sh
 ```
 
+
 For `apt` dependencies add them manually to `apt.txt`.
 
-### While building
+## Troubleshooting
