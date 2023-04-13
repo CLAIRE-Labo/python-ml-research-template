@@ -4,16 +4,19 @@
 
 _[EDIT ME. A description of your project.]_
 
-A template for starting news research project at the <lab-name> lab with hardware acceleration.
+This repo is template for starting python research projects at the <lab-name> lab with hardware acceleration.
 It features and encourages good practices for:
 
-- Reproducible research through
-    - reproducible environments that can be used/deployed on multiple platforms with hardware acceleration.
-      E.g. your local computer, the lab server, the RunAI Kubernetes platform, and someone else's server or local
-      computer.
+- Reproducible environments that can be used/deployed on multiple platforms with hardware acceleration.
+  E.g. your local computer (macOS, WSL), the lab server (HaaS), the RunAI Kubernetes platform,
+  and (most importantly) someone else's server or local computer.
 - Experiment management, tracking, and sharing with `wandb` and `hydra`.
 - Python project packaging inspired from
-  the [PyPA packaging tutorial](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
+  the [PyPA packaging guidelines](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
+
+Because of its focus on reproducibility, this template can readily be used by other labs et EPFL and beyond.
+It can also be adapted to suit many other use cases.
+However, it's maintained form will be tailored to the needs of the <lab-name> lab.
 
 ## Getting started with the template
 
@@ -30,7 +33,7 @@ Feel free to `Use this template` (GitHub button) and
    file. [(Some help here.)](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
 3. Setup and edit the development environment instructions for the platforms you'll use/support.
    We support the following platforms:
-    - **macOS with Apple Silicon (`osx-arm64`)**, with support for the MPS hardware acceleration.
+    - **macOS with Apple Silicon (`osx-arm64`)**, with support for MPS hardware acceleration.
       Refer to `installation/osx-arm64/README.md`.
     - **Docker on AMD64 platforms** (e.g. linux server like the EPFL HaaS servers, WSL on you local machine, Kubernetes
       platforms like the EPFL runai Platform), with support for NVIDIA GPUs.
