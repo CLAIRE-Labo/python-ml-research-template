@@ -49,7 +49,7 @@ cd installation/docker-amd64
    ```bash
    make env
    ```
-   This creates a `.user.env` file with pre-filled values.
+   This creates a `.env` file with pre-filled values.
     - The `UID/GID` are used to give the container user read/write access to the volumes that will be mounted
       when the container is run, containing the code of the project, the data, and where you'll write your outputs.
       These need to match the user permissions on the mounted volumes.
@@ -68,7 +68,7 @@ cd installation/docker-amd64
 ## Instructions to run the environment
 
 You can either run the environment locally or on a managed cluster.
-Edit the `SERVICE` variable in the `.user.env` file to match how you want to run the image.
+Edit the `SERVICE` variable in the `.env` file to match how you want to run the image.
 
 - `image-only` does not specify any deployment options.
   It is there if you only need to build the image and then deploy it however you want.
@@ -99,7 +99,7 @@ Steps prefixed with [CUDA] are only required to use NVIDIA GPUs with `SERVICE=lo
 
 **Run**
 
-Edit the `.user.env` to specify the local directories to mount the project code, data, and outputs.
+Edit the `.env` to specify the local directories to mount the project code, data, and outputs.
 These are specified by the `LOCAL_*_DIR` variables.
 Then you can
 

@@ -2,8 +2,7 @@
 # This is an example of how to submit a job to runai.
 
 # Read some of the variables from the .env file.
-source ../.user.env
-source ../.project.env
+source ../.env
 
 runai submit \
   --name sandbox-home \

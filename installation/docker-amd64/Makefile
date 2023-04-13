@@ -33,7 +33,7 @@ LOGS_DIR=$$PROJECT_ROOT/logs
 endef
 export ENV_TEXT
 
-# All variables below are read from the `.user.env` and `.project.env` files.
+# All variables below are read from the `.env` and `.project.env` files.
 ENV_FILE = .env
 -include ${ENV_FILE}
 
