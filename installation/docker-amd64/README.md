@@ -11,7 +11,7 @@ It remains to
 1. Specify your initial dependencies.
    Follow the instructions to maintain the environment up to (including) the manual editing section.
 2. Create the environment following the user instructions to build the environment.
-3. Run the environment following the user instructions to run the environment. 
+3. Run the environment following the user instructions to run the environment.
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got.
     ```bash
@@ -34,12 +34,10 @@ These acknowledgement should also be in the public instructions, not only the te
 * `docker` (`docker --version`). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= TODO). [Install here.](https://docs.docker.com/compose/install/)
 
-To check if you have each of them run `<command-name> --version` or `<command-name> version`.
-
 **build**
 
-We recommend building on an `amd64` platform rather although the Docker BuildKit allows building for different
-platforms.
+We recommend building on an `amd64` platform, although the Docker BuildKit allows building for different
+platforms. Use at your own risk.
 
 All commands should be run from the installation directory.
 
@@ -52,24 +50,20 @@ cd installation/docker-amd64
    make env
    ```
    This creates a `.user.env` file with pre-filled values.
-
-    - The `SERVICE` variable, doesn't matter at this stage.
-      It doesn't influence the build, it will be used later to run your image.
-    - The `UID/GID` are used to give the container user read/write access to the mounted volumes
-      containing the code of the project, the data, and where you'll write your outputs.
+    - The `UID/GID` are used to give the container user read/write access to the volumes that will be mounted
+      when the container is run, containing the code of the project, the data, and where you'll write your outputs.
       These need to match the user permissions on the mounted volumes.
       (If you're deploying locally, i.e. where you're building, these values should be filled correctly by default.)
 
       (**EPFL Note:** _These will typically be your GASPAR credentials and will match the permissions
       on your lab NFS and HaaS machines._)
+    - You can ignore the rest of the variables after `## For running:`.
+      These don't influence the build, they will be used later to run your image.
 
 2. Build the image with
    ```bash
    make build
    ```
-3. You can then use the image in multiple ways.
-    1. Locally
-    2. In a managed cluster
 
 ## Instructions to run the environment
 
@@ -139,19 +133,18 @@ docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} python --version
 System dependencies are managed by both`apt` and `conda`.
 Python dependencies are be managed by both `conda` and `pip`.
 
-Use `apt` for system programs (e.g. `sudo`, `zsh`).
-Use `conda` for non-python dependencies needed to run the project code (e.g. `mkl`, `swig`)
-and dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
-These will typically be your main dependencies and will likely not change as your project grows.
-Use `pip` for the rest of the python dependencies.
+- Use `apt` for system programs (e.g. `sudo`, `zsh`).
+- Use `conda` for non-python dependencies needed to run the project code (e.g. `mkl`, `swig`)
+  and dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
+  These will typically be your main dependencies and will likely not change as your project grows.
+- Use `pip` for the rest of the python dependencies.
+- For more complex dependencies that may require a custom installation or build, use the `Dockerfile` directly.
 
 Here are references and reasons to follow the above claims:
 
 * [A guide for managing `conda` + `pip` environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment).
 * [Reasons to  use `conda` for not-python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
 * [Ways of combining `conda` and `pip`](https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
-
-For more complex dependencies that may require a custom installation or build, use the `Dockerfile` directly.
 
 There are two ways to add dependencies to the environment:
 
@@ -184,7 +177,8 @@ the environment by manually adding the dependencies before the build as describe
 
 ### Freeze the environment
 
-After any change to the dependencies, a snapshot of the full environment specification should be written to the dependencies files.
+After any change to the dependencies, a snapshot of the full environment specification should be written to the
+dependencies files.
 This includes changes during a build and changes made interactively.
 This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
 
@@ -193,7 +187,6 @@ To do so, run the following with a shell in the container:
 ```bash
 source dependencies/update_env_file.sh
 ```
-
 
 For `apt` dependencies add them manually to `apt.txt`.
 

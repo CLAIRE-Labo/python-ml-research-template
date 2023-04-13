@@ -14,7 +14,7 @@ for file in \
   "$OSX64_DIR/environment.yml" \
   "$AMD64_DIR/dependencies/environment.yml" \
   "$AMD64_DIR/dependencies/update_env_file.sh" \
-  "$AMD64_DIR/.project.env" \
+  "$AMD64_DIR/Makefile" \
   "$AMD64_DIR/README.md" \
   "src/${PACKAGE_NAME}/main.py"; do
   sed -i '' "s/<project-name>/${PROJECT_NAME}/g" "$file"

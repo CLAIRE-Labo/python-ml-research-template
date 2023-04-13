@@ -1,6 +1,7 @@
 # A workaround to define multiline text.
 define ENV_TEXT
 # All user-specific configurations are here.
+
 ## For building:
 GID=$(shell id -g)
 UID=$(shell id -u)
@@ -11,19 +12,30 @@ USR=$(shell id -un)
 PASSWD=$(shell id -un)
 LAB_NAME=$(shell id -un)
 WANDB_API_KEY=0
+
 ## For running:
 SERVICE=image-only
 ### For running locally
 LOCAL_CODE_DIR=../..
 LOCAL_DATA_DIR=../../data
 LOCAL_LOGS_DIR=../../logs
+
+####################
+# Project-specific environment variables.
+## Used to avoid writing paths multiple times and creating unconsistencies.
+## You should not need to change anything below this line.
+PROJECT_NAME=<project-name>
+PACKAGE_NAME=<package_name>
+PROJECT_ROOT=/opt/project
+CODE_DIR=$$PROJECT_ROOT/code
+DATA_DIR=$$PROJECT_ROOT/data
+LOGS_DIR=$$PROJECT_ROOT/logs
 endef
 export ENV_TEXT
 
 # All variables below are read from the `.user.env` and `.project.env` files.
-ENV_FILE = .user.env
+ENV_FILE = .env
 -include ${ENV_FILE}
--include .project.env
 
 IMAGE_NAME=${LAB_NAME}/${PROJECT_NAME}:${USR}
 COMPOSE_PROJECT = $(shell echo ${PROJECT_NAME}-${USR} | tr "[:upper:]" "[:lower:]")
@@ -31,6 +43,7 @@ export COMPOSE_PROJECT
 export SERVICE
 command="python --version"
 
+.PHONY: env check build up exec run start down
 env:  # Creates the `.env` file if it does not exist.
 	@test -f ${ENV_FILE} || printf "$$ENV_TEXT" >> ${ENV_FILE}
 

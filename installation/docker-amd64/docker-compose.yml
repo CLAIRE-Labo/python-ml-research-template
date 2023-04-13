@@ -2,12 +2,10 @@ services:
   image-only: # Base service to build the image.
     image: ${LAB_NAME}/${PROJECT_NAME}:${USR}
     platform: "linux/amd64"
-    env_file:
-      - .user.env
-      - .project.env
     build:
       platforms:
         - "linux/amd64"
+      context: .
       target: train
       args:
         PROJECT_NAME: ${PROJECT_NAME}
@@ -17,9 +15,9 @@ services:
         GIT_IMAGE: alpine/git:edge-2.38.1       # https://hub.docker.com/r/alpine/git/tags
         CONDA_URL:
           https://github.com/conda-forge/miniforge/releases/download/23.1.0-1/Mambaforge-23.1.0-1-Linux-x86_64.sh
-                                            # https://github.com/conda-forge/miniforge/releases/
+        # https://github.com/conda-forge/miniforge/releases/
         CONDA_INSTALL_PATH: /opt/conda      # Should be the same between stages not to brake linking.
-                                            # https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#bb7b
+        # https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#bb7b
         GID: ${GID}
         UID: ${UID}
         GRP: ${GRP}
@@ -30,9 +28,9 @@ services:
         DATA_DIR: ${DATA_DIR}
         LOGS_DIR: ${LOGS_DIR}
 
-  local-cpu:   # Service to run the image locally with CPU only.
+  local-cpu: # Service to run the image locally with CPU only.
     extends:
-        service: image-only
+      service: image-only
     tty: true
     stdin_open: true
     volumes:
@@ -42,7 +40,7 @@ services:
     environment:
       WANDB_API_KEY: ${WANDB_API_KEY}
 
-  local-gpu:   # Service to run the image locally with NVIDIA GPU.
+  local-gpu: # Service to run the image locally with NVIDIA GPU.
     extends:
       service: local-cpu
     deploy:
