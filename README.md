@@ -41,7 +41,8 @@ Feel free to `Use this template` (GitHub button) and
     - **Docker on AMD64 platforms** (e.g. linux server like the EPFL HaaS servers, WSL on you local machine, Kubernetes
       platforms like the EPFL runai Platform), with support for NVIDIA GPUs.
       Refer to `installation/docker-amd64/README.md`
-      Delete the _Template info_ section in the installation instructions of the platforms you plan to support, and the
+      
+    Delete the _Template info_ section in the installation instructions of the platforms you plan to support, and the
       whole installation directory for the platforms you don't use.
 4. Edit this `README.md` file.
     1. Replace the [_Overview_](#overview) section with description of your project.
