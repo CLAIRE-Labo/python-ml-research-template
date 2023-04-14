@@ -48,7 +48,6 @@ FROM ${BASE_IMAGE} AS train-apt-base
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 ENV PYTHONIOENCODING=UTF-8
-ENV NVIDIA_VISIBLE_DEVICES=all
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Enable caching for `apt` packages in Docker.
@@ -99,7 +98,9 @@ RUN mamba clean -fya && \
     find ${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME} -name '__pycache__' | xargs rm -rf
 
 ########################################################################
-# Here you can install other software starting from train-apt-base.
+# Here you can install other software starting from train-apt-base,
+# then copy the installation artifacts to train-base. (As done with the conda env).
+# Think multi-stage and cache-efficient.
 
 ########################################################################
 # Setting up a user.
@@ -117,9 +118,14 @@ ENV PASSWD=${PASSWD}
 RUN groupadd -f -g ${GID} ${GRP} && \
     useradd --shell /bin/zsh --create-home -u ${UID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
     usermod -aG sudo ${USR}
-# Create a directory for the project.
+# Create a directory for the project and a directory for startup scripts.
 ARG PROJECT_ROOT
-RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
+ENV PROJECT_ROOT=${PROJECT_ROOT}
+ENV ENTRYPOINTS_ROOT=/opt/entrypoints
+RUN mkdir -p ${PROJECT_ROOT} && \
+    chown ${USR}:${GRP} ${PROJECT_ROOT} && \
+    mkdir -p ${ENTRYPOINTS_ROOT} && \
+    chown ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
 
 # Get conda with the directory ownership given to the user.
 # This is to be able to install more packages in interactive mode.
@@ -164,29 +170,25 @@ FROM train-base AS train
 # If using your own .zshrc, mount it to ${HOME}/.local_zshrc and uncomment the following line.
 # RUN echo "source ${HOME}/.local_zshrc" >> ${HOME}/.zshrc
 
-ARG PROJECT_ROOT
 ARG PROJECT_NAME
 ARG PACKAGE_NAME
-ARG CODE_DIR
 ARG DATA_DIR
-ARG LOGS_DIR
-ENV PROJECT_ROOT=${PROJECT_ROOT}
+ARG OUTPUTS_DIR
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PACKAGE_NAME=${PACKAGE_NAME}
-ENV CODE_DIR=${CODE_DIR}
 ENV DATA_DIR=${DATA_DIR}
-ENV LOGS_DIR=${LOGS_DIR}
+ENV OUTPUTS_DIR=${OUTPUTS_DIR}
 
-WORKDIR ${CODE_DIR}
+WORKDIR ${PROJECT_ROOT}
 
 # Entrypoint is an interactive shell to activate the conda environment.
 # Don't overwrite the entrypoint it is installing the project
 # and testing that you correctly mounted your volume.
 # It only needs to run once, so you can attach shells later without running it.
-COPY --link entrypoint.sh ../entrypoint.sh
-ENTRYPOINT ["/bin/zsh", "-i", "../entrypoint.sh"]
+COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
+ENTRYPOINT ["/bin/zsh", "-i", "${ENTRYPOINTS_ROOT}/entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 # The following is for EPFL specific configuration.
-ENV EPFL_CONFIG_DIR=${PROJECT_ROOT}/EPFL_config
+ENV EPFL_CONFIG_DIR=${ENTRYPOINTS_ROOT}/EPFL_config
 COPY --link EPFL_runai_setup ${EPFL_CONFIG_DIR}

@@ -1,10 +1,8 @@
-# lab_name-project-template
+# MLO Project Template
 
 ## Overview
 
-_[EDIT ME. A description of your project.]_
-
-This repo is template for starting python research projects at the <lab-name> lab with hardware acceleration.
+This repo is template for starting python research projects at the EPFL MLO lab with hardware acceleration.
 It features and encourages good practices for:
 
 - Reproducible environments that can be used/deployed on multiple platforms with hardware acceleration.
@@ -20,7 +18,7 @@ With this, open-sourcing your code and project will be a breeze.
 
 Because of its focus on reproducibility, this template can readily be used by other labs et EPFL and beyond.
 It can also be adapted to suit many other use cases.
-However, it's maintained form will be tailored to the needs of the <lab-name> lab.
+However, it's maintained form will be tailored to the needs of the MLO lab.
 It also contains extra EPFL-specific instructions for deployment on the RunAI Kubernetes platform.
 
 ## Getting started with the template
@@ -42,7 +40,7 @@ Click on the `Use this template` (GitHub button) to create a new repo, clone it,
     - **macOS with Apple Silicon (`osx-arm64`)**, with support for MPS hardware acceleration.
       Refer to `installation/osx-arm64/README.md`.
     - **Docker on AMD64 platforms** (e.g. linux server like the EPFL HaaS servers, WSL on you local machine, Kubernetes
-      platforms like the EPFL runai Platform), with support for NVIDIA GPUs.
+      platforms like the EPFL RunAI Platform), with support for NVIDIA GPUs.
       Refer to `installation/docker-amd64/README.md`.
 
    Delete the _Template info_ section in the installation instructions of the platforms you plan to support, and the
@@ -77,6 +75,10 @@ Docker is a good solution to these problems.
 It probably seems complex at first sight because you are not familiar with the tools and practices it uses.
 However, these practices (probably not usually combined in a research project, whence this template) are
 well established and have been proven to be very useful.
+
+For example the `Dockerfile` seems complex because it leverages multi-staging to be very
+cache-efficient.
+Changing your build dependencies, or installing something in the Dockerfile will cause very little rebuilds.
 
 ### Why is the template so big?
 

@@ -24,9 +24,8 @@ services:
         USR: ${USR}
         PASSWD: ${PASSWD}
         PROJECT_ROOT: ${PROJECT_ROOT}
-        CODE_DIR: ${CODE_DIR}
         DATA_DIR: ${DATA_DIR}
-        LOGS_DIR: ${LOGS_DIR}
+        OUTPUTS_DIR: ${OUTPUTS_DIR}
 
   local-cpu: # Service to run the image locally with CPU only.
     extends:
@@ -34,15 +33,17 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ${LOCAL_CODE_DIR}:${CODE_DIR}
+      - ${LOCAL_PROJECT_ROOT}:${PROJECT_ROOT}
       - ${LOCAL_DATA_DIR}:${DATA_DIR}
-      - ${LOCAL_LOGS_DIR}:${LOGS_DIR}
+      - ${LOCAL_OUTPUTS_DIR}:${OUTPUTS_DIR}
     environment:
       WANDB_API_KEY: ${WANDB_API_KEY}
 
   local-gpu: # Service to run the image locally with NVIDIA GPU.
     extends:
       service: local-cpu
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all # Can be overridden by the user.
     deploy:
       resources:
         reservations:

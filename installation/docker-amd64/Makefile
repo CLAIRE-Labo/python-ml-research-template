@@ -16,9 +16,9 @@ WANDB_API_KEY=0
 ## For running:
 SERVICE=image-only
 ### For running locally
-LOCAL_CODE_DIR=../..
+LOCAL_PROJECT_ROOT=../../
 LOCAL_DATA_DIR=../../data
-LOCAL_LOGS_DIR=../../logs
+LOCAL_OUTPUTS_DIR=../../logs
 
 ####################
 # Project-specific environment variables.
@@ -27,9 +27,8 @@ LOCAL_LOGS_DIR=../../logs
 PROJECT_NAME=<project-name>
 PACKAGE_NAME=<package_name>
 PROJECT_ROOT=/opt/project
-CODE_DIR=$$PROJECT_ROOT/code
 DATA_DIR=$$PROJECT_ROOT/data
-LOGS_DIR=$$PROJECT_ROOT/logs
+OUTPUTS_DIR=$$PROJECT_ROOT/outputs
 endef
 export ENV_TEXT
 
