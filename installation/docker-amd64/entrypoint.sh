@@ -15,6 +15,5 @@ pip install -e .
 # Test that the template works. Feel free to remove this.
 python -c "import ${PACKAGE_NAME}"
 
-# Exec and --live-stream so that the child process receives the OS signals.
-#exec conda run --live-streaming -n ${PROJECT_NAME} "$@"
+# Exec so that the child process receives the OS signals.
 exec "$@"
