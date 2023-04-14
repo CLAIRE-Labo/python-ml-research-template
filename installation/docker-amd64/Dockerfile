@@ -87,8 +87,8 @@ ARG CONDA_PKGS_DIRS=${CONDA_INSTALL_PATH}/pkgs
 ARG CONDA_ENV_FILE=/tmp/dependencies/environment.yml
 ARG PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 
-COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
 COPY --link --from=install-conda ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
+COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     --mount=type=cache,target=${CONDA_PKGS_DIRS},sharing=locked \
     mamba env create --file ${CONDA_ENV_FILE}
@@ -161,6 +161,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "alias ll='ls -lh'"; \
         echo "alias wns='watch nvidia-smi'"; \
         echo "alias hist='history 1'"; \
+        echo "alias update_env_file='source installation/docker-amd64/dependencies/update_env_file.sh'"; \
     } >> ${HOME}/.zshrc
 
 ########################################################################

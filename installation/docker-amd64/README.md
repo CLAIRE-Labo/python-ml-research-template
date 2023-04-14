@@ -192,10 +192,12 @@ dependencies files.
 This includes changes during a build and changes made interactively.
 This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
 
-To do so, run the following with a shell in the container:
+To do so, run the following from login shell in the container.
+The script overwrites the `dependencies/environment.yml` file with the current environment specification,
+so it's a good idea to commit the changes to the environment file before/after running it.
 
 ```bash
-source dependencies/update_env_file.sh
+update_env_file
 ```
 
 For `apt` dependencies add them manually to `apt.txt`.
