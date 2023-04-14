@@ -41,7 +41,7 @@ IMAGE_NAME=${LAB_NAME}/${PROJECT_NAME}:${USR}
 COMPOSE_PROJECT = $(shell echo ${PROJECT_NAME}-${USR} | tr "[:upper:]" "[:lower:]")
 command="python --version"
 
-.PHONY: env check build up exec run start down
+.PHONY: env check build up logs exec run start down
 env:  # Creates the `.env` file if it does not exist.
 	@test -f ${ENV_FILE} || printf "$$ENV_TEXT" >> ${ENV_FILE}
 
@@ -52,14 +52,17 @@ check:  # Checks if the `.env` file exists.
 		exit 1; \
 	fi
 
+# TODO: are those COMPOSE_BUILDKIT=1 and DOCKER_BUILDKIT=1 needed?
 build: check # Build the image without creating a new container.
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
 	docker compose -p ${COMPOSE_PROJECT} build ${SERVICE}
 up: check  # Start service. Creates a new container from the image.
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
 	docker compose -p ${COMPOSE_PROJECT} up -d ${SERVICE}
+logs:  # Show logs from the service.
+	docker compose -p ${COMPOSE_PROJECT} logs ${SERVICE}
 exec:	# Enter interactive shell.
-	DOCKER_BUILDKIT=1 docker compose -p ${COMPOSE_PROJECT} exec ${SERVICE}
+	DOCKER_BUILDKIT=1 docker compose -p ${COMPOSE_PROJECT} exec ${SERVICE} zsh
 run:	# Run a command in a new container.
 	docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} ${command}
 # Useful if the previous container must not be deleted.

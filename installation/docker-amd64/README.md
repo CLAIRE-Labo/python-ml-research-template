@@ -70,20 +70,20 @@ cd installation/docker-amd64
 You can either run the environment locally or on a managed cluster.
 Edit the `SERVICE` variable in the `.env` file to match how you want to run the image.
 
-- `image-only` does not specify any deployment options.
-  It is there if you only need to build the image and then deploy it however you want.
-
-  (**EPFL note:** _Use this option for deploying on the RunAI Kubernetes Cluster
-  and refer to the `./EPFL_runai_setup/README.md` for more details._)
 - `local-cpu` specifies a deployment with Docker Compose on your machine with no hardware acceleration.
   Use this option to run the container on a machine with Docker Compose. E.g. on your ssh server, WSL machine.
 - `local-gpu` same as above with GPU support.
 
   (**EPFL note:** _Use this option for deploying on HaaS machines._)
+- `image-only` does not specify any deployment options.
+  It is there if you only need to build the image and then deploy it in a custom way.
+  For example to a managed cluster (Kubernetes, etc).
+
+  (**EPFL note:** _Use this option for deploying on the RunAI Kubernetes Cluster)
 
 For local deployments follow the instructions below.
-For managed cluster deployments, EPFL RunAI cluster users can refer to the `./EPFL_runai_setup/README.md` for more
-details.
+
+For managed cluster deployments, EPFL RunAI cluster users should refer to the `./EPFL_runai_setup/README.md`.
 Other users can get inspiration from it too, otherwise we leave it to you to deploy on your managed cluster.
 
 **Prerequisites**
@@ -101,32 +101,42 @@ Steps prefixed with [CUDA] are only required to use NVIDIA GPUs with `SERVICE=lo
 
 Edit the `.env` to specify the local directories to mount the project code, data, and outputs.
 These are specified by the `LOCAL_*_DIR` variables.
-Then you can
+By default, they are set to the project directory on your machine.
 
-Start the container with
+Then you can:
 
-```bash
-make up
-```
+- Start the service container with
+    ```bash
+    make up
+    ```
+  This will start a container in the background for your service.
+  It has an entrypoint that installs the project,
+  checking that the code directory has correctly been mounted.
 
-Open a shell in the container with
+  You can check its logs with
+    ```bash
+    make logs
+    ```
+  and open a shell in this background container with
+    ```bash
+    make exec
+    ```
 
-```bash
-make exec
-```
+- Run jobs in independent containers with
+    ```bash
+    make run command="python --version"
+    ```
+  These containers start with the entrypoint then run the command you specified.
+  By default, they are automatically removed after they exit.
+  The not-so-nice syntax is due to `make` which is not really made to be used like this.
+  Otherwise, you can run
+    ```bash
+    docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} python --version
+    ```
 
-Run independent jobs in separate containers with
-
-```bash
-make run command="python --version"
-```
-
-The not-so-nice syntax is due to `make` which is not really made to be used like this.
-Otherwise, you can run
-
-```bash
-docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} python --version
-```
+You should not override the entrypoint of the service container, as it is necessary to install the project.
+Only do so, if you know what you're doing.
+(TODO: maybe this si not needed?)
 
 ## Instructions to maintain the environment
 
