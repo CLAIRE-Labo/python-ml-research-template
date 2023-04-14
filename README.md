@@ -23,13 +23,11 @@ It also contains extra EPFL-specific instructions for deployment on the RunAI Ku
 
 ## Getting started with the template
 
-[DELETE ME. Delete this section afterwards, and keep the "Getting started" below.]
-
 Click on the `Use this template` (GitHub button) to create a new repo, clone it, and
 
 1. Fill the template variables in `template/template_variables.sh` and run the script
    ```bash
-   source template/fill_template.sh
+   . template/fill_template.sh
    ```
    Then, delete the `template` directory.
 2. Edit the `LICENCE`
@@ -52,7 +50,8 @@ Click on the `Use this template` (GitHub button) to create a new repo, clone it,
     1. Replace the [_Overview_](#overview) section with description of your project.
     2. Delete the [installation instructions](#development-environment) for the platforms you don't support.
     3. List your direct dependencies (with versions when relevant) in the Dependencies section. (Todo: link.)
-    4. Delete this section [(Getting started with the template)](#getting-started-with-the-template).
+    4. Delete this getting started and the Template FAQ sections, to only keep the project [Getting Started](#getting-started)
+       section.
 5. You're off to a good start! Here are a few tips for keeping your project in a good shape.
     - Todo.
 

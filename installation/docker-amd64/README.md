@@ -10,7 +10,7 @@ It remains to
 
 1. Specify your initial dependencies.
    Follow the instructions to maintain the environment up to (including) the manual editing section.
-2. Create the environment following the user instructions to build the environment.
+2. Create the environment following the user instructions to build the environment below.
 3. Run the environment following the user instructions to run the environment.
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got.
