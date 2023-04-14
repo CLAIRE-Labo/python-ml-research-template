@@ -157,6 +157,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "prompt pure"; \
         echo "source ${ZSHA_PATH}/zsh-autosuggestions.zsh"; \
         echo "source ${ZSHS_PATH}/zsh-syntax-highlighting.zsh"; \
+        echo "alias ls='ls --color=auto'"; \
         echo "alias ll='ls -lh'"; \
         echo "alias wns='watch nvidia-smi'"; \
         echo "alias hist='history 1'"; \
@@ -186,7 +187,7 @@ WORKDIR ${PROJECT_ROOT}
 # and testing that you correctly mounted your volume.
 # It only needs to run once, so you can attach shells later without running it.
 COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
-ENTRYPOINT ["/bin/zsh", "-i", "${ENTRYPOINTS_ROOT}/entrypoint.sh"]
+ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 # The following is for EPFL specific configuration.

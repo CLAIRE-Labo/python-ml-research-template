@@ -18,7 +18,7 @@ SERVICE=image-only
 ### For running locally
 LOCAL_PROJECT_ROOT=../../
 LOCAL_DATA_DIR=../../data
-LOCAL_OUTPUTS_DIR=../../logs
+LOCAL_OUTPUTS_DIR=../../outputs
 
 ####################
 # Project-specific environment variables.
@@ -36,9 +36,9 @@ export ENV_TEXT
 ENV_FILE = .env
 -include ${ENV_FILE}
 
-IMAGE_NAME=${LAB_NAME}/${PROJECT_NAME}:${USR}
+IMAGE_NAME = ${LAB_NAME}/${PROJECT_NAME}:${USR}
 COMPOSE_PROJECT = $(shell echo ${PROJECT_NAME}-${USR} | tr "[:upper:]" "[:lower:]")
-command="python --version"
+command = python --version
 
 .PHONY: env check build up logs exec run start down
 env:  # Creates the `.env` file if it does not exist.

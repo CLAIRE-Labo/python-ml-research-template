@@ -76,8 +76,9 @@ However, these practices (probably not usually combined in a research project, w
 well established and have been proven to be very useful.
 
 For example the `Dockerfile` seems complex because it leverages multi-staging to be very
-cache-efficient.
-Changing your build dependencies, or installing something in the Dockerfile will cause very little rebuilds.
+time and cache-efficient.
+Different build stages can run in parallel and changing your build dependencies,
+or installing something in the Dockerfile will cause very little rebuilds.
 
 ### Why is the template so big?
 
