@@ -11,12 +11,12 @@
 # *_DIR are environment variables already defined in the Dockerfile.
 # *_DIR_IN_PVC are environment variables injected with the RunAI submit command.
 
-ln -s "${CODE_DIR_IN_NFS}" "${CODE_DIR}"
-ln -s "${DATA_DIR_IN_NFS}" "${DATA_DIR}"
-ln -s "${OUTPUTS_DIR_IN_NFS}" "${OUTPUTS_DIR}"
+ln -s "${CODE_DIR_IN_PVC}" "${CODE_DIR}"
+ln -s "${DATA_DIR_IN_PVC}" "${DATA_DIR}"
+ln -s "${OUTPUTS_DIR_IN_PVC}" "${OUTPUTS_DIR}"
 
 ## Remote development configuration
 # Run interactive setup in the background if interactive job.
-if [ -z "${EPFL_RUNAI_INTERACTIVE}" ]; then
+if [ -n "${EPFL_RUNAI_INTERACTIVE}" ]; then
     zsh "${EPFL_CONFIG_DIR}"/interactive_startup.sh
 fi
