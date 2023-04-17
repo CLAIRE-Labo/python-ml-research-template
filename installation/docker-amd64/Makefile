@@ -11,6 +11,7 @@ USR=$(shell id -un)
 # it is only there to avoid running password-less sudo commands accidentally.
 PASSWD=$(shell id -un)
 LAB_NAME=$(shell id -un)
+IMAGE_TAG=latest
 WANDB_API_KEY=0
 
 ## For running:

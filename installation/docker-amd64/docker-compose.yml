@@ -1,6 +1,6 @@
 services:
   image-only: # Base service to build the image.
-    image: ic-registry.epfl.ch/${LAB_NAME}/${PROJECT_NAME}/${USR}:latest
+    image: ic-registry.epfl.ch/${LAB_NAME}/${PROJECT_NAME}/${USR}:${IMAGE_TAG}
     platform: "linux/amd64"
     build:
       platforms:
