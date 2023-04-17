@@ -18,7 +18,7 @@ SERVICE=image-only
 ### For running locally
 LOCAL_CODE_DIR=../../code
 LOCAL_DATA_DIR=../../data
-LOCAL_OUTPUTS_DIR=../../ouputs
+LOCAL_OUTPUTS_DIR=../../outputs
 
 ####################
 # Project-specific environment variables.
