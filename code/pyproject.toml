@@ -5,7 +5,6 @@ build-backend = "hatchling.build"
 [project]
 name = "<project-name>"
 version = "0.0.1"
-readme = "README.md"
 requires-python = ">=<python-version>"
 license = { file="LICENSE" }
 classifiers = [
