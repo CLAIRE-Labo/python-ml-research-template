@@ -32,7 +32,7 @@ Create the environment and activate it.
 
 ```bash
 conda env create --file installation/osx-arm64/environment.yml
-conda activate <project-name>
+conda activate my-project
 ```
 
 ## Instructions to maintain the environment

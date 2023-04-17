@@ -25,8 +25,8 @@ LOCAL_OUTPUTS_DIR=../../outputs
 # Project-specific environment variables.
 ## Used to avoid writing paths multiple times and creating unconsistencies.
 ## You should not need to change anything below this line.
-PROJECT_NAME=<project-name>
-PACKAGE_NAME=<package_name>
+PROJECT_NAME=my-project
+PACKAGE_NAME=my_project
 PROJECT_ROOT=/opt/project
 CODE_DIR=$${PROJECT_ROOT}/code
 DATA_DIR=$${PROJECT_ROOT}/data
