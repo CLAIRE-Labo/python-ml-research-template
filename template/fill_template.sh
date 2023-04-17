@@ -2,7 +2,7 @@
 
 source template/template_variables.sh
 
-mv "src/package_name/" "src/${PACKAGE_NAME}"
+mv "code/src/package_name/" "code/src/${PACKAGE_NAME}"
 
 OSX64_DIR="installation/osx-arm64"
 AMD64_DIR="installation/docker-amd64"

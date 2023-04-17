@@ -1,8 +1,10 @@
 # This is not part of the docker pipeline.
 # This is an example of how to submit a job to runai.
 
-# Read some of the variables from the .env file.
-source ../.env
+CODE_DIR_IN_PVC=/mlodata1/${USR}/${PROJECT_NAME}/code
+DATA_DIR_IN_PVC=/mlodata1/${USR}/${PROJECT_NAME}/data
+OUTPUTS_DIR_IN_PVC=/mlodata1/${USR}/${PROJECT_NAME}/outputs
+
 
 runai submit \
   --name sandbox-home \
@@ -11,9 +13,9 @@ runai submit \
   --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
   --pvc runai-mlo-moalla-mloraw1:/mloraw1 \
   --environment EPFL_RUNAI=1 \
-  --environment CODE_DIR_IN_NFS=/mlodata1/${USR}/code/${PROJECT_NAME} \
-  --environment DATA_DIR_IN_NFS=/mlodata1/${USR}/data/${PROJECT_NAME} \
-  --environment LOGS_DIR_IN_NFS=/mlodata1/${USR}/logs/${PROJECT_NAME} \
+  --environment CODE_DIR_IN_PVC=CODE_DIR_IN_PVC \
+  --environment DATA_DIR_IN_PVC=DATA_DIR_IN_PVC \
+  --environment OUTPUTS_DIR_IN_PVC=OUTPUTS_DIR_IN_PVC \
   --environment PYCHARM_IDE_LOCATION=/mlodata1/${USR}/remote_development/pycharm \
   --environment WANDB_API_KEY=${WANDB_API_KEY} \
   -- sleep infinity

@@ -13,6 +13,14 @@ instructions in the `installation/docker-amd64/README.md` file.
 
 ## Prerequisites
 
+We strongly suggest having two instances of your project repository on your NFS
+
+1. One for development, which may have uncommitted changes, be in a broken state, etc.
+2. One for running unattended jobs, which is always referring to a commit at a working state of the code.
+   Note: you may have several of these frozen repositories, or you may add a checkout command in the script you submit
+   to the cluster.
+   TODO: implement an env variable that allows checking a commit in the entrypoint.
+
 ### Common
 
 You should be familiar wit
