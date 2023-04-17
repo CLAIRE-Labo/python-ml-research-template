@@ -6,12 +6,10 @@ import time
 import numpy as np
 
 
-@hydra.main(version_base=None, config_path="configs", config_name="config")
-def main(cfg: DictConfig) -> None:
-    print(OmegaConf.to_yaml(cfg))
+def main() -> None:
     rng = np.random.default_rng()
 
-    N = cfg.N
+    N = 2000
 
     # The performance boost is more dramatic for single precision.
     m1 = rng.random((N, N), dtype='float32')
