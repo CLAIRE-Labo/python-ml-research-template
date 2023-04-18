@@ -12,6 +12,7 @@ echo "${PASSWD}" | sudo -S /usr/sbin/sshd
 # Must have the binaries in your NFS.
 
 # if the pycharm_ide_location variable is set:
+echo "Starting PyCharm remote development server."
 if [ -n "${PYCHARM_IDE_LOCATION}" ]; then
 
   REMOTE_DEV_NON_INTERACTIVE=1 \
