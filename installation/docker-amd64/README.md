@@ -197,6 +197,7 @@ The script overwrites the `dependencies/environment.yml` file with the current e
 so it's a good idea to commit the changes to the environment file before/after running it.
 
 ```bash
+# TODO. This returns text. Describe how to use it.
 update_env_file
 ```
 
