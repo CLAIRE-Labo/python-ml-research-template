@@ -1,6 +1,11 @@
 ## Overview:
 ## Startup script for EPFL RunAI: setup paths and run interactive setup for remote development.
 
+if [ -n "${SSH_ONLY}" ]; then
+    echo "SSH_ONLY is set. Only starting an ssh server without setup."
+    echo "${PASSWD}" | sudo -S /usr/sbin/sshd -D
+fi
+
 
 ## Workarounds to setup paths for EPFL.
 # RunAI does not allow to mount specific directories from PVCs.

@@ -5,10 +5,11 @@
 At this point, you should have an image that can be deployed on multiple platforms.
 This guide will show you how to deploy your image on the EPFL IC RunAI cluster and use for:
 
-1. Running unattended jobs.
-2. Remote development (as at <lab-name> we use the RunAI platform as our daily drivers).
+1. Remote development (as at <lab-name> we use the RunAI platform as our daily drivers).
+2. Running unattended jobs.
 
-Using the image on the HaaS lab machines falls into the general reproducible use case and is covered by the
+Using the image on the HaaS lab machines falls into the public instructions 
+using the reproducible `local` Docker Compose servie and is covered by the
 instructions in the `installation/docker-amd64/README.md` file.
 
 ## Prerequisites
@@ -21,26 +22,29 @@ It will be hard to debug your image on RunAI if you can't even run it locally.
 **RunAI**:
 
 1. You should be familiar with the RunAI platform and be able to run jobs on it.
-   Refer to this tutorial for a quick introduction.
+   Refer to this tutorial for a quick introduction. (TODO)
 2. You should have one or more PVC(s) (Persistent Volume Claim) that you can use to store your data on the cluster.
-   Refer to this tutorial for a quick introduction.
+   Refer to this tutorial for a quick introduction. (TODO)
 
-**Workflow**:
+## First steps
+
+### Cloning your repository in your PVCs
 
 We strongly suggest having two instances of your project repository on your PVCs.
 
 1. One for development, which may have uncommitted changes, be in a broken state, etc.
 2. One for running unattended jobs, which is always referring to a commit at a working state of the code.
 
-   Note: you may have several of these frozen repositories, or you may add a checkout command in your entrypoint.
-
-   TODO: implement an env variable that allows checking a commit in the entrypoint.
-
 In addition, if you have multiple PVCs with different performance characteristics,
 you may want to put your data and outputs on a different PVC than your code.
-This is straightforward with this template and is covered in the instructions below.
+This is straightforward with this template and is covered in the examples provided.
 
-## First steps
+If you already have those, e.g. because you have your PVC mounted on an ssh server that you use for development,
+you can skip to the next section.
+Otherwise, the template covers a deployment options that simply opens an ssh server on your container without setting up
+the project.
+
+### A quick test to understand how the template works
 
 Adapt the `submit-examples/minimal.sh` with the name of your image, your PVC(s), and the correct paths to your project
 in the PVC(s).
@@ -49,6 +53,7 @@ As in the example when you specify the `EPFL_RUNAI=1` environment variable with 
 the entrypoint of the container will run an additional setup script that:
 
 - Creates symlinks to the relevant directories in your PVCs on your project directory in the container.
+  (Currently this is a workaround as RunAI does not support directly  mounting subdirectories of PVCs)
 - Installs the project in editable mode. This is a lightweight installation that allows you to edit the code
   on your local machine and have the changes reflected in the container.
 - Executes a provided command (e.g. `sleep infinity`), otherwise will run a shell and stop.
