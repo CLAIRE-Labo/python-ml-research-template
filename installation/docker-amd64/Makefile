@@ -17,7 +17,7 @@ WANDB_API_KEY=0
 ## For running:
 SERVICE=image-only
 ### For running locally
-LOCAL_CODE_DIR=../../code
+LOCAL_PROJECT_ROOT=../../
 LOCAL_DATA_DIR=../../data
 LOCAL_OUTPUTS_DIR=../../outputs
 
@@ -28,7 +28,6 @@ LOCAL_OUTPUTS_DIR=../../outputs
 PROJECT_NAME=<project-name>
 PACKAGE_NAME=<package_name>
 PROJECT_ROOT=/opt/project
-CODE_DIR=$${PROJECT_ROOT}/code
 DATA_DIR=$${PROJECT_ROOT}/data
 OUTPUTS_DIR=$${PROJECT_ROOT}/outputs
 IMAGE_NAME=ic-registry.epfl.ch/$${LAB_NAME}/$${PROJECT_NAME}/$${USR}:$${IMAGE_TAG}

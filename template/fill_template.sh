@@ -2,13 +2,14 @@
 
 source template/template_variables.sh
 
-mv "code/src/package_name/" "code/src/${PACKAGE_NAME}"
+mv "src/package_name/" "src/${PACKAGE_NAME}"
 
 OSX64_DIR="installation/osx-arm64"
 AMD64_DIR="installation/docker-amd64"
 
 for file in \
-  "code/pyproject.toml" \
+  "pyproject.toml" \
+  "reproducibility/some_experiment.sh" \
   "$OSX64_DIR/README.md" \
   "$OSX64_DIR/update_env_file.sh" \
   "$OSX64_DIR/environment.yml" \

@@ -4,9 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "<project-name>"
+readme = "README.md"
+license = { file="LICENSE" }
 version = "0.0.1"
 requires-python = ">=<python-version>"
-license = "MIT"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

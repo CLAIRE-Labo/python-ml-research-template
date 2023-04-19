@@ -120,10 +120,10 @@ RUN groupadd -f -g ${GID} ${GRP} && \
     usermod -aG sudo ${USR}
 # Create a directory for the project and a directory for startup scripts.
 ARG PROJECT_ROOT
-ARG ENTRYPOINTS_DIR=${PROJECT_ROOT}/entrypoints
 ENV PROJECT_ROOT=${PROJECT_ROOT}
-ENV ENTRYPOINTS_DIR=${ENTRYPOINTS_DIR}
-RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
+ENV ENTRYPOINTS_ROOT=/opt/entrypoints
+RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT} && \
+    mkdir -p ${ENTRYPOINTS_ROOT} && chown ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
 
 # Get conda with the directory ownership given to the user.
 # This is to be able to install more packages in interactive mode.
@@ -167,17 +167,12 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
 
 FROM train-base AS train
 
-# If using your own .zshrc, mount it to ${HOME}/.local_zshrc and uncomment the following line.
-# RUN echo "source ${HOME}/.local_zshrc" >> ${HOME}/.zshrc
-
 ARG PROJECT_NAME
 ARG PACKAGE_NAME
-ARG CODE_DIR
 ARG DATA_DIR
 ARG OUTPUTS_DIR
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PACKAGE_NAME=${PACKAGE_NAME}
-ENV CODE_DIR=${CODE_DIR}
 ENV DATA_DIR=${DATA_DIR}
 ENV OUTPUTS_DIR=${OUTPUTS_DIR}
 
@@ -187,10 +182,10 @@ WORKDIR ${PROJECT_ROOT}
 # Don't overwrite the entrypoint it is installing the project
 # and testing that you correctly mounted your volume.
 # It only needs to run once, so you can attach shells later without running it.
-COPY --link entrypoint.sh ${ENTRYPOINTS_DIR}/entrypoint.sh
-ENTRYPOINT ["/bin/zsh", "-i", "/opt/project/entrypoints/entrypoint.sh"]
+COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
+ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 # The following is for EPFL specific configuration.
-ENV EPFL_CONFIG_DIR=${ENTRYPOINTS_DIR}/EPFL_config
-COPY --link EPFL_runai_setup ${EPFL_CONFIG_DIR}
+ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL_runai_setup
+COPY --link EPFL_runai_setup ${EPFL_RUNAI_SETUP_DIR}

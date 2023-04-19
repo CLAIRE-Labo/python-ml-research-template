@@ -24,7 +24,6 @@ services:
         USR: ${USR}
         PASSWD: ${PASSWD}
         PROJECT_ROOT: ${PROJECT_ROOT}
-        CODE_DIR: ${CODE_DIR}
         DATA_DIR: ${DATA_DIR}
         OUTPUTS_DIR: ${OUTPUTS_DIR}
 
@@ -34,7 +33,7 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ${LOCAL_CODE_DIR}:${CODE_DIR}
+      - ${LOCAL_PROJECT_ROOT}:${PROJECT_ROOT} # Should be mounted first, before data and outputs.
       - ${LOCAL_DATA_DIR}:${DATA_DIR}
       - ${LOCAL_OUTPUTS_DIR}:${OUTPUTS_DIR}
     environment:
