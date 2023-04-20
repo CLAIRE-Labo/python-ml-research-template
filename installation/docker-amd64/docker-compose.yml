@@ -33,7 +33,11 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ${LOCAL_PROJECT_ROOT}:${PROJECT_ROOT} # Should be mounted first, before data and outputs.
+      # LOCAL_PROJECT_ROOT Should be mounted first, before data and outputs.
+      # It is okay if it already contains data or outputs, and you mount them again.
+      # They will not be deleted, just "obscured" by the mount.
+      # https://docs.docker.com/storage/bind-mounts/#mount-into-a-non-empty-directory-on-the-container
+      - ${LOCAL_PROJECT_ROOT}:${PROJECT_ROOT}
       - ${LOCAL_DATA_DIR}:${DATA_DIR}
       - ${LOCAL_OUTPUTS_DIR}:${OUTPUTS_DIR}
     environment:
