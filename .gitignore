@@ -136,6 +136,8 @@ dmypy.json
 
 # Project
 data
-!data/README.md
+_data
+!_data/README.md
 outputs
-!outputs/README.md
+_outputs
+!_outputs/README.md
