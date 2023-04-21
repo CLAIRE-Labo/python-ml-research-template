@@ -27,7 +27,7 @@ Click on the `Use this template` (GitHub button) to create a new repo, clone it,
 
 1. Fill the template variables in `template/template_variables.sh` and run the script
    ```bash
-   . template/fill_template.sh
+   ./template/fill_template.sh
    ```
    Then, delete the `template` directory.
 2. Edit the `LICENCE`

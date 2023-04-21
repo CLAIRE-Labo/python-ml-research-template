@@ -2,7 +2,7 @@
 
 # This script allows to replace the template variables with your project ones.
 set -eo pipefail
-source template/template_variables.sh
+source template/template_variables.env
 
 mv "src/package_name/" "src/${PACKAGE_NAME}"
 
