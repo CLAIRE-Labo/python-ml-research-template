@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This script allows to replace the template variables with your project ones.
 set -eo pipefail
 source template/template_variables.sh
