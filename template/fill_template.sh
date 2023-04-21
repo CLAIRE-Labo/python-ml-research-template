@@ -9,7 +9,7 @@ AMD64_DIR="installation/docker-amd64"
 
 for file in \
   "pyproject.toml" \
-  "reproducibility/some_experiment.sh" \
+  "reproducibility_scripts/some_experiment.sh" \
   "$OSX64_DIR/README.md" \
   "$OSX64_DIR/update_env_file.sh" \
   "$OSX64_DIR/environment.yml" \

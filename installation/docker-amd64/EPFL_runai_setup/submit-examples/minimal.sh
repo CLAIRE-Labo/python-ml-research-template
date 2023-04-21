@@ -10,6 +10,8 @@ runai submit \
 ### Notes:
 
 # This is a minimal example of a working submission.
+# We show `submit` commands and not a YAML file because the RunAI API for kubernetes resources is still in alpha phase.
+
 # You can then attach a shell to it with: runai exec -it example-minimal zsh
 # The EPFL_RUNAI=1 environment variable must be set to setup the paths directory paths correctly.
 # The PROJECT_ROOT_IN_PVC environment variable must specify the root of the project in your PVC.
