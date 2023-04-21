@@ -184,7 +184,7 @@ WORKDIR ${PROJECT_ROOT}
 # It only needs to run once, so you can attach shells later without running it.
 COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
 ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
-CMD ["sleep", "infinity"]
+CMD ["/bin/zsh"]
 
 # The following is for EPFL specific configuration.
 ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL_runai_setup

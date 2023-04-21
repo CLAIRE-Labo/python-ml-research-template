@@ -16,33 +16,30 @@ fi
 
 ## Variables
 # PROJECT_ROOT and *_DIR are environment variables already defined in the Dockerfile.
-# PROJECT_ROOT_IN_PVC and *_DIR_IN_OTHER_PVC are environment variables injected with the RunAI submit command.
+# PROJECT_ROOT_IN_PVC and *_DIR_IN_PVC are environment variables injected with the RunAI submit command.
 
-# This is the ugly workaround to symlink the directories in the PVCs.
-cd "${HOME}" || exit
-# if project root exists delete it and replace it with a symlink to the project root in the PVC.
-rm -r "${PROJECT_ROOT}"
-# Error if PROJECT_ROOT_IN_PVC is not set.
+# Error if those variables are not set.
 if [ -z "${PROJECT_ROOT_IN_PVC}" ]; then
   echo "PROJECT_ROOT_IN_PVC is not set. Exiting."
   exit 1
 fi
+if [ -z "${DATA_DIR_IN_PVC}" ]; then
+  echo "DATA_DIR_IN_PVC is not set. Exiting."
+  exit 1
+fi
+if [ -z "${OUTPUTS_DIR_IN_PVC}" ]; then
+  echo "OUTPUTS_DIR_IN_PVC is not set. Exiting."
+  exit 1
+fi
+
+# This is the ugly workaround to symlink the directories in the PVCs.
+cd "${HOME}" || exit
+# Delete the empty initialized PROJECT_ROOT and replace it with a symlink to the project root in the PVC.
+rm -r "${PROJECT_ROOT}"
 ln -s "${PROJECT_ROOT_IN_PVC}" "${PROJECT_ROOT}"
-# If DATA_DIR_IN_OTHER_PVC is set symlink to it.
-# If data directory exists (from current PROJECT_ROOT_IN_PVC) and only contains README.md delete it and replace it.
-if [ -n "${DATA_DIR_IN_OTHER_PVC}" ]; then
-  if [ -d "${DATA_DIR}" ] && [ "$(ls -A "${DATA_DIR}")" = "README.md" ]; then
-    rm -r "${DATA_DIR}"
-  fi
-  ln -s "${DATA_DIR_IN_OTHER_PVC}" "${DATA_DIR}"
-fi
-# Same for outputs directory
-if [ -n "${OUTPUTS_DIR_IN_OTHER_PVC}" ]; then
-  if [ -d "${OUTPUTS_DIR}" ] && [ "$(ls -A "${OUTPUTS_DIR}")" = "README.md" ]; then
-    rm -r "${OUTPUTS_DIR}"
-  fi
-  ln -s "${OUTPUTS_DIR_IN_OTHER_PVC}" "${OUTPUTS_DIR}"
-fi
+# Symlink to data and outputs
+ln -s "${DATA_DIR_IN_PVC}" "${DATA_DIR}"
+ln -s "${OUTPUTS_DIR_IN_PVC}" "${OUTPUTS_DIR}"
 
 ## Remote development configuration
 # Run interactive setup in the background if interactive job.

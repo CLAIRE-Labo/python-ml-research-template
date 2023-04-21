@@ -30,6 +30,8 @@ services:
   local-cpu: # Service to run the image locally with CPU only.
     extends:
       service: image-only
+    tty: true
+    stdin_open: true
     volumes:
       - ${LOCAL_PROJECT_ROOT}:${PROJECT_ROOT}
       - ${LOCAL_DATA_DIR}:${DATA_DIR}

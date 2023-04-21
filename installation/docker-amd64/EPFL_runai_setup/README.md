@@ -22,13 +22,21 @@ It will be hard to debug your image on RunAI if you can't even run it locally.
 **RunAI**:
 
 1. You should be familiar with the RunAI platform and be able to run jobs on it.
-   Refer to this tutorial for a quick introduction. (TODO)
-2. You should have one or more PVC(s) (Persistent Volume Claim) that you can use to store your data on the cluster.
-   Refer to this tutorial for a quick introduction. (TODO)
+2. You should have access to [Harbor](https://ic-registry.epfl.ch),the EPFL IC Docker registry.
+3. You should have one or more PVC(s) (Persistent Volume Claim) that you can use to store your data on the cluster.
+
+Refer to this tutorial for an introduction to these tools (TODO: link to the EPIC guide.)
 
 ## First steps
 
-### Cloning your repository in your PVCs
+### Push your image to the EPFL IC Docker registry
+
+```bash
+# Get your image name from the last line of the build output (ic-registry.epfl.ch/.../:...) 
+docker push <image-name>
+```
+
+### Clone your repository in your PVCs
 
 We strongly suggest having two instances of your project repository on your PVCs.
 
@@ -42,7 +50,10 @@ This is straightforward with this template and is covered in the examples provid
 If you already have those, e.g. because you have your PVC mounted on an ssh server that you use for development,
 you can skip to the next section.
 Otherwise, the template covers a deployment options that simply opens an ssh server on your container without setting up
-the project.
+the project, forwards your ssh keys, and allows you to clone your repository on the container.
+
+1. Submit your job in the same fashion as `submit-examples/minimal.sh`.
+2. 
 
 ### A quick test to understand how the template works
 
