@@ -18,8 +18,8 @@ WANDB_API_KEY=0
 SERVICE=image-only
 ### For running locally
 LOCAL_PROJECT_ROOT=../../
-LOCAL_DATA_DIR=../../data
-LOCAL_OUTPUTS_DIR=../../outputs
+LOCAL_DATA_DIR=../../_data
+LOCAL_OUTPUTS_DIR=../../_outputs
 
 ####################
 # Project-specific environment variables.
