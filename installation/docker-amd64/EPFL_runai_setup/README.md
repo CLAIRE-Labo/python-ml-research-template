@@ -8,7 +8,7 @@ This guide will show you how to deploy your image on the EPFL IC RunAI cluster a
 1. Remote development (as at <lab-name> we use the RunAI platform as our daily drivers).
 2. Running unattended jobs.
 
-Using the image on the HaaS lab machines falls into the public instructions 
+Using the image on the HaaS lab machines falls into the public instructions
 using the reproducible `local` Docker Compose servie and is covered by the
 instructions in the `installation/docker-amd64/README.md` file.
 
@@ -21,7 +21,7 @@ It will be hard to debug your image on RunAI if you can't even run it locally.
 
 **RunAI**:
 
-1. You should be familiar with the RunAI platform and be able to run jobs on it.
+1. You should be familiar with the RunAI platform, be able to run jobs on it, and know how to check their status.
 2. You should have access to [Harbor](https://ic-registry.epfl.ch),the EPFL IC Docker registry.
 3. You should have one or more PVC(s) (Persistent Volume Claim) that you can use to store your data on the cluster.
 
@@ -53,7 +53,15 @@ Otherwise, the template covers a deployment options that simply opens an ssh ser
 the project, forwards your ssh keys, and allows you to clone your repository on the container.
 
 1. Submit your job in the same fashion as `submit-examples/minimal.sh`.
-2. 
+2. Follow the steps in the [SSH configuration section](#ssh-configuration) and ssh to your container.
+3. Clone your repository in your PVCs. (Don't forget to push the changes you did after initializing the template.)
+
+   ```bash
+   # In your PVC.
+   mkdir <project-name>
+   git clone <repo-url> <project-name>/dev
+   git clone <repo-url> <project-name>/run
+   ```
 
 ### A quick test to understand how the template works
 
@@ -64,7 +72,7 @@ As in the example when you specify the `EPFL_RUNAI=1` environment variable with 
 the entrypoint of the container will run an additional setup script that:
 
 - Creates symlinks to the relevant directories in your PVCs on your project directory in the container.
-  (Currently this is a workaround as RunAI does not support directly  mounting subdirectories of PVCs)
+  (Currently this is a workaround as RunAI does not support directly mounting subdirectories of PVCs)
 - Installs the project in editable mode. This is a lightweight installation that allows you to edit the code
   on your local machine and have the changes reflected in the container.
 - Executes a provided command (e.g. `sleep infinity`), otherwise will run a shell and stop.
@@ -119,6 +127,13 @@ kubectl port-forward <pod-name> 2222:22
 ```
 
 You can then ssh to your container by ssh-ing to that port on your local machine.
+Connect with the user and password you specified in your `.env` file when you built the image.
+
+```bash
+# ssh to local machine is forwarded to the pod.
+ssh -p 2222 <user>@127.0.0.1   
+```
+
 As the container will each time be on a different machine, you will have to reset the ssh key for the remote server.
 You can do this with
 
@@ -126,15 +141,8 @@ You can do this with
 ssh-keygen -R '[127.0.0.1]:2222'
 ```
 
-Then ssh to the remote server with the user and password you specified in your `.env` file when you built the image.
-
-```bash
-# ssh to local machine is forwarded to the pod.
-ssh -p 2222 <user>@127.0.0.1   
-```
-
-So that you don't have to put your ssh keys on the remote server, you can forward your ssh keys with your ssh
-connection.
+Moreover, so that you don't have to put your ssh keys on the remote server, you can forward your ssh keys with your ssh
+agent (e.g. to connect to GitHub).
 Follow the guide (
 here)[https://docs.github.com/en/authentication/connecting-to-github-with-ssh/using-ssh-agent-forwarding].
 With the following changes to your ssh config file.
@@ -143,6 +151,14 @@ With the following changes to your ssh config file.
 Match host 127.0.0.1 exec "test %p = 2222"
 	ForwardAgent yes
 ```
+
+**Limitations**
+
+Note that an ssh connection to the container is not like executing a shell on the container. E.g.
+
+- environment variables created when running the container are not available during ssh connections.
+  You can work around this by explicitly adding them to the `.zshrc` in the entrypoint script.
+  I.e. add the line `echo "export VARIABLE=${VARIABLE}" >> ~/.zshrc` to the entrypoint script.
 
 #### PyCharm
 
@@ -191,6 +207,11 @@ Gateway link: jetbrains-gateway://connect#idePath=%2Fmlodata1%2Fmoalla%2Fremote_
 
 Use this link to connect to it from a local JetBrains Gateway client as described here
 
+**Limitations**
+
+- Terminal in PyCharm opens ssh connections to the container, so the limitations in the ssh section apply.
+- The template does not support storing the IDE configuration yet, so it's like starting from a fresh IDE each time.
+
 #### VSCode
 
 #### JuptyerLab
@@ -198,5 +219,12 @@ Use this link to connect to it from a local JetBrains Gateway client as describe
 Note: make a note that jupyter notebooks are harder to reproduce and do not fill well in a codebase.
 Use them to experiment with plots maybe, but then copy the code to a proper script that outputs the figure
 to a file.
+
+### Examples
+
+We provide examples of how to use the template in the `submit-examples` directory.
+We use `submit` commands and not YAML files to specify job configurations because the RunAI API for kubernetes resources is still in alpha phase.
+
+
 
 ### Troubleshooting

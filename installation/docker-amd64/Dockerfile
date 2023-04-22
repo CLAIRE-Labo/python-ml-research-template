@@ -68,10 +68,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm -rf /var/lib/apt/lists/*
 
 # Configuration for ssh server. (Delete this if not needed.)
-ENV NOTVISIBLE="in users profile"
 RUN mkdir /var/run/sshd && \
-    sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd && \
-    echo "export VISIBLE=now" >> /etc/profile
+    sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
 
 ########################################################################
 # Install the conda environment.
@@ -189,3 +187,11 @@ CMD ["/bin/zsh"]
 # The following is for EPFL specific configuration.
 ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL_runai_setup
 COPY --link EPFL_runai_setup ${EPFL_RUNAI_SETUP_DIR}
+
+# Export environment variables relevant for ssh connection.
+RUN {   echo "export PROJECT_NAME=${PROJECT_NAME}"; \
+        echo "export PACKAGE_NAME=${PACKAGE_NAME}"; \
+        echo "export LANG=${LANG}"; \
+        echo "export LC_ALL=${LC_ALL}"; \
+        echo "export PYTHONENCODING=${PYTHONENCODING}"; \
+    } >> ${HOME}/.zshrc

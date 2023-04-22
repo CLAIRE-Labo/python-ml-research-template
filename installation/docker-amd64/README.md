@@ -72,6 +72,9 @@ Edit the `SERVICE` variable in the `.env` file to match how you want to run the 
 
 - `local-cpu` specifies a deployment with Docker Compose on your machine with no hardware acceleration.
   Use this option to run the container on a machine with Docker Compose. E.g. on your ssh server, WSL machine.
+  This can also be used as
+  a [remote interpreter](https://www.jetbrains.com/help/pycharm/using-docker-compose-as-a-remote-interpreter.html),
+  where remote means inside the (local) container.
 - `local-gpu` same as above with GPU support.
 
   (**EPFL note:** _Use this option for deploying on HaaS machines._)
