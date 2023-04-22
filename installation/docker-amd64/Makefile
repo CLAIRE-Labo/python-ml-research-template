@@ -17,7 +17,7 @@ WANDB_API_KEY=0
 ## For running:
 SERVICE=image-only
 ### For running locally
-LOCAL_PROJECT_ROOT=../../
+LOCAL_PROJECT_DIR=../../
 LOCAL_DATA_DIR=../../_data
 LOCAL_OUTPUTS_DIR=../../_outputs
 
