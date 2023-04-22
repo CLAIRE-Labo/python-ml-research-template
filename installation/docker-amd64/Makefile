@@ -28,8 +28,9 @@ LOCAL_OUTPUTS_DIR=../../_outputs
 PROJECT_NAME=<project-name>
 PACKAGE_NAME=<package_name>
 PROJECT_ROOT=/opt/project
-DATA_DIR=$${PROJECT_ROOT}/data
-OUTPUTS_DIR=$${PROJECT_ROOT}/outputs
+PROJECT_DIR=$${PROJECT_ROOT}/$${PROJECT_NAME}
+DATA_DIR=$${PROJECT_DIR}/data
+OUTPUTS_DIR=$${PROJECT_DIR}/outputs
 IMAGE_NAME=ic-registry.epfl.ch/$${LAB_NAME}/$${PROJECT_NAME}/$${USR}:$${IMAGE_TAG}
 endef
 export ENV_TEXT

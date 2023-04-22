@@ -15,12 +15,12 @@ fi
 # TODO. Replace with direct subPath mounting with yaml submission when this is supported. (ticket INC0548857)
 
 ## Variables
-# PROJECT_ROOT and *_DIR are environment variables already defined in the Dockerfile.
-# PROJECT_ROOT_IN_PVC and *_DIR_IN_PVC are environment variables injected with the RunAI submit command.
+# *_DIR are environment variables already defined in the Dockerfile.
+# *_DIR_IN_PVC are environment variables injected with the RunAI submit command.
 
 # Error if those variables are not set.
-if [ -z "${PROJECT_ROOT_IN_PVC}" ]; then
-  echo "PROJECT_ROOT_IN_PVC is not set. Exiting."
+if [ -z "${PROJECT_DIR_IN_PVC}" ]; then
+  echo "PROJECT_DIR_IN_PVC is not set. Exiting."
   exit 1
 fi
 if [ -z "${DATA_DIR_IN_PVC}" ]; then
@@ -33,10 +33,10 @@ if [ -z "${OUTPUTS_DIR_IN_PVC}" ]; then
 fi
 
 # This is the ugly workaround to symlink the directories in the PVCs.
-cd "${HOME}" || exit
-# Delete the empty initialized PROJECT_ROOT and replace it with a symlink to the project root in the PVC.
-rm -r "${PROJECT_ROOT}"
-ln -s "${PROJECT_ROOT_IN_PVC}" "${PROJECT_ROOT}"
+cd "${PROJECT_ROOT}" || exit
+# Delete the empty initialized PROJECT_DIR and replace it with a symlink to the project dir in the PVC.
+rm -r "${PROJECT_DIR}"
+ln -s "${PROJECT_DIR_IN_PVC}" "${PROJECT_DIR}"
 # Symlink to data and outputs
 ln -s "${DATA_DIR_IN_PVC}" "${DATA_DIR}"
 ln -s "${OUTPUTS_DIR_IN_PVC}" "${OUTPUTS_DIR}"

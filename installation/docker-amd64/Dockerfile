@@ -167,14 +167,16 @@ FROM train-base AS train
 
 ARG PROJECT_NAME
 ARG PACKAGE_NAME
+ARG PROJECT_DIR
 ARG DATA_DIR
 ARG OUTPUTS_DIR
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PACKAGE_NAME=${PACKAGE_NAME}
+ENV PROJECT_DIR=${PROJECT_DIR}
 ENV DATA_DIR=${DATA_DIR}
 ENV OUTPUTS_DIR=${OUTPUTS_DIR}
 
-WORKDIR ${PROJECT_ROOT}
+WORKDIR ${PROJECT_DIR}
 
 # Entrypoint is an interactive shell to activate the conda environment.
 # Don't overwrite the entrypoint it is installing the project
@@ -191,6 +193,9 @@ COPY --link EPFL_runai_setup ${EPFL_RUNAI_SETUP_DIR}
 # Export environment variables relevant for ssh connection.
 RUN {   echo "export PROJECT_NAME=${PROJECT_NAME}"; \
         echo "export PACKAGE_NAME=${PACKAGE_NAME}"; \
+        echo "export PROJECT_DIR=${PROJECT_DIR}"; \
+        echo "export DATA_DIR=${DATA_DIR}"; \
+        echo "export OUTPUTS_DIR=${OUTPUTS_DIR}"; \
         echo "export LANG=${LANG}"; \
         echo "export LC_ALL=${LC_ALL}"; \
         echo "export PYTHONENCODING=${PYTHONENCODING}"; \

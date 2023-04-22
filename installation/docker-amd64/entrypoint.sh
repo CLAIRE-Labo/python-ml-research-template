@@ -10,7 +10,7 @@ fi
 # With login shell, wouldn't need the conda run
 # Install the package in editable mode.
 echo "Installing the project."
-pip install -e "${PROJECT_ROOT}"
+pip install -e "${PROJECT_DIR}"
 
 # Test that the template works. Feel free to remove this.
 python -c "import ${PACKAGE_NAME}"

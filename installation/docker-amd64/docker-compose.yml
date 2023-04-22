@@ -24,6 +24,7 @@ services:
         USR: ${USR}
         PASSWD: ${PASSWD}
         PROJECT_ROOT: ${PROJECT_ROOT}
+        PROJECT_DIR: ${PROJECT_DIR}
         DATA_DIR: ${DATA_DIR}
         OUTPUTS_DIR: ${OUTPUTS_DIR}
 
@@ -33,7 +34,7 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ${LOCAL_PROJECT_ROOT}:${PROJECT_ROOT}
+      - ${LOCAL_PROJECT_DIR}:${PROJECT_DIR}
       - ${LOCAL_DATA_DIR}:${DATA_DIR}
       - ${LOCAL_OUTPUTS_DIR}:${OUTPUTS_DIR}
     environment:
