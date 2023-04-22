@@ -17,7 +17,7 @@ if [ -n "${PYCHARM_IDE_LOCATION}" ]; then
 
   REMOTE_DEV_NON_INTERACTIVE=1 \
     "${PYCHARM_IDE_LOCATION}"/bin/remote-dev-server.sh \
-    run "${PROJECT_DIR}" \
+    run "${PROJECT_ROOT}" \
     --ssh-link-host 127.0.0.1 \
     --ssh-link-user "${USER}" \
     --ssh-link-port "${SSH_FORWARD_PORT}" &
