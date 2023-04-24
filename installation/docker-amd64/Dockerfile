@@ -176,7 +176,7 @@ ENV PROJECT_DIR=${PROJECT_DIR}
 ENV DATA_DIR=${DATA_DIR}
 ENV OUTPUTS_DIR=${OUTPUTS_DIR}
 
-WORKDIR ${PROJECT_DIR}
+WORKDIR ${PROJECT_ROOT}
 
 # Entrypoint is an interactive shell to activate the conda environment.
 # Don't overwrite the entrypoint it is installing the project
