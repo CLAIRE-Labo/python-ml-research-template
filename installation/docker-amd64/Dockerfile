@@ -119,9 +119,7 @@ RUN groupadd -f -g ${GID} ${GRP} && \
 # Create a directory for the project and a directory for startup scripts.
 ARG PROJECT_ROOT
 ENV PROJECT_ROOT=${PROJECT_ROOT}
-ENV ENTRYPOINTS_ROOT=/opt/entrypoints
-RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT} && \
-    mkdir -p ${ENTRYPOINTS_ROOT} && chown ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
+RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT}
 
 # Get conda with the directory ownership given to the user.
 # This is to be able to install more packages in interactive mode.
@@ -176,12 +174,14 @@ ENV PROJECT_DIR=${PROJECT_DIR}
 ENV DATA_DIR=${DATA_DIR}
 ENV OUTPUTS_DIR=${OUTPUTS_DIR}
 
-WORKDIR ${PROJECT_DIR}
+WORKDIR ${PROJECT_ROOT}
 
 # Entrypoint is an interactive shell to activate the conda environment.
 # Don't overwrite the entrypoint it is installing the project
 # and testing that you correctly mounted your volume.
 # It only needs to run once, so you can attach shells later without running it.
+ENV ENTRYPOINTS_ROOT=/opt/entrypoints
+RUN mkdir -p ${ENTRYPOINTS_ROOT}
 COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
 ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]

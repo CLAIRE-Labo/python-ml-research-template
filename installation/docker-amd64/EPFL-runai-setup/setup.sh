@@ -32,12 +32,7 @@ if [ -z "${OUTPUTS_DIR_IN_PVC}" ]; then
   exit 1
 fi
 
-# This is the ugly workaround to symlink the directories in the PVCs.
-cd "${PROJECT_ROOT}" || exit
-# Delete the empty initialized PROJECT_DIR and replace it with a symlink to the project dir in the PVC.
-rm -r "${PROJECT_DIR}"
 ln -s "${PROJECT_DIR_IN_PVC}" "${PROJECT_DIR}"
-# Symlink to data and outputs
 ln -s "${DATA_DIR_IN_PVC}" "${DATA_DIR}"
 ln -s "${OUTPUTS_DIR_IN_PVC}" "${OUTPUTS_DIR}"
 
