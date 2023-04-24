@@ -34,7 +34,7 @@ Click on the `Use this template` (GitHub button) to create a new repo, clone it,
 2. Edit the `LICENCE`
    file.
    Or delete it and remember to add one when open-sourcing your
-   code. [(Some help here.)](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
+   code. [(Some help here).](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
    A simple change if you're fine with the MIT licence is to replace the `2022 Skander Moalla` with your year and name.
 3. Setup and edit the development environment instructions for the platforms you'll use/support.
    We support the following platforms:

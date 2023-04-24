@@ -13,18 +13,19 @@ It remains to
 2. Create the environment following the user instructions to build the environment below.
 3. Run the environment following the user instructions to run the environment.
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
-   pin the dependencies you just got.
-    ```bash
-    TODO
-    ```
+   pin the dependencies you just got following the freeze your environment instructions.
 
 You can then add more dependencies as your project grows following
 the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
 
 ## [_DELETE ME_] More details on the setup
 
-Todo. Big acknowledgements to Cresset.
-These acknowledgement should also be in the public instructions, not only the template sections.
+Todo.
+
+- Big acknowledgements to Cresset.
+    - These acknowledgement should also be in the public instructions, not only the template sections.
+- Describe the Docker image
+- Describe the Docker Compose local deployment option
 
 ## Instructions to build the environment
 
@@ -72,9 +73,10 @@ Edit the `SERVICE` variable in the `.env` file to match how you want to run the 
 
 - `local-cpu` specifies a deployment with Docker Compose on your machine with no hardware acceleration.
   Use this option to run the container on a machine with Docker Compose. E.g. on your ssh server, WSL machine.
-  This can also be used as
+
+  This service can also be used as
   a [remote interpreter](https://www.jetbrains.com/help/pycharm/using-docker-compose-as-a-remote-interpreter.html),
-  where remote means inside the (local) container.
+  by some IDEs where remote means inside the (local) container.
 - `local-gpu` same as above with GPU support.
 
   (**EPFL note:** _Use this option for deploying on HaaS machines._)
@@ -82,12 +84,14 @@ Edit the `SERVICE` variable in the `.env` file to match how you want to run the 
   It is there if you only need to build the image and then deploy it in a custom way.
   For example to a managed cluster (Kubernetes, etc).
 
-  (**EPFL note:** _Use this option for deploying on the RunAI Kubernetes Cluster)
+  (**EPFL note:** _Use this option for deploying on the RunAI Kubernetes Cluster_)
 
 For local deployments follow the instructions below.
 
-For managed cluster deployments, EPFL RunAI cluster users should refer to the `./EPFL_runai_setup/README.md`.
+For managed cluster deployments, EPFL RunAI cluster users should refer to the `./EPFL-runai-setup/README.md`.
 Other users can get inspiration from it too, otherwise we leave it to you to deploy on your managed cluster.
+
+### Running locally with Docker Compose
 
 **Prerequisites**
 
@@ -137,9 +141,9 @@ Then you can:
     docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} python --version
     ```
 
-You should not override the entrypoint of the service container, as it is necessary to install the project.
-Only do so, if you know what you're doing.
-(TODO: maybe this si not needed?)
+You should not need to override the entrypoint of the service container.
+It is necessary to install the project.
+Only do so, if you need to debug the container, or you have a custom use case.
 
 ## Instructions to maintain the environment
 
@@ -148,7 +152,7 @@ Python dependencies are be managed by both `conda` and `pip`.
 
 - Use `apt` for system programs (e.g. `sudo`, `zsh`).
 - Use `conda` for non-python dependencies needed to run the project code (e.g. `mkl`, `swig`)
-  and dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
+  and python dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
 - Use `pip` for the rest of the python dependencies.
 - For more complex dependencies that may require a custom installation or build, use the `Dockerfile` directly.
@@ -177,6 +181,10 @@ We describe how to do so in the freeze the environment section.
 - To edit the `apt` dependencies, edit the `dependencies/apt.txt` file.
 - To edit the `conda` and `pip` dependencies, edit the `dependencies/environment.yml` file.
 - To edit the more complex dependencies, edit the `Dockerfile`.
+
+When manually editing the dependencies files, you do not need to specify the specific version of the dependencies,
+these will be written to the environment files when you free the environment.
+You will only need to specify the major versions of specific dependencies you need.
 
 ### Interactively (while developing)
 

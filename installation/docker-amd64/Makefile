@@ -12,14 +12,15 @@ USR=$(shell id -un)
 PASSWD=$(shell id -un)
 LAB_NAME=$(shell id -un)
 IMAGE_TAG=latest
-WANDB_API_KEY=0
 
 ## For running:
 SERVICE=image-only
+
 ### For running locally
 LOCAL_PROJECT_DIR=../../
 LOCAL_DATA_DIR=../../_data
 LOCAL_OUTPUTS_DIR=../../_outputs
+WANDB_API_KEY=0
 
 ####################
 # Project-specific environment variables.

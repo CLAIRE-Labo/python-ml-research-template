@@ -44,5 +44,5 @@ ln -s "${OUTPUTS_DIR_IN_PVC}" "${OUTPUTS_DIR}"
 ## Remote development configuration
 # Run interactive setup in the background if interactive job.
 if [ -n "${EPFL_RUNAI_INTERACTIVE}" ]; then
-  zsh "${EPFL_CONFIG_DIR}"/interactive_startup.sh
+  zsh "${EPFL_RUNAI_SETUP_DIR}"/interactive_startup.sh
 fi

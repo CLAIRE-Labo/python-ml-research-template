@@ -187,8 +187,8 @@ ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 # The following is for EPFL specific configuration.
-ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL_runai_setup
-COPY --link EPFL_runai_setup ${EPFL_RUNAI_SETUP_DIR}
+ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL-runai-setup
+COPY --link EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
 
 # Export environment variables relevant for ssh connection.
 RUN {   echo "export PROJECT_NAME=${PROJECT_NAME}"; \
