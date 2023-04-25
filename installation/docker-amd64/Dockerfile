@@ -199,4 +199,5 @@ RUN {   echo "export PROJECT_NAME=${PROJECT_NAME}"; \
         echo "export LANG=${LANG}"; \
         echo "export LC_ALL=${LC_ALL}"; \
         echo "export PYTHONENCODING=${PYTHONENCODING}"; \
+        echo "export PASSWD=${PASSWD}"; \
     } >> ${HOME}/.zshrc

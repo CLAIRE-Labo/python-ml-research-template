@@ -4,6 +4,9 @@
 ## SSH-only mode for first time use, or debugging.
 if [ -n "${SSH_ONLY}" ]; then
   echo "SSH_ONLY is set. Only starting an ssh server without setup."
+  # Install git as this option is primarily made to clone repos.
+  echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get update
+  echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get install -y git
   echo "${PASSWD}" | sudo -S /usr/sbin/sshd -D
   # The above runs in foreground, so the script will not continue.
   exit 1

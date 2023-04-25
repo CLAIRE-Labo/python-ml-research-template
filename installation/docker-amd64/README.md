@@ -37,8 +37,8 @@ Todo.
 
 **build**
 
-We recommend building on an `amd64` platform, although the Docker BuildKit allows building for different
-platforms. Use at your own risk.
+We recommend building on an `amd64` platform, although the Docker BuildKit allows for cross-platform builds.
+Use at your own risk.
 
 All commands should be run from the installation directory.
 

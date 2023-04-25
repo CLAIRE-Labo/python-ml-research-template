@@ -14,15 +14,16 @@ runai submit \
 # You can then attach a shell to this job with: runai exec -it example-minimal zsh
 
 # The important bits here are:
-# The EPFL_RUNAI=1
-# The PROJECT_DIR_IN_PVC env variable must specify the project directory in your PVC.
-# The DATA_DIR_IN_PVC env variable must specify the data directory in your PVC.
-# The OUTPUTS_DIR_IN_PVC env variable must specify the outputs directory in your PVC.
+# --environment EPFL_RUNAI=1
+# --environment PROJECT_DIR_IN_PVC must specify the project directory in your PVC.
+# --environment DATA_DIR_IN_PVC must specify the data directory in your PVC.
+# --environment OUTPUTS_DIR_IN_PVC must specify the outputs directory in your PVC.
+# In the example I'm using the default placeholder _data and _outputs directories of the project.
 
 ## If I wanted my outputs to be in a different PVC I could
-# add the the second PVC
+# 1. add the the second PVC
 #  --pvc runai-mlo-moalla-mloraw1:/mloraw1
-# and change the OUTPUTS_DIR_IN_PVC to point to the new PVC
-#  --environment OUTPUTS_DIR_IN_OTHER_PVC=/mloraw1/moalla/machrou3/_outputs
+# 2. change the OUTPUTS_DIR_IN_PVC to point to the new PVC
+#  --environment OUTPUTS_DIR_IN_PVC=/mloraw1/moalla/machrou3/dev/_outputs
 
-# same applies to data directory with DATA_DIR_IN_PVC.
+# The same applies to the data directory with DATA_DIR_IN_PVC.
