@@ -1,12 +1,8 @@
-## The port on your local machine that will be forwarded to the remote server.
-SSH_FORWARD_PORT=${SSH_FORWARD_PORT:-2222}
-
 ####################
-# Open ssh server.
-echo "${PASSWD}" | sudo -S /usr/sbin/sshd
-
-####################
-# Install a few tools if not present.
+# Install a few user tools if not present.
+# These are not a replacement for the tools installed in the base image.
+# They should not be required for the project to run.
+# Only for convenience during interactive development.
 echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get update
 echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get install -y \
   ca-certificates \
@@ -17,9 +13,19 @@ echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get install -y \
   wget
 
 ####################
+# Open ssh server.
+if [ -n "${SSH_ONLY}" ]; then
+  # SSH-only mode for first time use, or debugging.
+  echo "${PASSWD}" | sudo -S /usr/sbin/sshd -D
+  # The above runs in foreground, so the script will not continue.
+else
+  echo "${PASSWD}" | sudo -S /usr/sbin/sshd
+  # This runs in background, so the script will continue.
+fi
+
+####################
 ## PyCharm remote development server.
-# Set the env variables
-# PYCHARM_IDE=1 and PYCHARM_IDE_LOCATION to the location of the PyCharm binaries in your NFS.
+# Set the env variable PYCHARM_IDE_LOCATION to the location of the PyCharm binaries in your NFS.
 # Must have the binaries in your NFS.
 
 # if the pycharm_ide_location variable is set:
@@ -28,9 +34,12 @@ if [ -n "${PYCHARM_IDE_LOCATION}" ]; then
 
   if [ -n "${PYCHARM_PROJECT_CONFIG_LOCATION}" ]; then
     echo "Sym-linking to PyCharm project config files."
-    CONFIG_PARENT_DIR=~/.config/JetBrains/RemoteDev-PY/
-    mkdir -p "${CONFIG_PARENT_DIR}"
-    ln -s "${PYCHARM_PROJECT_CONFIG_LOCATION}" "${CONFIG_PARENT_DIR}/_opt_project"
+    # Project config.
+    ln -s "${PYCHARM_PROJECT_CONFIG_LOCATION}/_idea" "${PROJECT_ROOT}/.idea"
+    # IDE project-config.
+    IDE_CONFIG_PARENT_DIR=~/.config/JetBrains/RemoteDev-PY/
+    mkdir -p "${IDE_CONFIG_PARENT_DIR}"
+    ln -s "${PYCHARM_PROJECT_CONFIG_LOCATION}/_config" "${CONFIG_PARENT_DIR}/_opt_project"
   fi
 
   REMOTE_DEV_NON_INTERACTIVE=1 \

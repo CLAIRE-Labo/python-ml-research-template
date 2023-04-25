@@ -217,7 +217,7 @@ Nevertheless, option 2 could have some bugs as we're not sure yet
 how safe it is to have the directory containing the binaries of the IDE shared between machines.
 Option 1 is bug free as it installs a fresh copy of the IDE on the container.
 
-For both options your project directory will be the ${PROJECT_ROOT}=`/opt/project` in the container.
+For both options your project directory will be the `${PROJECT_ROOT}=/opt/project` in the container.
 
 _Option 1_:
 
@@ -252,16 +252,24 @@ _Option 2_:
 
 **Saving the project IDE configuration**
 
-The remote IDE stores its configs (e.g. the interpreters you set up) in `~/.config/JetBrains/RemoteDev-PY/_opt_project`.
-You can copy this directory to your PVC to save the IDE configuration.
-That way you will not have to set up the IDE each time you start a new container.
-A good place to copy it to your project root on your PVC, which will look like this in the example we provide
+The remote IDE stores its configuration (e.g. the interpreters you set up, memory ) in `~/.config/JetBrains/RemoteDev-PY/_opt_project`.
+This is project-based.
+Moreover, the project configuration is stored in `${PROJECT_ROOT}/.idea`.
+To have both of these maintained between different dev containers you can create placeholder
+directories in your PVC and the template will handle sym-linking them when the container starts.
+A good place to create those directories as they are project-dependant is in your project root on your PVC,
+which will look like this in the example we provide
 
     ```bash
     /mlodata1/moalla/machrou3
-    ├── dev                 # The copy of your repository for development.
-    ├── run                 # The frozen copy of your repository for unattended jobs.
-    ├── pycharm-config-dir  # The directory containing the PyCharm IDE configuration for the project.
+    ├── dev             # The copy of your repository for development.
+    ├── run             # The frozen copy of your repository for unattended jobs.
+    └── pycharm-config  
+        ├── _config     # To contain the IDE .config for the project.
+        └── _idea       # To contain the project .idea.
+    ```
+
+# The directory containing the PyCharm IDE configuration for the project.
 
 **Limitations**
 

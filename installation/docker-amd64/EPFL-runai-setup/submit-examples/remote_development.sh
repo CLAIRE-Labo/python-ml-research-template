@@ -9,7 +9,7 @@ runai submit \
   --environment OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
   --environment EPFL_RUNAI_INTERACTIVE=1 \
   --environment PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm \
-  --environment PYCHARM_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/pycharm-config-dir \
+  --environment PYCHARM_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/pycharm-config \
   -- sleep infinity
 
 # The important bits here are:
