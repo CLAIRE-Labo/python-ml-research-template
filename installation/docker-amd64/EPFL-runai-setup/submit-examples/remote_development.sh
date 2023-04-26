@@ -1,3 +1,4 @@
+## PyCharm example:
 runai submit \
   --name example-remote-development \
   --interactive \
@@ -8,6 +9,7 @@ runai submit \
   --environment DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_data \
   --environment OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
   --environment EPFL_RUNAI_INTERACTIVE=1 \
+  --environment SSH_SERVER=1 \
   --environment PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm \
   --environment PYCHARM_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/pycharm-config \
   -- sleep infinity
@@ -16,8 +18,6 @@ runai submit \
 
 # --environment EPFL_RUNAI_INTERACTIVE=1
 # which runs the EPFL RunAI interactive startup.
-
-# PyCharm:
 # --environment SSH_SERVER=1
 # which starts an ssh server in the container.
 # --environment PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm
@@ -25,9 +25,24 @@ runai submit \
 # --environment PYCHARM_PROJECT_CONFIG_LOCATION
 # specifies the location of the PyCharm project configuration.
 
+## Jupyter Lab example:
+runai submit \
+  --name example-remote-development \
+  --interactive \
+  --image ic-registry.epfl.ch/mlo/machrou3/moalla:latest \
+  --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
+  --environment EPFL_RUNAI=1 \
+  --environment PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev \
+  --environment DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_data \
+  --environment OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
+  --environment EPFL_RUNAI_INTERACTIVE=1 \
+  --environment JUPYTER_SERVER=1 \
+  -- sleep infinity
+
+
 ## You could also replace the PyCharm bits with:
 # Jupyter Lab:
-# --environment JUPYTER_LAB=1
+# --environment JUPYTER_SERVER=1
 
 
 ## Useful commands.

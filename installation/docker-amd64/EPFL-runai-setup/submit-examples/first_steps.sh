@@ -5,6 +5,7 @@ runai submit \
   --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
   --environment EPFL_RUNAI=1 \
   --environment EPFL_RUNAI_INTERACTIVE=1 \
+  --environment SSH_SERVER=1 \
   --environment SSH_ONLY=1 \
   -- sleep infinity
 
@@ -12,7 +13,8 @@ runai submit \
 # This will start an ssh server in the container, without setting the paths for your project.
 # The important bits here are
 # --environment EPFL_RUNAI=1
-#  --environment EPFL_RUNAI_INTERACTIVE=1
+# --environment EPFL_RUNAI_INTERACTIVE=1
+# --environment SSH_SERVER=1
 # --environment SSH_ONLY=1
 # --pvc your_pvc_name:/where_to_mount_your_pvc (you can mount it anywhere)
 

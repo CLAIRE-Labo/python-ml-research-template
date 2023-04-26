@@ -4,6 +4,7 @@
 # They should not be required for the project to run.
 # Only for convenience during interactive development.
 # While keeping the Docker image light.
+echo "Installing apt packages."
 echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get update
 echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get install -y \
   ca-certificates \
@@ -13,38 +14,38 @@ echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get install -y \
   openssh-server \
   vim \
   wget
-
+echo "Installed apt packages."
 ####################
 # Open ssh server.
 
-# Configuration for ssh server.
-echo "${PASSWD}" | sudo -S mkdir /var/run/sshd
-echo "${PASSWD}" | sudo -S sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
-
-# Export environment variables relevant for ssh connection.
-{
-  echo "export PROJECT_NAME=${PROJECT_NAME}"
-  echo "export PACKAGE_NAME=${PACKAGE_NAME}"
-  echo "export PROJECT_DIR=${PROJECT_DIR}"
-  echo "export DATA_DIR=${DATA_DIR}"
-  echo "export OUTPUTS_DIR=${OUTPUTS_DIR}"
-  echo "export LANG=${LANG}"
-  echo "export LC_ALL=${LC_ALL}"
-  echo "export PYTHONENCODING=${PYTHONENCODING}"
-  echo "export PASSWD=${PASSWD}"
-} >>"${ZDOTDIR}"/.zshrc
-
-if [ -n "${SSH_ONLY}" ]; then
-  # SSH-only mode for first time use, or debugging.
-  echo "SSH_ONLY mode enabled."
-  echo "${PASSWD}" | sudo -S /usr/sbin/sshd -D
-  # The above runs in foreground, so the script will not continue.
-fi
-
 if [ -n "${SSH_SERVER}" ]; then
-  echo "Starting ssh server."
-  echo "${PASSWD}" | sudo -S /usr/sbin/sshd
-  # This runs in background, so the script will continue.
+  # Configuration for ssh server.
+  echo "Configuring ssh server."
+  echo "${PASSWD}" | sudo -S mkdir /var/run/sshd
+  echo "${PASSWD}" | sudo -S sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
+  # Export environment variables relevant for ssh connection.
+  {
+    echo "export PROJECT_NAME=${PROJECT_NAME}"
+    echo "export PACKAGE_NAME=${PACKAGE_NAME}"
+    echo "export PROJECT_DIR=${PROJECT_DIR}"
+    echo "export DATA_DIR=${DATA_DIR}"
+    echo "export OUTPUTS_DIR=${OUTPUTS_DIR}"
+    echo "export LANG=${LANG}"
+    echo "export LC_ALL=${LC_ALL}"
+    echo "export PYTHONENCODING=${PYTHONENCODING}"
+    echo "export PASSWD=${PASSWD}"
+  } >>"${ZDOTDIR}"/.zshrc
+
+  if [ -n "${SSH_ONLY}" ]; then
+    # SSH-only mode for first time use, or debugging.
+    echo "SSH_ONLY mode enabled."
+    echo "${PASSWD}" | sudo -S /usr/sbin/sshd -D
+    # The above runs in foreground, so the script will not continue.
+  else
+    echo "Starting ssh server."
+    echo "${PASSWD}" | sudo -S /usr/sbin/sshd
+    # This runs in background, so the script will continue.
+  fi
 fi
 
 ####################
