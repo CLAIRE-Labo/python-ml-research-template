@@ -16,6 +16,7 @@ echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get install -y \
 # Open ssh server.
 if [ -n "${SSH_ONLY}" ]; then
   # SSH-only mode for first time use, or debugging.
+  echo "SSH_ONLY mode enabled."
   echo "${PASSWD}" | sudo -S /usr/sbin/sshd -D
   # The above runs in foreground, so the script will not continue.
 else
