@@ -131,20 +131,20 @@ COPY --link --from=conda-env --chown=${UID}:${GID} ${CONDA_INSTALL_PATH} ${CONDA
 
 # Set the user.
 USER ${USR}
-ARG HOME=/home/${USR}
 
 # Initialize conda for interactive shells.
 ARG PROJECT_NAME
 ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
+ENV ZDOTDIR=/home/${USR}
 RUN /bin/zsh -i -c "mamba init zsh" && \
     {   echo "mamba activate ${PROJECT_NAME}"; \
         echo "alias conda=mamba # For those who still think it's conda :)"; \
-    } >> ${HOME}/.zshrc
+    } >> ${ZDOTDIR}/.zshrc
 
 # Zsh configuration.
-ARG PURE_PATH=${HOME}/.zsh/pure
-ARG ZSHA_PATH=${HOME}/.zsh/zsh-autosuggestions
-ARG ZSHS_PATH=${HOME}/.zsh/zsh-syntax-highlighting
+ARG PURE_PATH=${ZDOTDIR}/.zsh/pure
+ARG ZSHA_PATH=${ZDOTDIR}/.zsh/zsh-autosuggestions
+ARG ZSHS_PATH=${ZDOTDIR}/.zsh/zsh-syntax-highlighting
 COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/pure ${PURE_PATH}
 COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
 COPY --link --from=get-pure --chown=${UID}:${GID} /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
@@ -158,7 +158,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "alias wns='watch nvidia-smi'"; \
         echo "alias hist='history 1'"; \
         echo "alias update_env_file='source installation/docker-amd64/dependencies/update_env_file.sh'"; \
-    } >> ${HOME}/.zshrc
+    } >> ${ZDOTDIR}/.zshrc
 
 ########################################################################
 # Final layer.
@@ -200,4 +200,4 @@ RUN {   echo "export PROJECT_NAME=${PROJECT_NAME}"; \
         echo "export LC_ALL=${LC_ALL}"; \
         echo "export PYTHONENCODING=${PYTHONENCODING}"; \
         echo "export PASSWD=${PASSWD}"; \
-    } >> ${HOME}/.zshrc
+    } >> ${ZDOTDIR}/.zshrc
