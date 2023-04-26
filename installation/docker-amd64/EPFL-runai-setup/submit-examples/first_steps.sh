@@ -16,5 +16,9 @@ runai submit \
 # --environment SSH_ONLY=1
 # --pvc your_pvc_name:/where_to_mount_your_pvc (you can mount it anywhere)
 
-# Utils
-# watch -n 1 runai describe job example-first-steps
+## Useful commands.
+# runai describe job example-first-steps
+# runai logs example-first-steps
+# kubectl port-forward example-first-steps-0-0  2222:22
+# ssh-keygen -R '[127.0.0.1]:2222'
+# ssh -p 2222 moalla@127.0.0.1

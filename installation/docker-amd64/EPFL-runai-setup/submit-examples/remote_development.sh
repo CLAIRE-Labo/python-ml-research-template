@@ -15,10 +15,13 @@ runai submit \
 # The important bits here are:
 # --environment EPFL_RUNAI_INTERACTIVE=1
 # which starts an ssh server on the job.
-# and
 # --environment PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm
 # starts the PyCharm remote development server.
+# --environment PYCHARM_PROJECT_CONFIG_LOCATION
+# specifies the location of the PyCharm project configuration.
 
-# Utils:
-# watch -n 1 runai describe job example-remote-development
-# watch -n 1 runai logs example-remote-development
+# Useful commands.
+# runai describe job example-remote-development
+# runai logs example-remote-development
+# ssh-keygen -R '[127.0.0.1]:2222'
+# kubectl port-forward example-remote-development-0-0  2222:22

@@ -20,6 +20,7 @@ if [ -n "${SSH_ONLY}" ]; then
   echo "${PASSWD}" | sudo -S /usr/sbin/sshd -D
   # The above runs in foreground, so the script will not continue.
 else
+  echo "Starting ssh server."
   echo "${PASSWD}" | sudo -S /usr/sbin/sshd
   # This runs in background, so the script will continue.
 fi
@@ -40,7 +41,7 @@ if [ -n "${PYCHARM_IDE_LOCATION}" ]; then
     # IDE project-config.
     IDE_CONFIG_PARENT_DIR=~/.config/JetBrains/RemoteDev-PY/
     mkdir -p "${IDE_CONFIG_PARENT_DIR}"
-    ln -s "${PYCHARM_PROJECT_CONFIG_LOCATION}/_config" "${CONFIG_PARENT_DIR}/_opt_project"
+    ln -s "${PYCHARM_PROJECT_CONFIG_LOCATION}/_config" "${IDE_CONFIG_PARENT_DIR}/_opt_project"
   fi
 
   REMOTE_DEV_NON_INTERACTIVE=1 \
