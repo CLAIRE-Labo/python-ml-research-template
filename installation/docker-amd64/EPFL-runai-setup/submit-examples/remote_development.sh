@@ -12,15 +12,25 @@ runai submit \
   --environment PYCHARM_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/pycharm-config \
   -- sleep infinity
 
-# The important bits here are:
+## The important bits here are:
+
 # --environment EPFL_RUNAI_INTERACTIVE=1
-# which starts an ssh server on the job.
+# which runs the EPFL RunAI interactive startup.
+
+# PyCharm:
+# --environment SSH_SERVER=1
+# which starts an ssh server in the container.
 # --environment PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm
 # starts the PyCharm remote development server.
 # --environment PYCHARM_PROJECT_CONFIG_LOCATION
 # specifies the location of the PyCharm project configuration.
 
-# Useful commands.
+## You could also replace the PyCharm bits with:
+# Jupyter Lab:
+# --environment JUPYTER_LAB=1
+
+
+## Useful commands.
 # runai describe job example-remote-development
 # runai logs example-remote-development
 # ssh-keygen -R '[127.0.0.1]:2222'

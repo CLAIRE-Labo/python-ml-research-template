@@ -1,6 +1,5 @@
 # `apt` requirements file.
 # Tip: sort your packages alphabetically.
-openssh-server      # For remote IDEs.
 openssl             # Required.
 sudo                # Required.
 zsh                 # Required.

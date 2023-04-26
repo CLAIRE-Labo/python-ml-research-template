@@ -78,7 +78,7 @@ Adapt the `submit-examples/minimal.sh` with the name of your image, your PVC(s),
 in the PVC(s).
 
 As in the example, when you specify the `EPFL_RUNAI=1` environment variable with your submit command,
-the entrypoint of the container will run an additional setup script that:
+the entrypoint of the container will run a setup script that:
 
 - Creates symlinks to the relevant directories in your PVCs on the `${PROJECT_ROOT}=/opt/project/` in the container.
   (Currently this is a workaround as RunAI does not support directly mounting subdirectories of PVCs)
@@ -128,28 +128,13 @@ Your job would start a remote IDE running on the cluster, and you would only hav
 on you laptop.
 
 When you specify an additional environment variable with your submitted job `EPFL_RUNAI_INTERACTIVE=1`,
-the entrypoint will run an additional setup script that:
+the entrypoint will run an additional setup script that can start an ssh server and a remote development server
+for your preferred IDE.
 
-- starts an ssh server.
-- starts a remote development server if you specify the path to the IDE binaries.
+You can configure this to your needs with environment variables sent with the `runai submit` command.
+An example of an interactive job submission can be found in `submit-examples/remote_development.sh`.
 
-You can configure this to your needs with environment variables sent with the `runai submit` command:
-An example of an interactive job submission can be found in `submit-examples/remote_development.sh`
-
-The list of environment variables that you can use to configure your interactive job are:
-
-```bash
---environment SSH_FORWARD_PORT=<>       # Port on the local machine that forwards to the ssh server on the container.
-                                        # Defaults to 2222.
---environment PYCHARM_IDE_LOCATION=<>   # Path to the PyCharm remote IDE binaries.
-                                        # If specified, will start the remote IDE on the container.
---environment PYCHARM_PROJECT_CONFIG_LOCATION=<> # Path to the PyCharm project configuration directory.
-                                                 # If specified, will symlink to it, otherwise will be a fresh IDE.
---environment VSCODE_IDE_LOCATION # TODO.
---environment JUPYTER_SOMETHING # TODO.
-```
-
-We describe in more detail how you can do remote development below.
+Below, we list and describe in more detail the tools and IDEs supported for remote development.
 
 #### SSH configuration
 
@@ -196,8 +181,8 @@ Note that an ssh connection to the container is not like executing a shell on th
 
 - environment variables created when running the container are not available during ssh connections.
   You can work around this by explicitly adding them to the`.zshrc`
-  with `echo "export VARIABLE=${VARIABLE}" >> ~/.zshrc` in the Dockerfile if these are build-time variables
-  or in the entrypoint script if those are runtime variables.
+  with `echo "export VARIABLE=${VARIABLE}" >> ~/.zshrc` in the entrypoint script.
+  This is already done for some variable
 
 #### PyCharm
 
@@ -213,13 +198,32 @@ The template supports both options.
 We suggest using option 1 when you don't have access to the PyCharm remote IDE binaries as a first time.
 Then settle with option 2 as it makes using RunAI as your daily driver feel like just opening a local IDE.
 
-Nevertheless, option 2 could have some bugs as we're not sure yet
-how safe it is to have the directory containing the binaries of the IDE shared between machines.
-Option 1 is bug free as it installs a fresh copy of the IDE on the container.
-
 For both options your project directory will be the `${PROJECT_ROOT}=/opt/project` in the container.
 
-_Option 1_:
+**Preliminaries: saving the project IDE configuration**
+
+The remote IDE stores its configuration (e.g. the interpreters you set up, memory )
+in `~/.config/JetBrains/RemoteDev-PY/_opt_project`.
+This is project-based.
+Moreover, the project configuration is stored in `${PROJECT_ROOT}/.idea`.
+To have both of these maintained between different dev containers you can create placeholder
+directories in your PVC and the template will handle sym-linking them when the container starts.
+A good place to create those directories as they are project-dependant is in your project root on your PVC,
+which will look like this in the example we provide
+
+    ```bash
+    /mlodata1/moalla/machrou3
+    ├── dev             # The copy of your repository for development.
+    ├── run             # The frozen copy of your repository for unattended jobs.
+    └── pycharm-config  
+        ├── _config     # To contain the IDE .config for the project.
+        └── _idea       # To contain the project .idea.
+    ```
+
+You can then specify the `PYCHARM_PROJECT_CONFIG_LOCATION` env variable with your submit command to maintain
+your IDE and project configurations.
+
+**Option 1**:
 
 1. Submit your job as in the example `submit-examples/remote_development.sh` without specifying the path to the IDE.
 2. Enable ssh forwarding.
@@ -228,7 +232,7 @@ _Option 1_:
 You can then copy the binaries in `~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version>` to your PVC
 to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the example.)
 
-_Option 2_:
+**Option 2**:
 
 1. In your `runai submit` command,
 
@@ -250,41 +254,58 @@ _Option 2_:
 3. Use the Gateway link to connect to the remote IDE from a local JetBrains Gateway client as
    described [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#use_idea).
 
-**Saving the project IDE configuration**
-
-The remote IDE stores its configuration (e.g. the interpreters you set up, memory ) in `~/.config/JetBrains/RemoteDev-PY/_opt_project`.
-This is project-based.
-Moreover, the project configuration is stored in `${PROJECT_ROOT}/.idea`.
-To have both of these maintained between different dev containers you can create placeholder
-directories in your PVC and the template will handle sym-linking them when the container starts.
-A good place to create those directories as they are project-dependant is in your project root on your PVC,
-which will look like this in the example we provide
-
-    ```bash
-    /mlodata1/moalla/machrou3
-    ├── dev             # The copy of your repository for development.
-    ├── run             # The frozen copy of your repository for unattended jobs.
-    └── pycharm-config  
-        ├── _config     # To contain the IDE .config for the project.
-        └── _idea       # To contain the project .idea.
-    ```
-
 # The directory containing the PyCharm IDE configuration for the project.
 
 **Limitations**
 
+- The terminal in PyCharm is opening a `bash` shell instead of the configured `zsh` shell.
+  You need to switch to `zsh` manually.
 - The terminal in PyCharm opens ssh connections to the container, so the limitations in the ssh section apply.
     - If needed, a workaround would be to just open a separate terminal on your local machine
       and directly exec a shell into the container.
-- The template does not support storing all the IDE configuration yet (this is work in progress).
 
 #### VSCode
 
 #### JuptyerLab
 
-Note: make a note that jupyter notebooks are harder to reproduce and do not fill well in a codebase.
-Use them to experiment with plots maybe, but then copy the code to a proper script that outputs the figure
-to a file.
+If you have `jupyterlab` in your `conda` dependencies, then the template can open a Jupyter Lab server for you when
+the container starts.
+
+To do so,
+
+1. Set the `JUPYTER_SERVER=1` environment variable in your `runai submit` command.
+   You can find an example in `submit-examples/remote_development.sh`.
+
+   A Jupyter server will start running with your container. It will print a link to container logs.
+
+   Get the logs with `runai logs <job-name>`.
+   The link looks like:
+
+   ```bash
+   [C 2023-04-26 17:17:03.072 ServerApp] 
+    
+    To access the server, open this file in a browser:
+        ...
+    Or copy and paste one of these URLs:
+        http://localhost:8888/lab?token=6e302b1931cf81a87f786a70f616762547af8f4b3741c20c
+        http://127.0.0.1:8888/lab?token=6e302b1931cf81a87f786a70f616762547af8f4b3741c20c
+   ```
+
+2. Forward the port `8888` on your local machine to the port `8888` on the container.
+   ```bash
+   kubeclt port-forward <job-name> 8888:8888
+   ```
+
+3. Open the link in your browser.
+
+**Note:**
+Development on Jupyter notebooks can be very useful, e.g. for quick iterations, plotting, etc, however,
+it can very easily facilitate bad practices, such as debugging with print statements, prevalence of global variables,
+relying on long-living kernel state, and hinder the reproducibility work.
+We strongly recommend using an IDE with a proper debugger for development, which would fill the need for quick
+iterations,
+and only use Jupyter notebooks for plotting end results (where data is properly loaded from the output of a training
+script).
 
 ### Examples
 
