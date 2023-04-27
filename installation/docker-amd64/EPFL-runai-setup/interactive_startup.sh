@@ -90,7 +90,7 @@ fi
 # if the pycharm_ide_location variable is set:
 if [ -n "${VSCODE_PROJECT_CONFIG_LOCATION}" ]; then
   echo "[TEMPLATE] Sym-linking to VSCode server config files."
-  ln -s "${VSCODE_PROJECT_CONFIG_LOCATION}/_vscode-server" "${HOME}/.vscode-server"
+  ln -s "${VSCODE_PROJECT_CONFIG_LOCATION}" "${HOME}/.vscode-server"
 fi
 
 #####################

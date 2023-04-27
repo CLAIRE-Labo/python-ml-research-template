@@ -222,14 +222,14 @@ directories in your PVC and the template will handle sym-linking them when the c
 A good place to create those directories as they are project-dependant is in your project root on your PVC,
 which will look like this in the example we provide
 
-    ```bash
-    /mlodata1/moalla/machrou3
-    ├── dev             # The copy of your repository for development.
-    ├── run             # The frozen copy of your repository for unattended jobs.
-    └── pycharm-config  
-        ├── _config     # To contain the IDE .config for the project.
-        └── _idea       # To contain the project .idea.
-    ```
+```
+/mlodata1/moalla/machrou3
+├── dev             # The copy of your repository for development.
+├── run             # The frozen copy of your repository for unattended jobs.
+└── _pycharm-config  
+    ├── _config     # To contain the IDE .config for the project.
+    └── _idea       # To contain the project .idea.
+```
 
 You can then specify the `PYCHARM_PROJECT_CONFIG_LOCATION` env variable with your submit command to maintain
 your IDE and project configurations.
@@ -237,8 +237,8 @@ your IDE and project configurations.
 **Option 1**:
 
 1. Submit your job as in the example `submit-examples/remote_development.sh` and set the environment variables to
-   - Open an ssh server `SSH_SERVER=1`.
-   - Optionally, preserve your config `PYCHARM_PROJECT_CONFIG_LOCATION`
+    - Open an ssh server `SSH_SERVER=1`.
+    - Optionally, preserve your config `PYCHARM_PROJECT_CONFIG_LOCATION`
 2. Enable ssh forwarding.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
 
@@ -288,13 +288,12 @@ directory in your PVC and the template will handle sym-linking it when the conta
 A good place to create this directory (as we treat it as project-dependant) is in your project root on your PVC,
 which will look like this in the example we provide
 
-    ```bash
-    /mlodata1/moalla/machrou3
-    ├── dev             # The copy of your repository for development.
-    ├── run             # The frozen copy of your repository for unattended jobs.
-    └── vscode-config  
-        └── _vscode-server    # To contain the IDE .vscode-server for the project.
-    ```
+```
+/mlodata1/moalla/machrou3
+├── dev             # The copy of your repository for development.
+├── run             # The frozen copy of your repository for unattended jobs.
+└── _vscode-server  # To contain the IDE .vscode-server for the project.
+```
 
 You can then specify the `VSCODE_PROJECT_CONFIG_LOCATION` env variable with your submit command to preserve
 your IDE configuration.
@@ -317,16 +316,16 @@ Host runai
 1. In your `runai submit` command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
     - Optionally, preserve your config `VSCODE_PROJECT_CONFIG_LOCATION`.
-2. Enable ssh forwarding.
-3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) 
-   on your local VS Code.
+2. Enable ssh forwarding (and eventually `ssh-keygen -R '[127.0.0.1]:2222'`).
+3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
+   extension on your local VS Code.
 4. Follow the steps [here](https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host)
 
-The root directory for your workspace should be the `${PROJECT_ROOT}=/opt/project` on the container.
+Set the root directory of your VS Code workspace to the `${PROJECT_ROOT}=/opt/project` on the container.
 
 **Limitations**
 
-- The terminal in PyCharm opens ssh connections to the container, so the limitations in the ssh section apply.
+- The terminal in VS Code opens ssh connections to the container, so the limitations in the ssh section apply.
     - If needed, a workaround would be to just open a separate terminal on your local machine
       and directly exec a shell into the container.
 - Support for programs with graphical interfaces (e.g. simulators) has not been tested yet.

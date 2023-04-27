@@ -11,7 +11,7 @@ runai submit \
   --environment EPFL_RUNAI_INTERACTIVE=1 \
   --environment SSH_SERVER=1 \
   --environment PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm \
-  --environment PYCHARM_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/pycharm-config \
+  --environment PYCHARM_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/_pycharm-config \
   -- sleep infinity
 
 ## The new bits here are:
@@ -36,7 +36,7 @@ runai submit \
   --environment OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
   --environment EPFL_RUNAI_INTERACTIVE=1 \
   --environment SSH_SERVER=1 \
-  --environment VSCODE_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/vsmcode-config \
+  --environment VSCODE_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/_vscode-server \
   -- sleep infinity
 
 ## Jupyter Lab example:
