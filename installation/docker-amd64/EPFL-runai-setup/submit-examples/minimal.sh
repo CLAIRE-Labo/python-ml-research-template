@@ -27,3 +27,8 @@ runai submit \
 #  --environment OUTPUTS_DIR_IN_PVC=/mloraw1/moalla/machrou3/dev/_outputs
 
 # The same applies to the data directory with DATA_DIR_IN_PVC.
+
+## Useful commands.
+# runai describe job example-minimal
+# runai logs example-minimal
+# runai exec -it example-minimal zsh

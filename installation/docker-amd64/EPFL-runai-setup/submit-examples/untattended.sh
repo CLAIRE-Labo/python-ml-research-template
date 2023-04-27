@@ -15,3 +15,7 @@ runai submit \
 # I'm pointing to the /run instance of my repository on my PVC.
 # That would be a copy of the machrou3 repo frozen in a commit at a working state to be used in unattended jobs.
 # Otherwise while developing I would change the code that would be picked by newly scheduled jobs.
+
+# Useful commands.
+# runai describe job example-unattended
+# runai logs example-unattended

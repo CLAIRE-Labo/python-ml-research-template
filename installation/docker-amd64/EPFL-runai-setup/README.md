@@ -182,7 +182,8 @@ Note that an ssh connection to the container is not like executing a shell on th
 - environment variables created when running the container are not available during ssh connections.
   You can work around this by explicitly adding them to the`.zshrc`
   with `echo "export VARIABLE=${VARIABLE}" >> ~/.zshrc` in the entrypoint script.
-  This is already done for some variable
+  This is already done for some variable.
+  (Impact: one more line to add at build time.)
 
 #### PyCharm
 
@@ -259,7 +260,8 @@ to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the e
 **Limitations**
 
 - The terminal in PyCharm is opening a `bash` shell instead of the configured `zsh` shell.
-  You need to switch to `zsh` manually.
+  You need to get into `zsh` manually.
+  (Impact: a 1-second delay when opening a new terminal.)
 - The terminal in PyCharm opens ssh connections to the container, so the limitations in the ssh section apply.
     - If needed, a workaround would be to just open a separate terminal on your local machine
       and directly exec a shell into the container.
@@ -299,6 +301,7 @@ To do so,
 3. Open the link in your browser.
 
 **Note:**
+
 Development on Jupyter notebooks can be very useful, e.g. for quick iterations, plotting, etc, however,
 it can very easily facilitate bad practices, such as debugging with print statements, prevalence of global variables,
 relying on long-living kernel state, and hinder the reproducibility work.
@@ -306,6 +309,13 @@ We strongly recommend using an IDE with a proper debugger for development, which
 iterations,
 and only use Jupyter notebooks for plotting end results (where data is properly loaded from the output of a training
 script).
+
+**Limitations:**
+
+- The default terminal opened by Jupyter Lab is `sh` and not `zsh`, you need to get into a `zsh` manually.
+  (Impact: 1 second delay.)
+- The author of the template does not use Jupyter Lab so limitations are not be known yet.
+  (Impact: unknown.)
 
 ### Examples
 

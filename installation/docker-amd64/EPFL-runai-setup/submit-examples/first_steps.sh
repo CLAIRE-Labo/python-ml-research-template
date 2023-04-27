@@ -11,7 +11,7 @@ runai submit \
 
 ## Notes:
 # This will start an ssh server in the container, without setting the paths for your project.
-# The important bits here are
+# The important bits here are:
 # --environment EPFL_RUNAI=1
 # --environment EPFL_RUNAI_INTERACTIVE=1
 # --environment SSH_SERVER=1
