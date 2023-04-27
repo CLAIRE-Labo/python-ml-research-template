@@ -124,19 +124,22 @@ Note the emphasis on having a frozen copy of the repository for running unattend
 
 This would be the typical use case for a researcher at <lab-name> using the RunAI cluster as their daily driver to do
 development, testing, and debugging.
-Your job would start a remote IDE running on the cluster, and you would only have a lightweight local IDE client running
+Your job would be running a remote IDE/code editor on the cluster, and you would only have a lightweight local client
+running
 on you laptop.
 
-When you specify an additional environment variable with your submitted job `EPFL_RUNAI_INTERACTIVE=1`,
+When you specify the additional environment variable with your submitted job `EPFL_RUNAI_INTERACTIVE=1`,
 the entrypoint will run an additional setup script that can start an ssh server and a remote development server
-for your preferred IDE.
+for your preferred IDE/code editor.
 
 You can configure this to your needs with environment variables sent with the `runai submit` command.
 An example of an interactive job submission can be found in `submit-examples/remote_development.sh`.
 
 Below, we list and describe in more detail the tools and IDEs supported for remote development.
 
-#### SSH configuration
+#### SSH
+
+Your job will open an ssh server when set the environment variable `SSH_SERVER=1`.
 
 The ssh server is configured to run on port 22 of the container.
 With RunAI, you can forward a local port on your machine to this port on the container.
@@ -187,9 +190,16 @@ Note that an ssh connection to the container is not like executing a shell on th
 
 #### PyCharm
 
-There are two main ways to use
-PyCharm [Remote Development](https://www.jetbrains.com/help/pycharm/remote-development-overview.html) with an ssh
-server (here our container):
+We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remote-development-overview.html) feature of
+PyCharm
+that runs a remote IDE in the container.
+We prefer this method to using the container as
+a [remote interpreter](https://www.jetbrains.com/help/pycharm/configuring-remote-interpreters-via-ssh.html), as with the
+latter the code will have to be kept
+in sync between the container and your local machine, creating a mismatch with the non-interactive way of running the
+template.
+
+There are two main ways to use PyCharm Remote development with an ssh server (here our container):
 
 1. Using the JetBrains Gateway client to install the IDE in the server and connect to it.
 2. The server has access to remote IDE binaries, starts the IDE on its own, and gives you a link to use with
@@ -226,7 +236,9 @@ your IDE and project configurations.
 
 **Option 1**:
 
-1. Submit your job as in the example `submit-examples/remote_development.sh` without specifying the path to the IDE.
+1. Submit your job as in the example `submit-examples/remote_development.sh` and set the environment variables to
+   - Open an ssh server `SSH_SERVER=1`.
+   - Optionally, preserve your config `PYCHARM_PROJECT_CONFIG_LOCATION`
 2. Enable ssh forwarding.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
 
@@ -235,10 +247,11 @@ to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the e
 
 **Option 2**:
 
-1. In your `runai submit` command,
-
-    - Set the environment variable for the path to PyCharm remote IDE binaries on your PVC `PYCHARM_IDE_LOCATION`.
-    - Optionally if your forward port is different from 2222 set `SSH_FORWARD_PORT`.
+1. In your `runai submit` command, set the environment variables for
+    - Opening an ssh server `SSH_SERVER=1`.
+    - the path to PyCharm remote IDE binaries on your PVC `PYCHARM_IDE_LOCATION`.
+    - Optionally, preserve your config `PYCHARM_PROJECT_CONFIG_LOCATION`
+    - Optionally, if your forward port is different from 2222 set `SSH_FORWARD_PORT`.
 
    You can find an example in `submit-examples/remote_development.sh`.
 
@@ -255,20 +268,72 @@ to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the e
 3. Use the Gateway link to connect to the remote IDE from a local JetBrains Gateway client as
    described [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#use_idea).
 
-# The directory containing the PyCharm IDE configuration for the project.
-
 **Limitations**
 
-- The terminal in PyCharm is opening a `bash` shell instead of the configured `zsh` shell.
-  You need to get into `zsh` manually.
-  (Impact: a 1-second delay when opening a new terminal.)
 - The terminal in PyCharm opens ssh connections to the container, so the limitations in the ssh section apply.
     - If needed, a workaround would be to just open a separate terminal on your local machine
       and directly exec a shell into the container.
+- Support for programs with graphical interfaces (e.g. simulators) has not been tested yet.
 
 #### VSCode
 
-#### JuptyerLab
+We support the [Remote Development using SSH ](https://code.visualstudio.com/docs/remote/ssh) feature of
+VS code that runs a remote IDE in the container.
+
+**Preliminaries: saving the IDE configuration**
+
+The remote IDE stores its configuration (e.g. the extensions you set up) in `~/.vscode-server`.
+To have it preserved between different dev containers you can create placeholder
+directory in your PVC and the template will handle sym-linking it when the container starts.
+A good place to create this directory (as we treat it as project-dependant) is in your project root on your PVC,
+which will look like this in the example we provide
+
+    ```bash
+    /mlodata1/moalla/machrou3
+    ├── dev             # The copy of your repository for development.
+    ├── run             # The frozen copy of your repository for unattended jobs.
+    └── vscode-config  
+        └── _vscode-server    # To contain the IDE .vscode-server for the project.
+    ```
+
+You can then specify the `VSCODE_PROJECT_CONFIG_LOCATION` env variable with your submit command to preserve
+your IDE configuration.
+
+**ssh configuration**
+
+VS Code takes ssh configuration from files.
+Edit your `~/.ssh/config` file to add the following:
+
+```bash
+Host runai
+	HostName 127.0.0.1
+	User moalla
+	Port 2222
+	ForwardAgent yes
+```
+
+**Connecting VS Code to the container**:
+
+1. In your `runai submit` command, set the environment variables for
+    - Opening an ssh server `SSH_SERVER=1`.
+    - Optionally, preserve your config `VSCODE_PROJECT_CONFIG_LOCATION`.
+2. Enable ssh forwarding.
+3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) 
+   on your local VS Code.
+4. Follow the steps [here](https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host)
+
+The root directory for your workspace should be the `${PROJECT_ROOT}=/opt/project` on the container.
+
+**Limitations**
+
+- The terminal in PyCharm opens ssh connections to the container, so the limitations in the ssh section apply.
+    - If needed, a workaround would be to just open a separate terminal on your local machine
+      and directly exec a shell into the container.
+- Support for programs with graphical interfaces (e.g. simulators) has not been tested yet.
+- The author of the template does not use Jupyter Lab so limitations are not be known yet.
+  (Impact: unknown.)
+
+#### JupyterLab
 
 If you have `jupyterlab` in your `conda` dependencies, then the template can open a Jupyter Lab server for you when
 the container starts.
@@ -312,9 +377,7 @@ script).
 
 **Limitations:**
 
-- The default terminal opened by Jupyter Lab is `sh` and not `zsh`, you need to get into a `zsh` manually.
-  (Impact: 1 second delay.)
-- The author of the template does not use Jupyter Lab so limitations are not be known yet.
+- The author of the template does not use Jupyter Lab so limitations are not known yet.
   (Impact: unknown.)
 
 ### Examples

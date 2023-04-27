@@ -66,3 +66,4 @@ source installation/osx-arm64/update_env_file.sh
 You might also need users to install system dependencies.
 Use `conda` for those if possible, otherwise specify how to install those in the system dependencies section of
 [_Instructions to install the environment_](#instructions-to-install-the-environment).
+You could use `brew` or manual build instructions for those.
