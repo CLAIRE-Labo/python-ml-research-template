@@ -5,10 +5,10 @@
 At this point, you should have an image that can be deployed on multiple platforms.
 This guide will show you how to deploy your image on the EPFL IC RunAI cluster and use for:
 
-1. Remote development (as at <lab-name> we use the RunAI platform as our daily drivers).
+1. Remote development (as at CLAIRe we use the RunAI platform as our daily drivers).
 2. Running unattended jobs.
 
-Using the image on the HaaS lab machines falls into the public instructions
+Using the image on HaaS machines falls into the public instructions
 using the reproducible `local` Docker Compose servie and is covered by the
 instructions in the `installation/docker-amd64/README.md` file.
 
@@ -122,7 +122,7 @@ Note the emphasis on having a frozen copy of the repository for running unattend
 
 ### Remote development
 
-This would be the typical use case for a researcher at <lab-name> using the RunAI cluster as their daily driver to do
+This would be the typical use case for a researcher at CLAIRe using the RunAI cluster as their daily driver to do
 development, testing, and debugging.
 Your job would be running a remote IDE/code editor on the cluster, and you would only have a lightweight local client
 running
@@ -217,10 +217,10 @@ The remote IDE stores its configuration (e.g. the interpreters you set up, memor
 in `~/.config/JetBrains/RemoteDev-PY/_opt_project`.
 This is project-based.
 Moreover, the project configuration is stored in `${PROJECT_ROOT}/.idea`.
-To have both of these maintained between different dev containers you can create placeholder
+To have both of these preserved between different dev containers you should create placeholder
 directories in your PVC and the template will handle sym-linking them when the container starts.
 A good place to create those directories as they are project-dependant is in your project root on your PVC,
-which will look like this in the example we provide
+which will look like this in the example we provide:
 
 ```
 /mlodata1/moalla/machrou3
@@ -231,14 +231,14 @@ which will look like this in the example we provide
     └── _idea       # To contain the project .idea.
 ```
 
-You can then specify the `PYCHARM_PROJECT_CONFIG_LOCATION` env variable with your submit command to maintain
+You should then specify the `PYCHARM_PROJECT_CONFIG_LOCATION` env variable with your submit command to maintain
 your IDE and project configurations.
 
 **Option 1**:
 
 1. Submit your job as in the example `submit-examples/remote_development.sh` and set the environment variables to
     - Open an ssh server `SSH_SERVER=1`.
-    - Optionally, preserve your config `PYCHARM_PROJECT_CONFIG_LOCATION`
+    - preserve your config `PYCHARM_PROJECT_CONFIG_LOCATION`
 2. Enable ssh forwarding.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
 
@@ -250,7 +250,7 @@ to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the e
 1. In your `runai submit` command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
     - the path to PyCharm remote IDE binaries on your PVC `PYCHARM_IDE_LOCATION`.
-    - Optionally, preserve your config `PYCHARM_PROJECT_CONFIG_LOCATION`
+    - preserving your config `PYCHARM_PROJECT_CONFIG_LOCATION`
     - Optionally, if your forward port is different from 2222 set `SSH_FORWARD_PORT`.
 
    You can find an example in `submit-examples/remote_development.sh`.
@@ -283,7 +283,7 @@ VS code that runs a remote IDE in the container.
 **Preliminaries: saving the IDE configuration**
 
 The remote IDE stores its configuration (e.g. the extensions you set up) in `~/.vscode-server`.
-To have it preserved between different dev containers you can create placeholder
+To have it preserved between different dev containers you should create placeholder
 directory in your PVC and the template will handle sym-linking it when the container starts.
 A good place to create this directory (as we treat it as project-dependant) is in your project root on your PVC,
 which will look like this in the example we provide
@@ -295,7 +295,7 @@ which will look like this in the example we provide
 └── _vscode-server  # To contain the IDE .vscode-server for the project.
 ```
 
-You can then specify the `VSCODE_PROJECT_CONFIG_LOCATION` env variable with your submit command to preserve
+You should then specify the `VSCODE_PROJECT_CONFIG_LOCATION` env variable with your submit command to preserve
 your IDE configuration.
 
 **ssh configuration**
@@ -306,7 +306,7 @@ Edit your `~/.ssh/config` file to add the following:
 ```bash
 Host runai
 	HostName 127.0.0.1
-	User moalla
+	User <user>
 	Port 2222
 	ForwardAgent yes
 ```
@@ -315,7 +315,7 @@ Host runai
 
 1. In your `runai submit` command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
-    - Optionally, preserve your config `VSCODE_PROJECT_CONFIG_LOCATION`.
+    - preserving your config `VSCODE_PROJECT_CONFIG_LOCATION`.
 2. Enable ssh forwarding (and eventually `ssh-keygen -R '[127.0.0.1]:2222'`).
 3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
    extension on your local VS Code.
