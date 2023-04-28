@@ -39,29 +39,29 @@ Click on the `Use this template` (GitHub button) to create a new repo, clone it,
    A simple change if you're fine with the MIT licence is to replace the `2022 Skander Moalla` with your year and name.
 3. Setup and edit the development environment instructions for the platforms you'll use/support.
    We support the following platforms:
-    - **macOS with Apple Silicon (`osx-arm64`)**, with support for MPS hardware acceleration.
-      Refer to `installation/osx-arm64/README.md`.
-    - **Docker on AMD64 platforms** (e.g. linux server like the EPFL HaaS servers, WSL on a local machine, Kubernetes
+   - **AMD64 platforms (x86-64)** (e.g. linux server like the EPFL HaaS servers, WSL on a local machine, Kubernetes
       platforms like the EPFL RunAI Platform), with support for NVIDIA GPUs.
       Refer to `installation/docker-amd64/README.md`.
+   - **macOS with Apple Silicon (`osx-arm64`)**, with support for MPS hardware acceleration.
+     Refer to `installation/osx-arm64/README.md`.
 
-   Delete the _Template info_ section in the installation instructions of the platforms you plan to support, and the
-   whole installation directory for the platforms you don't use.
+   Delete the directory for the platforms you don't use.
 
    In addition, it is good to list your direct dependencies (with major versions when relevant) for users with other
    needs.
    For that, edit the section `Dependencies` as described below.
 4. Edit this `README.md` file.
     1. Replace the [_Overview_](#overview) section with description of your project.
-    2. Delete the [installation instructions](#development-environment) for the platforms you don't support.
-    3. List your direct dependencies (with major versions when relevant) in the Dependencies section. (Todo: link.)
+    2. Delete the installation instructions for the platforms you don't support in the [Getting Started](#getting-started) section.
+    3. List your direct dependencies (with major versions when relevant) in the development environment section of the [Getting Started](#getting-started).
     4. Delete this getting started, to only keep the project [Getting Started](#getting-started)
        section.
 5. You're off to a good start! Here are a few tips for keeping your project in a good shape.
-    - Todo.
-    - Remember to pin your dependencies whenever you install new news.
-      More details on this in the installation guides.
-    -
+    - Maintain good commit hooks. More on this in the [Contributing](#contributing) section.
+    - Remember to pin your dependencies whenever you install new ones.
+      More on this in the installation guides.
+    - Keep your `reproducibility_scripts/` directory up to date.
+      More on this in the [Reproducibility](#reproducibility) section.
 
 ## Getting Started
 
@@ -73,11 +73,11 @@ Todo. This will be the public instructions.
 
 We support the following platforms for installing the project dependencies and running the code.
 
-* AMD64 platforms (x86-64) with Docker support (e.g. linux server like the EPFL HaaS servers, WSL on a local machine,
-  Kubernetes platforms like the EPFL RunAI Platform); using [Docker](https://www.docker.com/).
-    - Refer to `installation/docker-amd64/README.md`.
-* macOS with Apple Silicon (`osx-arm64`); using a [Conda](https://docs.conda.io/en/latest/) environment.
-    - Refer to `installation/osx-arm64/README.md`.
+* **AMD64 platforms (x86-64)** (e.g. linux server like the EPFL HaaS servers, WSL on a local machine, Kubernetes
+      platforms like the EPFL RunAI Platform), with support for NVIDIA GPUs.
+      Refer to `installation/docker-amd64/README.md`.
+* **macOS with Apple Silicon (`osx-arm64`)**, with support for MPS hardware acceleration.
+   Refer to `installation/osx-arm64/README.md`.
 
 We list below our direct dependencies (with major versions when relevant) for users with other needs.
 

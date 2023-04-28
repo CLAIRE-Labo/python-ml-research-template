@@ -1,6 +1,6 @@
 # Installation on macOS arm64
 
-## [_DELETE ME_] Template info
+## [TEMPLATE] Template info
 
 This template provides a minimal `environment.yml` file for starting a `conda` environment.
 The python version and package name have already been filled by the `fill_template.sh` script.
@@ -12,15 +12,15 @@ It remains to
     ```bash
     source installation/osx-arm64/update_env_file.sh 
     ```
-
-You can then add more dependencies as your project grows following
-the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
+   You can later add more dependencies as your project grows following
+   the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
+3. Delete the [TEMPLATE] sections from this file.
 
 ## Instructions to install the environment
 
 **Prerequisites**
 
-- `conda`: we recommend [miniforge](https://github.com/conda-forge/miniforge).
+- `mamba` (or equivalently `conda`): we recommend [mambaforge](https://github.com/conda-forge/miniforge).
 
 **Installation**
 
@@ -31,8 +31,8 @@ System dependencies:
 Create the environment and activate it.
 
 ```bash
-conda env create --file installation/osx-arm64/environment.yml
-conda activate <project-name>
+mamba env create --file installation/osx-arm64/environment.yml
+mamba activate <project-name>
 ```
 
 ## Instructions to maintain the environment

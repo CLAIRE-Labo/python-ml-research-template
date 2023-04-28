@@ -1,6 +1,6 @@
 # Installation on amd64 platforms with Docker
 
-## [_DELETE ME_] Template info
+## [TEMPLATE] Template info
 
 This template provides a Docker setup to use the environment.
 For information on the setup refer to the next template section [(_More details on the
@@ -13,12 +13,12 @@ It remains to
 2. Create the environment following the user instructions to build the environment below.
 3. Run the environment following the user instructions to run the environment.
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
-   pin the dependencies you just got following the freeze your environment instructions.
+   pin the dependencies you just got following the freeze your environment instructions. 
+   You can then add more dependencies as your project grows following
+   the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
+5. Delete the [TEMPLATE] sections from this file.
 
-You can then add more dependencies as your project grows following
-the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
-
-## [_DELETE ME_] More details on the setup
+## [TEMPLATE] More details on the setup
 
 Todo.
 
