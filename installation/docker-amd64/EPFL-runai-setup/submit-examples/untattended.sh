@@ -2,10 +2,10 @@ runai submit \
   --name example-unattended \
   --image ic-registry.epfl.ch/mlo/machrou3/moalla:latest \
   --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
-  --environment EPFL_RUNAI=1 \
-  --environment PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/run \
-  --environment DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/run/_data \
-  --environment OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/run/_outputs \
+  -e EPFL_RUNAI=1 \
+  -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/run \
+  -e DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/run/_data \
+  -e OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/run/_outputs \
   -- python -m machrou3.main some_number=2
 
 # or -- python machrou3/src/machrou3/main.py some_number=2

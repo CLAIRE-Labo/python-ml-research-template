@@ -151,8 +151,8 @@ System dependencies are managed by both`apt` and `conda`.
 Python dependencies are be managed by both `conda` and `pip`.
 
 - Use `apt` for system programs (e.g. `sudo`, `zsh`).
-- Use `conda` for non-python dependencies needed to run the project code (e.g. `mkl`, `swig`)
-  and python dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
+- Use `conda` for non-python dependencies needed to run the project code (e.g. `mkl`, `swig`).
+- Use `conda` for python dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
 - Use `pip` for the rest of the python dependencies.
 - For more complex dependencies that may require a custom installation or build, use the `Dockerfile` directly.
@@ -183,7 +183,7 @@ We describe how to do so in the freeze the environment section.
 - To edit the more complex dependencies, edit the `Dockerfile`.
 
 When manually editing the dependencies files, you do not need to specify the specific version of the dependencies,
-these will be written to the environment files when you free the environment.
+these will be written to the environment files when you freeze the environment.
 You will only need to specify the major versions of specific dependencies you need.
 
 ### Interactively (while developing)
