@@ -9,10 +9,10 @@ It features and encourages good practices for:
 - Reproducible environments that can be used/deployed on multiple platforms with hardware acceleration.
   E.g. local computers (macOS + Apple Silicon, WSL + GPU), linux servers (like HaaS at EPFL), the EPFL RunAI Kubernetes
   platform.
-- Experiment management, tracking, and sharing with `wandb` and `hydra`.
+- Experiment management, tracking, and sharing with [Weights & Biases](https://wandb.ai/site)  and [Hydra](https://hydra.cc/).
 - Python project packaging inspired from
   the [PyPA packaging guidelines](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
-- TODO. Code quality and style with `flake8` and `black`.
+- Code quality with [pre-commit](https://pre-commit.com) hooks.
 
 With this template, open-sourcing your code will be a breeze, and its adoption will be straightforward,
 maximizing the impact of your work.

@@ -32,8 +32,8 @@ Todo.
 **Prerequisites**
 
 * `make` (`make --version`). [Install here.](https://cmake.org/install/)
-* `docker` (`docker --version`). [Install here.](https://docs.docker.com/engine/)
-* `docker compose` (`docker compose version` >= TODO). [Install here.](https://docs.docker.com/compose/install/)
+* `docker` (`docker --version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
+* `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 
 **build**
 

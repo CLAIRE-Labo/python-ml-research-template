@@ -11,6 +11,7 @@ AMD64_DIR="installation/docker-amd64"
 
 for file in \
   "pyproject.toml" \
+  ".pre-commit-config.yaml" \
   "reproducibility_scripts/some_experiment.sh" \
   "$OSX64_DIR/README.md" \
   "$OSX64_DIR/update_env_file.sh" \

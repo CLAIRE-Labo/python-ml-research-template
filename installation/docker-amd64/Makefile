@@ -55,7 +55,6 @@ check:  # Checks if the `.env` file exists.
 		exit 1; \
 	fi
 
-# TODO: are those COMPOSE_BUILDKIT=1 and DOCKER_BUILDKIT=1 needed?
 build: check # Build the image without creating a new container.
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 \
 	docker compose -p ${COMPOSE_PROJECT} build ${SERVICE}
