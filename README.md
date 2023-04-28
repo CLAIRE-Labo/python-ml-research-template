@@ -75,7 +75,19 @@ We support the following platforms for installing the project dependencies and r
 * macOS with Apple Silicon (`osx-arm64`); using a [Conda](https://docs.conda.io/en/latest/) environment.
     - Refer to `installation/osx-arm64/README.md`.
 
+We list below our direct dependencies (with major versions when relevant) for users with other needs.
+
+```bash
+Python:
+wandb - https://github.com/wandb/wandb/
+hydra - https://github.com/facebookresearch/hydra
+tqdm  - https://github.com/tqdm/
+```
+
 ### Repository structure
 
 Todo.
 Mention the directory structure. (This is independent of the deployment platform.)
+
+
+### 
