@@ -15,6 +15,10 @@ echo "${PASSWD}" | DEBIAN_FRONTEND=noninteractive sudo -S apt-get install -y \
   vim \
   wget
 echo "[TEMPLATE] Installed apt packages."
+
+echo "[TEMPLATE] Installing pre-commit."
+pip install pre-commit
+echo "[TEMPLATE] Installed pre-commit."
 ####################
 # Open ssh server.
 

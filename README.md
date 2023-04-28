@@ -9,7 +9,8 @@ It features and encourages good practices for:
 - Reproducible environments that can be used/deployed on multiple platforms with hardware acceleration.
   E.g. local computers (macOS + Apple Silicon, WSL + GPU), linux servers (like HaaS at EPFL), the EPFL RunAI Kubernetes
   platform.
-- Experiment management, tracking, and sharing with [Weights & Biases](https://wandb.ai/site)  and [Hydra](https://hydra.cc/).
+- Experiment management, tracking, and sharing with [Weights & Biases](https://wandb.ai/site)
+  and [Hydra](https://hydra.cc/).
 - Python project packaging inspired from
   the [PyPA packaging guidelines](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
 - Code quality with [pre-commit](https://pre-commit.com) hooks.
@@ -60,7 +61,7 @@ Click on the `Use this template` (GitHub button) to create a new repo, clone it,
     - Todo.
     - Remember to pin your dependencies whenever you install new news.
       More details on this in the installation guides.
-    - 
+    -
 
 ## Getting Started
 
@@ -72,6 +73,9 @@ Todo. This will be the public instructions.
 
 We support the following platforms for installing the project dependencies and running the code.
 
+* AMD64 platforms (x86-64) with Docker support (e.g. linux server like the EPFL HaaS servers, WSL on a local machine,
+  Kubernetes platforms like the EPFL RunAI Platform); using [Docker](https://www.docker.com/).
+    - Refer to `installation/docker-amd64/README.md`.
 * macOS with Apple Silicon (`osx-arm64`); using a [Conda](https://docs.conda.io/en/latest/) environment.
     - Refer to `installation/osx-arm64/README.md`.
 
@@ -89,5 +93,17 @@ tqdm  - https://github.com/tqdm/
 Todo.
 Mention the directory structure. (This is independent of the deployment platform.)
 
+## Contributing
 
-### 
+We use [pre-commit](https://pre-commit.com) hooks to ensure code quality.
+Make sure it's installed on your system.
+Refer to the installation instructions in the [development environment](#development-environment) section for your
+platform.
+
+As a first step, install the pre-commit hooks with
+
+```bash
+pre-commit install
+```
+
+Then, every time you commit, the hooks will run and check your code.
