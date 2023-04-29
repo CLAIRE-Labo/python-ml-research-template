@@ -68,6 +68,9 @@ Give it a hyphen-separated name, then follow the instructions below to set up yo
 
 You're off to a good start! Here are a few tips for keeping your project in a good shape.
 
+- Keep this README up to date.
+  Fill the sections after the Getting Started when releasing your project.
+  We give a structure and some templates for those.
 - Remember to pin your dependencies whenever you install new ones.
   More on this in the installation guides.
 - If using datasets, describe how to obtain those and where to put them.
@@ -78,6 +81,7 @@ You're off to a good start! Here are a few tips for keeping your project in a go
 - Maintain good commit hooks. More on this in the [Contributing](#contributing) section.
 - Have a look at the [ML Code Completeness Checklist](https://github.com/paperswithcode/releasing-research-code).
   This template facilitates meeting all the checklist items, with a different design.
+
 
 ## Getting Started
 
@@ -103,7 +107,7 @@ tqdm  - https://github.com/tqdm/
 ### Reproducing our results
 
 We provide scripts to reproduce our work in the `reproducibility_scripts/` directory.
-It has a README at its root describing which script reproduce which experiments.
+It has a README at its root describing which scripts reproduce which experiments.
 
 ### Experiment with different configurations
 
@@ -112,7 +116,9 @@ They are managed by [Hydra](https://hydra.cc/docs/intro/).
 You can experiment with different configurations by passing the relevant flags.
 You can get examples on how to do so in the `reproducibility_scripts/` directory.
 
-### Pre-trained models
+### Pre-trained models and experiment results
+
+We share our Weights and Biases runs in [this anonymized W&B project]().
 
 ## Repository structure
 
