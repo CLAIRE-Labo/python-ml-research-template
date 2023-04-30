@@ -25,10 +25,10 @@ It remains to
 The project follows a specific tree structure that needs to be respected for the installation to work.
 
 ```
-<project-name>-root/ # To which we will refer to as the PROJECT_ROOT can be any name.
-├── <project-name>/  # This is the git repository root.
-├── data/            # This is from where the data will be read.
-├── outputs/         # This is where the outputs will be written.
+<project-name>-project-root/ # To which we will refer to as the PROJECT_ROOT can be any direcotry name.
+├── <project-name>/          # This is the git repository root.
+├── data/                    # This is from where the data will be read.
+├── outputs/                 # This is where the outputs will be written.
 ```
 
 Create the respective directories so that the tree looks like the above:
@@ -38,6 +38,11 @@ Create the respective directories so that the tree looks like the above:
   Moving an exiting clone does not work (`mv dirname` doesn't move dotfiles).
 - By default, you should symlink `data/` and `outputs/` to the `_data/` and `_outputs/`
   directories in the repository root.
+  Tip: symlink the directories with global paths.
+  ```bash  
+  ln -s $(pwd)/<project-name>/_data data
+  ln -s $(pwd)/<project-name>/_outputs outputs
+  ```
   Otherwise, you can symlink them to a different location, perhaps on a mounted filesystem.
 
 ### Development environment
