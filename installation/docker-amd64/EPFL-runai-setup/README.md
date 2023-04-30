@@ -5,7 +5,7 @@
 At this point, you should have an image that can be deployed on multiple platforms.
 This guide will show you how to deploy your image on the EPFL IC RunAI cluster and use for:
 
-1. Remote development, as at (CLAIR - tentative name) we use the RunAI platform as our daily drivers).
+1. Remote development, as at (CLAIRe - tentative name) we use the RunAI platform as our daily drivers).
 2. Running unattended jobs.
 
 Using the image on HaaS machines falls into the public instructions

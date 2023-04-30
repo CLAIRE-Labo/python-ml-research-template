@@ -1,4 +1,4 @@
-OSX64_DIR="installation/osx-arm64"
+OSX64_DIR="<project-name>/installation/osx-arm64"
 conda activate "<project-name>"
 conda env export --no-builds --file "$OSX64_DIR/environment.yml"
 # Delete the path line.

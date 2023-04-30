@@ -3,7 +3,7 @@
 ## Overview
 
 This is a template used for starting python machine learning research
-projects with hardware acceleration at the EPFL (CLAIR - tentative name) lab.
+projects with hardware acceleration at the EPFL (CLAIRe - tentative name) lab.
 It features and encourages good practices for:
 
 - Reproducible environments that can be used/deployed on multiple platforms with hardware acceleration.
@@ -20,9 +20,9 @@ maximizing its impact.
 The practices in this template earned its authors an Outstanding Paper (Honorable Mention) at the
 ML Reproducibility Challenge 2022. (TODO, link to paper)
 
-Because of its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
+Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
 It can also be adapted to suit many other use cases.
-However, it's maintained form will be tailored to the needs of (CLAIR - tentative name).
+However, it's maintained form will be tailored to the needs of (CLAIRe - tentative name).
 It also contains extra EPFL-specific instructions for deployment on the RunAI Kubernetes cluster.
 
 ## Getting started with the template
@@ -64,7 +64,18 @@ Give it a hyphen-separated name, then follow the instructions below to set up yo
        the [Getting Started](#getting-started) section.
     3. List your direct dependencies (with major versions when relevant)
        in the [Getting Started](#getting-started) section.
-    4. Delete this getting started, to only keep the project [Getting Started](#getting-started) section.
+    4. If you use datasets, describe how to obtain them in the [datasets](#datasets) section.
+       You can refer the users to `_data/README.md` and write the instructions there.
+       The template has a common directory structure across all installation methods.
+       So you should ask the users to put the data somewhere in the `data/` directory.
+       ```
+       PROJECT_ROOT/        # The root of the project can be any name.
+       ├── <project-name>/  # The root of the the git repository.
+       ├── data/            # This is from where the data will be read (will mount/symlink to somewhere by the user).
+       ├── outputs/         # This is where the outputs will be written (will mount/symlink to somewhere by the user).
+       ```
+       Otherwise, delete the section.
+    5. Delete this getting started, to only keep the project [Getting Started](#getting-started) section.
 
 You're off to a good start! Here are a few tips for keeping your project in a good shape.
 
@@ -73,8 +84,6 @@ You're off to a good start! Here are a few tips for keeping your project in a go
   We give a structure and some templates for those.
 - Remember to pin your dependencies whenever you install new ones.
   More on this in the installation guides.
-- If using datasets, describe how to obtain those and where to put them.
-  The template has a common directory structure across all installation methods.
 - Keep your `reproducibility_scripts/` directory up to date.
   Commit it regularly and run your jobs with those scripts.
   More on this in the [Reproducibility](#reproducibility) section.
@@ -82,8 +91,9 @@ You're off to a good start! Here are a few tips for keeping your project in a go
 - Have a look at the [ML Code Completeness Checklist](https://github.com/paperswithcode/releasing-research-code).
   This template facilitates meeting all the checklist items, with a different design.
 
-
 ## Getting Started
+
+### Development environment
 
 We support the following platforms for installing the project dependencies and running the code.
 
@@ -101,6 +111,10 @@ wandb - https://github.com/wandb/wandb/
 hydra - https://github.com/facebookresearch/hydra
 tqdm  - https://github.com/tqdm/
 ```
+
+### Datasets
+
+Refer to `_data/README.md`.
 
 ## Reproduction and Experimentation
 

@@ -6,17 +6,41 @@ This template provides a minimal `environment.yml` file for starting a `conda` e
 The python version and package name have already been filled by the `fill_template.sh` script.
 It remains to
 
-1. Create the environment following the
-   user [instructions to install the environment](#instructions-to-install-the-environment).
-2. Pin the initial dependencies you just got.
-    ```bash
-    source installation/osx-arm64/update_env_file.sh 
-    ```
-   You can later add more dependencies as your project grows following
+1. Specify your initial dependencies.
+   Follow the [instructions to maintain the environment](#instructions-to-maintain-the-environment)
+   up to (including) the manual editing section.
+2. Create the environment following the user
+   [instructions to create the environment](#instructions-to-create-the-environment) below.
+3. Get familiar with running the environment following the user instructions to run the environment.
+4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
+   pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
+   You can then add more dependencies as your project grows following
    the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
-3. Delete the [TEMPLATE] sections from this file.
+5. Delete the [TEMPLATE] sections from this file.
 
-## Instructions to install the environment
+## Instructions to create the environment
+
+### Directory structure
+
+The project follows a specific tree structure that needs to be respected for the installation to work.
+
+```
+<project-name>-root/ # To which we will refer to as the PROJECT_ROOT can be any name.
+├── <project-name>/  # This is the git repository root.
+├── data/            # This is from where the data will be read.
+├── outputs/         # This is where the outputs will be written.
+```
+
+Create the respective directories so that the tree looks like the above:
+
+- Create the `PROJECT_ROOT` directory.
+- Clone the git repository in the `PROJECT_ROOT` directory.
+  Moving an exiting clone does not work (`mv dirname` doesn't move dotfiles).
+- By default, you should symlink `data/` and `outputs/` to the `_data/` and `_outputs/`
+  directories in the repository root.
+  Otherwise, you can symlink them to a different location, perhaps on a mounted filesystem.
+
+### Development environment
 
 **Prerequisites**
 
@@ -32,8 +56,22 @@ System dependencies:
 The `conda` environment:
 
 ```bash
-mamba env create --file installation/osx-arm64/environment.yml
-mamba activate <package_name>
+mamba env create --file <project-name>/installation/osx-arm64/environment.yml
+```
+
+## Instructions to run the environment
+
+```bash
+conda activate <project-name>
+```
+
+Run your scripts from the `PROJECT_ROOT` directory.
+Here are some examples.
+
+```bash
+python <project-name>/src/<package_name>/main.py some_arg=some_value
+python -m <package_name> some_arg=some_value
+source <project-name>/reproducibility_scripts/some_experiment.sh
 ```
 
 ## Instructions to maintain the environment
@@ -47,8 +85,8 @@ Python dependencies are be managed by both `conda` and `pip`.
 - Use `conda` for python dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
 - Use `pip` for the rest of the python dependencies.
-- For more complex dependencies that may require a custom installation or build, manually follow their installation
-  steps.
+- For more complex dependencies that may require a custom installation or build,
+  manually follow their installation steps.
 
 Here are references and reasons to follow the above claims:
 
@@ -63,7 +101,7 @@ There are two ways to add dependencies to the environment:
    It will also be useful if you run into conflicts and have to restart from scratch.
 2. **Add/upgrade dependencies interactively** while running a shell with the environment activated
    to experiment with which dependency is needed.
-   This is probably what you'll be doing after building the image for the first time.
+   This is probably what you'll be doing after creating the image for the first time.
 
 In both cases, after any change, a snapshot of the full environment specification should be saved.
 We describe how to do so in the freeze the environment section.
@@ -100,7 +138,7 @@ The script overwrites the `environment.yml` file with the current environment sp
 so it's a good idea to commit the changes to the environment file before/after running it.
 
 ```bash
-source installation/osx-arm64/update_env_file.sh
+source <project-name>/installation/osx-arm64/update_env_file.sh
 ```
 
 For `brew` and more complex dependencies describe how to install them in the system dependencies section of
