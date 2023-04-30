@@ -9,6 +9,7 @@ It remains to
 1. Specify your initial dependencies.
    Follow the [instructions to maintain the environment](#instructions-to-maintain-the-environment)
    up to (including) the manual editing section.
+   Commit so that you can get back to this file to edit it manually.
 2. Create the environment following the user
    [instructions to create the environment](#instructions-to-create-the-environment) below.
 3. Get familiar with running the environment following the user instructions to run the environment.
@@ -16,6 +17,7 @@ It remains to
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
    You can then add more dependencies as your project grows following
    the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
+   Commit.
 5. Delete the [TEMPLATE] sections from this file.
 
 ## Instructions to create the environment
@@ -135,7 +137,7 @@ manually add the dependency to the `environment.yml` file then recreate the envi
 
 After any change to the dependencies, a snapshot of the full environment specification should be written to the
 `environment.yml` file.
-This includes changes during a build and changes made interactively.
+This includes manual changes to the file and changes made interactively.
 This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
 
 To do so, run the following command.

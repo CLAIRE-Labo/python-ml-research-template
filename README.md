@@ -36,13 +36,11 @@ Give it a hyphen-separated name, then follow the instructions below to set up yo
    ./template/fill_template.sh
    ```
    Then, delete the `template` directory.
-
    Commit.
 3. Edit the `LICENCE` file.
    Or delete it and remember to add one when open-sourcing your code.
    [(Some help here).](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
    A simple change if you're fine with the MIT licence is to replace the `2022 Skander Moalla` with your year and name.
-
    Commit.
 4. Setup and edit the development environment instructions for the platforms you'll use/support.
    We support the following platforms:

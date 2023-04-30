@@ -11,14 +11,16 @@ It remains to
 1. Specify your initial dependencies.
    Follow the [instructions to maintain the environment](#instructions-to-maintain-the-environment)
    up to (including) the manual editing section.
-2. Create the environment following the user 
+   Commit so that you can get back to this file to edit it manually.
+2. Create the environment following the user
    [instructions to build the environment](#instructions-to-build-the-environment).
-3. Get familiar with running the environment following the user instructions to 
+3. Get familiar with running the environment following the user instructions to
    [run the environment](#instructions-to-run-the-environment).
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
-   pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section. 
+   pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
    You can then add more dependencies as your project grows following
    the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
+   Commit.
 5. Delete the [TEMPLATE] sections from this file.
 
 ## [TEMPLATE] More details on the setup
