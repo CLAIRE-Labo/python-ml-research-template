@@ -103,8 +103,8 @@ Other users can get inspiration from it too, otherwise we leave it to you to dep
 Steps prefixed with [CUDA] are only required to use NVIDIA GPUs with `SERVICE=local-gpu`.
 
 * `make` (`make --version`). [Install here.](https://cmake.org/install/)
-* `docker` (`docker --version`). [Install here.](https://docs.docker.com/engine/)
-* `docker compose` (`docker compose version` >= TODO). [Install here.](https://docs.docker.com/compose/install/)
+* `docker` (`docker --version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
+* `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 * [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc)
 * [CUDA] `nvidia-docker` (the NVIDIA Container
   Toolkit). [Install here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
