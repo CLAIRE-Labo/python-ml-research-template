@@ -12,6 +12,11 @@ It remains to
    Commit so that you can get back to this file to edit it manually.
 2. Create the environment following the user
    [instructions to create the environment](#instructions-to-create-the-environment) below.
+   As we want the documentation in that section to be readily usable by you when you initiate the project and
+   any subsequent user (including future you),
+   the steps may feel slightly redundant now as you will have to re-clone the repository
+   so that it matches the project directory structure.
+   (Note that moving files inside an existing clone with `mv *` does not move dotfiles.)
 3. Get familiar with running the environment following the user instructions to run the environment.
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
@@ -27,21 +32,21 @@ It remains to
 The project follows a specific tree structure that needs to be respected for the installation to work.
 
 ```
-<project-name>-project-root/ # To which we will refer to as the PROJECT_ROOT can be any directory name.
-├── <project-name>/          # This is the git repository root.
-├── data/                    # This is from where the data will be read.
-├── outputs/                 # This is where the outputs will be written.
+<project-name>/          # To which we will refer as the PROJECT_ROOT can be any directory name.
+├── <project-name>/      # This is the git repository root.
+├── data/                # This is from where the data will be read.
+├── outputs/             # This is where the outputs will be written.
 ```
 
 Create the respective directories so that the tree looks like the above:
 
 - Create the `PROJECT_ROOT` directory.
 - Clone the git repository in the `PROJECT_ROOT` directory.
-  Moving an exiting clone does not work (`mv dirname` doesn't move dotfiles).
 - By default, you should symlink `data/` and `outputs/` to the `_data/` and `_outputs/`
   directories in the repository root.
   Tip: symlink the directories with global paths.
   ```bash
+  # When in the PROJECT_ROOT directory.
   ln -s $(pwd)/<project-name>/_data data
   ln -s $(pwd)/<project-name>/_outputs outputs
   ```
@@ -63,6 +68,7 @@ System dependencies:
 The `conda` environment:
 
 ```bash
+# When in the PROJECT_ROOT directory.
 mamba env create --file <project-name>/installation/osx-arm64/environment.yml
 ```
 
@@ -116,8 +122,8 @@ We describe how to do so in the freeze the environment section.
 ### Manual editing (before/while building)
 
 - To edit the `conda` and `pip` dependencies, edit the `environment.yml` file.
-- For the `brew` and more complex dependencies, describe the installation steps in the
-  [Instructions to install the environment](#instructions-to-install-the-environment) section.
+- For the `brew` and the more complex dependencies, describe the installation steps in the
+  [Development Environment](#development-environment) section.
 
 When manually editing the `environment.yml` file, you do not need to specify the specific version of the dependencies,
 these will be written to the file when you freeze the environment.

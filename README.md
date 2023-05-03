@@ -146,7 +146,7 @@ Below, we give a description of main files and directories in this repository.
 
 We use [pre-commit](https://pre-commit.com) hooks to ensure code quality.
 Make sure it's installed on the system where you're developing.
-(that's not necessarily where you'll run the project code and this is not a project dependency.
+(That's not necessarily where you'll run the project code and this is not a project dependency.
 E.g. when running locally with Docker Compose you will probably develop outside the container and have `pre-commit`
 on your system).
 
