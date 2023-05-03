@@ -31,7 +31,7 @@ Click on the `Use this template` GitHub button to create a new GitHub repository
 Give it a hyphen-separated name, then follow the instructions below to set up your project.
 
 1. Clone the repo.
-2. Fill the template variables in `template/template_variables.sh` and run the script
+2. Fill the template variables in `template/template_variables.env` and run the script
    ```bash
    ./template/fill_template.sh
    ```
@@ -145,11 +145,12 @@ Below, we give a description of main files and directories in this repository.
 ## Contributing
 
 We use [pre-commit](https://pre-commit.com) hooks to ensure code quality.
-Make sure it's installed on your system.
-Refer to the installation instructions in the [development environment](#development-environment)
-section for your platform.
+Make sure it's installed on the system where you're developing.
+(that's not necessarily where you'll run the project code and this is not a project dependency.
+E.g. when running locally with Docker Compose you will probably develop outside the container and have `pre-commit`
+on your system).
 
-As a first step, install the pre-commit hooks with
+Install the pre-commit hooks with
 
 ```bash
 pre-commit install
