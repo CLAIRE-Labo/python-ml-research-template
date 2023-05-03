@@ -9,7 +9,7 @@ This guide will show you how to deploy your image on the EPFL IC RunAI cluster a
 2. Running unattended jobs.
 
 Using the image on HaaS machines falls into the public instructions
-using the reproducible `local` Docker Compose servie and is covered by the
+using the reproducible `local` Docker Compose service and is covered by the
 instructions in the `installation/docker-amd64/README.md` file.
 
 ## Prerequisites
@@ -32,7 +32,7 @@ Refer to this tutorial for an introduction to these tools (TODO: link to the EPI
 ### Push your image to the EPFL IC Docker registry
 
 ```bash
-# Get your image name from the last line of the build output (ic-registry.epfl.ch/.../:...) 
+# Get your image name from the last line of the build output (ic-registry.epfl.ch/.../:...)
 docker push <image-name>
 ```
 
@@ -57,7 +57,7 @@ the project, forwards your ssh keys, and allows you to clone your repository on 
    specifying your image name, and PVC(s).
    Checking its logs will give:
    ```bash
-    $ runai logs example-first-steps     
+    $ runai logs example-first-steps
     Running entrypoint.sh
     SSH_ONLY is set. Only starting an ssh server without setup.
    ```
@@ -93,7 +93,7 @@ You can check the logs of the container with `runai logs example-minimal` to see
 You should expect to see something like:
 
 ```bash
-$ runai logs example-minimal    
+$ runai logs example-minimal
 Running entrypoint.sh
 Installing the project.
 Obtaining file:///opt/project/machrou3
@@ -157,7 +157,7 @@ Connect with the user and password you specified in your `.env` file when you bu
 
 ```bash
 # ssh to local machine is forwarded to the pod.
-ssh -p 2222 <user>@127.0.0.1   
+ssh -p 2222 <user>@127.0.0.1
 ```
 
 As the container will each time be on a different machine, you will have to reset the ssh key for the remote server.
@@ -226,7 +226,7 @@ which will look like this in the example we provide:
 /mlodata1/moalla/machrou3
 ├── dev             # The copy of your repository for development.
 ├── run             # The frozen copy of your repository for unattended jobs.
-└── _pycharm-config  
+└── _pycharm-config
     ├── _config     # To contain the IDE .config for the project.
     └── _idea       # To contain the project .idea.
 ```
@@ -348,8 +348,8 @@ To do so,
    The link looks like:
 
    ```bash
-   [C 2023-04-26 17:17:03.072 ServerApp] 
-    
+   [C 2023-04-26 17:17:03.072 ServerApp]
+
     To access the server, open this file in a browser:
         ...
     Or copy and paste one of these URLs:
