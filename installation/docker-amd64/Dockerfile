@@ -153,7 +153,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "alias ll='ls -lh'"; \
         echo "alias wns='watch nvidia-smi'"; \
         echo "alias hist='history 1'"; \
-        echo "alias update_env_file='source installation/docker-amd64/dependencies/update_env_file.sh'"; \
+        echo "alias update_env_file='source \${PROJECT_DIR}/installation/docker-amd64/dependencies/update_env_file.sh'"; \
     } >> ${ZDOTDIR}/.zshrc
 
 ########################################################################
