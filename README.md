@@ -22,7 +22,7 @@ ML Reproducibility Challenge 2022. (TODO, link to paper)
 
 Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
 It can also be adapted to suit many other use cases.
-However, it's maintained form will be tailored to the needs of CLAIRe (tentative name).
+However, it's maintained form will be tailored to the needs of CLAIRe.
 It also contains extra EPFL-specific instructions for deployment on the RunAI Kubernetes cluster.
 
 ## Getting started with the template
