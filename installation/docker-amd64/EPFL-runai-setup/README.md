@@ -1,11 +1,11 @@
-# Guide for using the template with the EPFL IC RunnAI cluster
+# Guide for using the template with the EPFL IC Run:ai cluster
 
 ## Overview
 
 At this point, you should have an image that can be deployed on multiple platforms.
-This guide will show you how to deploy your image on the EPFL IC RunAI cluster and use for:
+This guide will show you how to deploy your image on the EPFL IC Run:ai cluster and use for:
 
-1. Remote development. (At CLAIRe we use the RunAI platform as our daily driver.)
+1. Remote development. (At CLAIRe we use the Run:ai platform as our daily driver.)
 2. Running unattended jobs.
 
 Using the image on HaaS machines falls into the public instructions
@@ -17,11 +17,11 @@ instructions in the `installation/docker-amd64/README.md` file.
 **Docker image**:
 
 Your should be able to deploy your docker image locally (on the machine you built it).
-It will be hard to debug your image on RunAI if you can't even run it locally.
+It will be hard to debug your image on Run:ai if you can't even run it locally.
 
-**RunAI**:
+**Run:ai**:
 
-1. You should be familiar with the RunAI platform, be able to run jobs on it, and know how to check their status.
+1. You should be familiar with the Run:ai platform, be able to run jobs on it, and know how to check their status.
 2. You should have access to [Harbor](https://ic-registry.epfl.ch), the EPFL IC Docker registry.
 3. You should have one or more PVC(s) (Persistent Volume Claim) that you can use to store your data on the cluster.
 
@@ -329,8 +329,6 @@ Set the root directory of your VS Code workspace to the `${PROJECT_ROOT}=/opt/pr
     - If needed, a workaround would be to just open a separate terminal on your local machine
       and directly exec a shell into the container.
 - Support for programs with graphical interfaces (e.g. simulators) has not been tested yet.
-- The author of the template does not use Jupyter Lab so limitations are not be known yet.
-  (Impact: unknown.)
 
 #### JupyterLab
 
