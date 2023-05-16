@@ -57,7 +57,7 @@ Give it a hyphen-separated name, then follow the instructions below to set up yo
    This is described in the next instructions.
 5. Edit this `README.md` file.
     1. Edit the title with the name of your project.
-       Replace the [_Overview_](#overview) section a the description of your project.
+       Replace the [Overview](#overview) section a the description of your project.
     2. Delete the installation options you don't support in
        the [Getting Started](#getting-started) section.
     3. List your direct dependencies (with major versions when relevant)

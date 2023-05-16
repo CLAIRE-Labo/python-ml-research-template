@@ -18,7 +18,9 @@ It remains to
    so that it matches the project directory structure.
    (You can move it temporarility somewhere else, create the `PROJECT_ROOT`, then move it back.
    Note that moving files inside an existing clone with `mv *` does not move dotfiles.)
-3. Get familiar with running the environment following the user [instructions to run the environment](#instructions-to-run-the-environment).
+3. Get familiar with running the environment following the user instructions to 
+   [run the environment](#instructions-to-run-the-environment).
+>>>>>>> 410a6da (remove blah.)
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
    You can then add more dependencies as your project grows following
@@ -83,8 +85,8 @@ Run your scripts from the `PROJECT_ROOT` directory.
 Here are some examples.
 
 ```bash
-python <project-name>/src/<package_name>/main.py some_arg=some_value
-python -m <package_name> some_arg=some_value
+python <project-name>/src/<package_name>/main.py some_number=10
+python -m <package_name>.main some_string=some_word
 source <project-name>/reproducibility_scripts/some_experiment.sh
 ```
 

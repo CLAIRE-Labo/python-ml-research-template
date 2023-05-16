@@ -3,8 +3,8 @@
 ## [TEMPLATE] Template info
 
 This template provides a Docker setup to use the environment.
-For information on the setup refer to the next template section [(_More details on the
-setup_)](#_delete-me_-more-details-on-the-setup).
+For information on the setup refer to the next template section [(More details on the
+setup)](#template-more-details-on-the-setup).
 The python version and package name have already been filled by the `fill_template.sh` script.
 It remains to
 
@@ -25,10 +25,9 @@ It remains to
 
 ## [TEMPLATE] More details on the setup
 
-Todo.
+This installation method is based on [Cresset](https://github.com/cresset-template/cresset).
 
 - Big acknowledgements to Cresset.
-    - These acknowledgement should also be in the public instructions, not only the template sections.
 - Describe the Docker image
 - Describe the Docker Compose local deployment option
 
@@ -221,3 +220,7 @@ For `apt` dependencies add them manually to `apt.txt`.
 For dependencies that required a custom installation or build, edit the `Dockerfile`.
 
 ## Troubleshooting
+
+## Acknowledgements
+
+This installation method is based on [Cresset](https://github.com/cresset-template/cresset).
