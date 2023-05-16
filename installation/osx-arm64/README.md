@@ -18,7 +18,7 @@ It remains to
    so that it matches the project directory structure.
    (You can move it temporarility somewhere else, create the `PROJECT_ROOT`, then move it back.
    Note that moving files inside an existing clone with `mv *` does not move dotfiles.)
-3. Get familiar with running the environment following the user instructions to run the environment.
+3. Get familiar with running the environment following the user [instructions to run the environment](#instructions-to-run-the-environment).
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
    You can then add more dependencies as your project grows following
