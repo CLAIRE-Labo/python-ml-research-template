@@ -14,9 +14,10 @@ It remains to
    [instructions to create the environment](#instructions-to-create-the-environment) below.
    As we want the documentation in that section to be readily usable by you when you initiate the project and
    any subsequent user (including future you),
-   the steps may feel slightly redundant now as you will have to re-clone the repository
+   the steps may feel slightly redundant now as you will have to move the current repository
    so that it matches the project directory structure.
-   (Note that moving files inside an existing clone with `mv *` does not move dotfiles.)
+   (You can move it temporarility somewhere else, create the `PROJECT_ROOT`, then move it back.
+   Note that moving files inside an existing clone with `mv *` does not move dotfiles.)
 3. Get familiar with running the environment following the user instructions to run the environment.
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
