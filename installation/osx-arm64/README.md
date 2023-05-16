@@ -132,6 +132,15 @@ When manually editing the `environment.yml` file, you do not need to specify the
 these will be written to the file when you freeze the environment.
 You will only need to specify the major versions of specific dependencies you need.
 
+After manually editing the `environment.yml` file, you need need to recreate the environment.
+
+```bash
+mamba deactivate
+mamba env remove --name <project-name>
+mamba env create --file <project-name>/installation/osx-arm64/environment.yml
+mamba activate <project-name>
+```
+
 ### Interactively (while developing)
 
 `conda` dependencies should all be installed before any `pip` dependency.
