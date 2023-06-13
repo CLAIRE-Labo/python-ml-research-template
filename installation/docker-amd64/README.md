@@ -133,6 +133,11 @@ Then you can:
     make exec
     ```
 
+- Delete the service with
+    ```bash
+    make down
+    ```
+
 - Run jobs in independent containers with
     ```bash
     make run command="python --version"
