@@ -47,7 +47,7 @@ Use at your own risk.
 All commands should be run from the installation directory.
 
 ```bash
-cd installation/docker-amd64
+cd <project-name>/installation/docker-amd64
 ```
 
 1. Create an environment file for your personal configuration with
