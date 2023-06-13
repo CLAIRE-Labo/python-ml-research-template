@@ -69,6 +69,7 @@ cd <project-name>/installation/docker-amd64
    ```bash
    make build
    ```
+   In case of build issues, setting `export BUILDKIT_PROGRESS=plain` will allow you to inspect all the build progress.
 
 ## Instructions to run the environment
 
