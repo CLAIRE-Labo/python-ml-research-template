@@ -8,4 +8,5 @@ dependencies:
       - hydra-core
       - tqdm
       - wandb
+      - pre-commit
 prefix: /opt/conda/envs/<project-name>
