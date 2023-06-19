@@ -1,7 +1,7 @@
 runai submit \
   --name example-first-steps \
   --interactive \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:latest \
+  --image ic-registry.epfl.ch/mlo/machrou3/moalla:dev \
   --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
   -e EPFL_RUNAI=1 \
   -e EPFL_RUNAI_INTERACTIVE=1 \

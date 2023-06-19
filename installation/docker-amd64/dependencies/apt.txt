@@ -1,5 +1,0 @@
-# `apt` requirements file.
-# Tip: sort your packages alphabetically.
-openssl             # Required.
-sudo                # Required.
-zsh                 # Required.

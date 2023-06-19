@@ -1,6 +1,6 @@
 runai submit \
   --name example-unattended \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:latest \
+  --image ic-registry.epfl.ch/mlo/machrou3/moalla:runtime \
   --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
   -e EPFL_RUNAI=1 \
   -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/run \

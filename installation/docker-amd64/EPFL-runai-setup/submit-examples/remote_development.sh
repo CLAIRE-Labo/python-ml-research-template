@@ -2,7 +2,7 @@
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:latest \
+  --image ic-registry.epfl.ch/mlo/machrou3/moalla:dev \
   --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
   -e EPFL_RUNAI=1 \
   -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev \
@@ -10,8 +10,8 @@ runai submit \
   -e OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
   -e EPFL_RUNAI_INTERACTIVE=1 \
   -e SSH_SERVER=1 \
-  -e PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm \
   -e PYCHARM_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/_pycharm-config \
+  -e PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm \
   -- sleep infinity
 
 ## The new bits here are:

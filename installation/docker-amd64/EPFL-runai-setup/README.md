@@ -3,20 +3,20 @@
 ## Overview
 
 At this point, you should have an image that can be deployed on multiple platforms.
-This guide will show you how to deploy your image on the EPFL IC Run:ai cluster and use for:
+This guide will show you how to deploy your image on the EPFL IC Run:ai cluster and use it for:
 
 1. Remote development. (At CLAIRe we use the Run:ai platform as our daily driver.)
 2. Running unattended jobs.
 
 Using the image on HaaS machines falls into the public instructions
-using the reproducible `local` Docker Compose service and is covered by the
+using the local deployment option with Docker Compose service and is covered by the
 instructions in the `installation/docker-amd64/README.md` file.
 
 ## Prerequisites
 
 **Docker image**:
 
-Your should be able to deploy your docker image locally (on the machine you built it).
+You should be able to deploy your docker image locally (e.g. on the machine you built it).
 It will be hard to debug your image on Run:ai if you can't even run it locally.
 
 **Run:ai**:
@@ -35,6 +35,8 @@ Refer to this tutorial for an introduction to these tools (TODO: link to the EPI
 # Get your image name from the last line of the build output (ic-registry.epfl.ch/.../:...)
 docker push <image-name>
 ```
+
+Do this for both the `runtime` and `dev` images.
 
 ### Clone your repository in your PVCs
 
@@ -57,7 +59,7 @@ the project, forwards your ssh keys, and allows you to clone your repository on 
    specifying your image name, and PVC(s).
    Checking its logs will give:
    ```bash
-    $ runai logs example-first-steps
+    $ runai logs implicit-pg-first-steps
     Running entrypoint.sh
     SSH_ONLY is set. Only starting an ssh server without setup.
    ```
@@ -137,7 +139,7 @@ An example of an interactive job submission can be found in `submit-examples/rem
 
 Below, we list and describe in more detail the tools and IDEs supported for remote development.
 
-#### SSH
+#### SSH Configuration
 
 Your job will open an ssh server when set the environment variable `SSH_SERVER=1`.
 
@@ -188,7 +190,7 @@ Note that an ssh connection to the container is not like executing a shell on th
   This is already done for some variable.
   (Impact: one more line to add at build time.)
 
-#### PyCharm
+### PyCharm
 
 We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remote-development-overview.html) feature of
 PyCharm
@@ -221,6 +223,7 @@ To have both of these preserved between different dev containers you should crea
 directories in your PVC and the template will handle sym-linking them when the container starts.
 A good place to create those directories as they are project-dependant is in your project root on your PVC,
 which will look like this in the example we provide:
+(You can use the `minimal.sh` or the `first_steps.sh` examples to access your PVC.)
 
 ```
 /mlodata1/moalla/machrou3
@@ -236,9 +239,10 @@ your IDE and project configurations.
 
 **Option 1**:
 
-1. Submit your job as in the example `submit-examples/remote_development.sh` and set the environment variables to
-    - Open an ssh server `SSH_SERVER=1`.
-    - preserve your config `PYCHARM_PROJECT_CONFIG_LOCATION`
+1. Submit your job as in the example `submit-examples/remote_development.sh` and in particular edit the environment
+   variables
+    - `PYCHARM_PROJECT_CONFIG_LOCATION` by setting to the `_pycharm-config` described above.
+    - `PYCHARM_IDE_LOCATION` by deleting it as the IDE will be installed after the container is ran.
 2. Enable ssh forwarding.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
 
@@ -246,14 +250,13 @@ You can then copy the binaries in `~/.cache/JetBrains/RemoteDev/dist/<some_pycha
 to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the example.)
 
 **Option 2**:
+You can find an example in `submit-examples/remote_development.sh`.
 
 1. In your `runai submit` command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
     - the path to PyCharm remote IDE binaries on your PVC `PYCHARM_IDE_LOCATION`.
     - preserving your config `PYCHARM_PROJECT_CONFIG_LOCATION`
     - Optionally, if your forward port is different from 2222 set `SSH_FORWARD_PORT`.
-
-   You can find an example in `submit-examples/remote_development.sh`.
 
    Your IDE will start running with your container.
    It will print a link to the IDE in the container logs.
@@ -275,7 +278,7 @@ to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the e
       and directly exec a shell into the container.
 - Support for programs with graphical interfaces (e.g. simulators) has not been tested yet.
 
-#### VSCode
+### VSCode
 
 We support the [Remote Development using SSH ](https://code.visualstudio.com/docs/remote/ssh) feature of
 VS code that runs a remote IDE in the container.

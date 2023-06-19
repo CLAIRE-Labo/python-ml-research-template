@@ -10,7 +10,6 @@ fi
 ## Workarounds to setup paths for EPFL.
 # RunAI does not allow to mount specific directories from PVCs.
 # Instead we will create symlinks to the specific directories in the PVCs.
-# TODO. Replace with direct subPath mounting with yaml submission when this is supported. (ticket INC0548857)
 
 ## Variables
 # *_DIR are environment variables already defined in the Dockerfile.

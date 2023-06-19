@@ -2,5 +2,5 @@ EPFL_runai_setup/submit-examples/
 EPFL_runai_setup/README.md
 docker-compose.yml
 Dockerfile
-Makefile
+template.sh
 README.md

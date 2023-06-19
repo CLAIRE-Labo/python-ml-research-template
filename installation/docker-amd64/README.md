@@ -3,8 +3,8 @@
 ## [TEMPLATE] Template info
 
 This template provides a Docker setup to use the environment.
-For information on the setup refer to the next template section [(More details on the
-setup)](#template-more-details-on-the-setup).
+For detailed information on the setup refer to the next section [(_More details on the
+setup_)](#_delete-me_-more-details-on-the-setup).
 The python version and package name have already been filled by the `fill_template.sh` script.
 It remains to
 
@@ -25,17 +25,73 @@ It remains to
 
 ## [TEMPLATE] More details on the setup
 
-This installation method is based on [Cresset](https://github.com/cresset-template/cresset).
+The setup is based on Docker and Docker Compose and is heavily inspired by
+the [Cresset template](https://github.com/cresset-template/cresset).
+It is composed of a Dockerfile to build the image containing the runtime and development environments
+and a Docker Compose file to set variables in the Dockerfile and run it locally.
 
-- Big acknowledgements to Cresset.
-- Describe the Docker image
-- Describe the Docker Compose local deployment option
+These two files are templates that should suit most use cases and will not need to be edited.
+They read project/user-specific information from the other files such as the project dependencies and user
+configuration.
+Typically, the only files you will have to edit are `.env` and the `dependencies/` files.
+
+Here's a summary of all the files in this directory.
+
+```
+docker-amd64/
+├── Dockerfile              # Dockerfile template. Edit if you are buildings things manually.
+├── docker-compose.yml      # Docker Compose template. Edit if you have a custom local deployment.
+├── entrypoint.sh           # Entrypoint script. Edit you need to start programs when the container starts.
+├── template.sh             # A utility script to help you interact with the template (build, deploy, etc).
+├── .env                    # Will contain yout personal configuration.
+├── dependencies/
+│   ├── environment.yml     # Conda and pip dependencies.
+│   ├── apt-build.txt       # System dependencies (from apt) for building the conda environment, and potentially other software.
+│   ├── apt-runtime.txt     # System dependencies (from apt) needed to run your code.
+│   ├── apt-dev.txt         # System dependencies (from apt) needed to develop in a container e.g. vim.
+│   └── update_env_file.sh  # A utility script to update the environment files.
+└── EPFL-runai-setup/       # Template files to deploy on the EPFL RunAI Kubernetes cluster. Refer to the README.md in this directory.
+```
+
+### Details on the Dockerfile
+
+The Dockerfile specifies all the steps to build the environment that in which your code will run.
+It makes efficient use of multi-stage builds to speed up build time and keep final images small.
+
+Broadly, it has 3 main stages:
+
+1. A stage to download, install, and build dependencies.
+   It is used to build the Conda environment for example.
+   This stage typically requires build-time dependencies such as compilers, headers, etc. which are not needed
+   at runtime.
+2. A stage to install runtime dependencies and copy the conda environment from the previous stage.
+   Runtime dependencies are typically lighter than build-time dependencies.
+3. A stage extending the runtime stage with development dependencies.
+   These dependencies and utilities (e.g. vim, pretty shell, SSH server, etc) are not needed at runtime
+   but are useful when developing in the container.
+
+The base image is an Ubuntu image and most of the machine learning and hardware acceleration dependencies are installed
+through Conda.
+This includes CUDA and deep learning libraries.
+(Note that this is different from starting from the CUDA or PyTorch images which include the hardware acceleration
+libraries as system libraries.)
+
+### Details on the on Docker Compose file
+
+The Docker Compose file is used to configure variables used by the Dockerfile when building the images and
+to configure the container when running it locally.
+
+It supports building two images `runtime` and `dev` and running on each with either `cpu` or `gpu` support.
+
+We provide a utility script, `template.sh`, to help you interact with Docker Compose.
+It has a macro for the main operations you will have to do.
+
+You can always interact directly with `docker compose` if you prefer and get examples from the `template.sh` script.
 
 ## Instructions to build the environment
 
 **Prerequisites**
 
-* `make` (`make --version`). [Install here.](https://cmake.org/install/)
 * `docker` (`docker --version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 
@@ -47,15 +103,15 @@ Use at your own risk.
 All commands should be run from the installation directory.
 
 ```bash
-cd <project-name>/installation/docker-amd64
+cd installation/docker-amd64
 ```
 
 1. Create an environment file for your personal configuration with
    ```bash
-   make env
+   ./template env
    ```
    This creates a `.env` file with pre-filled values.
-    - The `UID/GID` are used to give the container user read/write access to the volumes that will be mounted
+    - The `USRID/GRPID` are used to give the container user read/write access to the volumes that will be mounted
       when the container is run, containing the code of the project, the data, and where you'll write your outputs.
       These need to match the user permissions on the mounted volumes.
       (If you're deploying locally, i.e. where you're building, these values should be filled correctly by default.)
@@ -65,31 +121,17 @@ cd <project-name>/installation/docker-amd64
     - You can ignore the rest of the variables after `## For running:`.
       These don't influence the build, they will be used later to run your image.
 
-2. Build the image with
+2. Build the images with
    ```bash
-   make build
+   ./template build runtime
+   ./template build dev
    ```
-   In case of build issues, setting `export BUILDKIT_PROGRESS=plain` will allow you to inspect all the build progress.
+   The runtime images will be used to run the code in an unattended way.
+   The dev image has additional utilities that facilitates development in the container.
 
 ## Instructions to run the environment
 
 You can either run the environment locally or on a managed cluster.
-Edit the `SERVICE` variable in the `.env` file to match how you want to run the image.
-
-- `local-cpu` specifies a deployment with Docker Compose on your machine with no hardware acceleration.
-  Use this option to run the container on a machine with Docker Compose. E.g. on your ssh server, WSL machine.
-
-  This service can also be used as
-  a [remote interpreter](https://www.jetbrains.com/help/pycharm/using-docker-compose-as-a-remote-interpreter.html),
-  by some IDEs where remote means inside the (local) container.
-- `local-gpu` same as above with GPU support.
-
-  (**EPFL note:** _Use this option for deploying on HaaS machines._)
-- `image-only` does not specify any deployment options.
-  It is there if you only need to build the image and then deploy it in a custom way.
-  For example to a managed cluster (Kubernetes, etc).
-
-  (**EPFL note:** _Use this option for deploying on the RunAI Kubernetes Cluster_)
 
 For local deployments follow the instructions below.
 
@@ -100,9 +142,8 @@ Other users can get inspiration from it too, otherwise we leave it to you to dep
 
 **Prerequisites**
 
-Steps prefixed with [CUDA] are only required to use NVIDIA GPUs with `SERVICE=local-gpu`.
+Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 
-* `make` (`make --version`). [Install here.](https://cmake.org/install/)
 * `docker` (`docker --version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 * [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc)
@@ -111,45 +152,45 @@ Steps prefixed with [CUDA] are only required to use NVIDIA GPUs with `SERVICE=lo
 
 **Run**
 
-Edit the `.env` to specify the local directories to mount the project code, data, and outputs.
-These are specified by the `LOCAL_*_DIR` variables.
-By default, they are set to the project directory on your machine.
+Edit the `.env` file to specify
+
+- whether you want to run on `cpu` or `gpu` with the `CPU_OR_GPU` variable.
+- the local directories to mount the project code, data, and outputs.
+  These are specified by the `LOCAL_*_DIR` variables.
+  By default, they are set to the project directory on your machine.
 
 Then you can:
 
-- Start the service container with
+- Start the development container with
     ```bash
-    make up
+    ./template up
     ```
-  This will start a container in the background for your service.
+  This will start a container running the development image in the background.
   It has an entrypoint that installs the project,
   checking that the code directory has correctly been mounted.
 
   You can check its logs with
     ```bash
-    make logs
+    ./template logs
     ```
   and open a shell in this background container with
     ```bash
-    make exec
+    ./template shell
+    ```
+  You can stop the container or delete it with
+    ```bash
+    ./template stop
+    ./template down
     ```
 
-- Delete the service with
+- Run jobs in independent containers running the `runtime` image with
     ```bash
-    make down
-    ```
-
-- Run jobs in independent containers with
-    ```bash
-    make run command="python --version"
+    ./template run your_command some_arg some_other_arg
+    ./template run python --version
     ```
   These containers start with the entrypoint then run the command you specified.
   By default, they are automatically removed after they exit.
   The not-so-nice syntax is due to `make` which is not really made to be used like this.
-  Otherwise, you can run
-    ```bash
-    docker compose -p ${COMPOSE_PROJECT} run --rm ${SERVICE} python --version
-    ```
 
 You should not need to override the entrypoint of the service container.
 It is necessary to install the project.
@@ -160,7 +201,7 @@ Only do so, if you need to debug the container, or you have a custom use case.
 System dependencies are managed by both`apt` and `conda`.
 Python dependencies are be managed by both `conda` and `pip`.
 
-- Use `apt` for system programs (e.g. `sudo`, `zsh`).
+- Use `apt` for system programs (e.g. `sudo`, `zsh`, `gcc`).
 - Use `conda` for non-python dependencies needed to run the project code (e.g. `mkl`, `swig`).
 - Use `conda` for python dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
@@ -188,7 +229,12 @@ We describe how to do so in the freeze the environment section.
 
 ### Manual editing (before/while building)
 
-- To edit the `apt` dependencies, edit the `dependencies/apt.txt` file.
+- To edit the `apt` dependencies, edit the `dependencies/apt-*.txt` files.
+  `apt` dependencies are separated into three files to help with multi-stage builds and keep final images small.
+    - In `apt-build.txt` put the dependencies needed to build the environment, e.g. compilers, build tools, etc.
+      We provide a set of minimal dependencies as an example.
+    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g. image processing libraries, etc.
+    - In `apt-dev.txt` put the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
 - To edit the `conda` and `pip` dependencies, edit the `dependencies/environment.yml` file.
 - To edit the more complex dependencies, edit the `Dockerfile`.
 
@@ -203,7 +249,7 @@ This will cause conflicts otherwise as `conda` doesn't track the `pip` dependenc
 So if you need to add a `conda` dependency after you already installed some `pip` dependencies, you need to recreate
 the environment by manually adding the dependencies before the build as described in the previous section.
 
-* To add `apt`  dependencies run `sudo apt-istall install <package>`
+* To add `apt`  dependencies run `sudo apt-install install <package>`
 * To add `conda` dependencies run `(conda | pip) install <package>`
 
 ### Freeze the environment
@@ -221,12 +267,21 @@ so it's a good idea to commit the changes to the environment file before/after r
 update_env_file
 ```
 
-For `apt` dependencies add them manually to `apt.txt`.
+For `apt` dependencies add them manually to the `apt-*.txt` files.
 
 For dependencies that required a custom installation or build, edit the `Dockerfile`.
 
 ## Troubleshooting
 
+### My image doesn't build with my initial dependencies.
+
+Try removing the dependencies causing the issue, rebuilding, then installing them interactively when running the
+container.
+The error messages will possibly be more informative and you will be able to dig into the issue.
+
+Alternatively you can open a container at the sub-image before the installation of the conda environment, say at
+`apt-build-base`, and try to install the conda environment manually.
+
 ## Acknowledgements
 
-This installation method is based on [Cresset](https://github.com/cresset-template/cresset).
+This Docker setup is heavily based on the [Cresset template](https://github.com/cresset-template/cresset).
