@@ -7,6 +7,13 @@ if [ -n "${EPFL_RUNAI}" ]; then
   zsh "${EPFL_RUNAI_SETUP_DIR}"/setup.sh
 fi
 
+# W&B login.
+# This does not need an internet connection.
+if [ -n "${WANDB_API_KEY}" ]; then
+  export WANDB_API_KEY="${WANDB_API_KEY}"
+  wandb login "${WANDB_API_KEY}"
+fi
+
 # Install the package in editable mode.
 echo "Installing the project."
 pip install -e "${PROJECT_DIR}"
