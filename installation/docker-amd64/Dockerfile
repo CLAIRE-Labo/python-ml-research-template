@@ -210,7 +210,7 @@ USER root
 
 # Install development packages.
 ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
-COPY --link dependencies/apt-build.txt ${DEV_DEPENDENCIES_FILE}
+COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-dev.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
