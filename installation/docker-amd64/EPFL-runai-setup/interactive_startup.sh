@@ -50,6 +50,10 @@ if [ -n "${PYCHARM_PROJECT_CONFIG_LOCATION}" ]; then
   IDE_CONFIG_PARENT_DIR=~/.config/JetBrains/RemoteDev-PY/
   mkdir -p "${IDE_CONFIG_PARENT_DIR}"
   ln -s "${PYCHARM_PROJECT_CONFIG_LOCATION}/_config" "${IDE_CONFIG_PARENT_DIR}/_opt_project"
+
+  # Workaround to force zsh in the remote IDE terminal.
+  # There's a bug and it keeps opening bash.
+  echo "zsh" >>.bashrc
 fi
 
 if [ -n "${PYCHARM_IDE_LOCATION}" ]; then

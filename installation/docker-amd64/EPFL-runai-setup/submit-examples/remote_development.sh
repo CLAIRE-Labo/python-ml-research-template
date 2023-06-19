@@ -1,4 +1,21 @@
 ## PyCharm example:
+
+# Option 1. No PyCharm on the remote server. Launch PyCharm from your local machine.
+runai submit \
+  --name example-remote-development \
+  --interactive \
+  --image ic-registry.epfl.ch/mlo/machrou3/moalla:dev \
+  --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
+  -e EPFL_RUNAI=1 \
+  -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev \
+  -e DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_data \
+  -e OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
+  -e EPFL_RUNAI_INTERACTIVE=1 \
+  -e SSH_SERVER=1 \
+  -e PYCHARM_PROJECT_CONFIG_LOCATION=/mloraw1/moalla/implicit-pg/_pycharm-config \
+  -- sleep infinity
+
+# Option 2 (preferred). PyCharm launched from the remote server.
 runai submit \
   --name example-remote-development \
   --interactive \

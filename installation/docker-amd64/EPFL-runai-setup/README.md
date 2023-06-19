@@ -246,7 +246,7 @@ your IDE and project configurations.
 2. Enable ssh forwarding.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
 
-You can then copy the binaries in `~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version>` to your PVC
+You can then copy the directory containing the binaries `~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version>` to your PVC
 to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the example.)
 
 **Option 2**:
