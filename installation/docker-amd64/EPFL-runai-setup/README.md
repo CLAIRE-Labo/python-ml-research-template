@@ -73,6 +73,8 @@ the project, forwards your ssh keys, and allows you to clone your repository on 
    git clone <repo-url> <project-name>/dev
    git clone <repo-url> <project-name>/run
    ```
+We also recommend that you make Git ignore the executable bit as the repo is moved across filesystems.
+You can do so by running `git config core.filemode false` in both repositories.
 
 ### A quick test to understand how the template works
 
