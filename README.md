@@ -2,12 +2,12 @@
 
 ## Overview
 
-This is a template used for starting python machine learning research
+This is a template used for starting Python machine-learning research
 projects with hardware acceleration at the EPFL CLAIRe (tentative name) lab.
 It features and encourages good practices for:
 
 - Reproducible environments that can be used/deployed on multiple platforms with hardware acceleration.
-  E.g. local computers (macOS + Apple Silicon, WSL + GPU), linux servers (like HaaS at EPFL),
+  E.g. local computers (macOS + Apple Silicon, WSL + GPU), Linux servers (like HaaS at EPFL),
   the EPFL IC RunAI Kubernetes cluster.
 - Experiment management, tracking, and sharing with [Weights & Biases](https://wandb.ai/site)
   and [Hydra](https://hydra.cc/).
@@ -22,7 +22,7 @@ ML Reproducibility Challenge 2022. (TODO, link to paper)
 
 Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
 It can also be adapted to suit many other use cases.
-However, it's maintained form will be tailored to the needs of CLAIRe.
+However, its maintained form will be tailored to the needs of CLAIRe.
 It also contains extra EPFL-specific instructions for deployment on the RunAI Kubernetes cluster.
 
 ## Getting started with the template
@@ -40,11 +40,11 @@ Give it a hyphen-separated name, then follow the instructions below to set up yo
 3. Edit the `LICENCE` file.
    Or delete it and remember to add one when open-sourcing your code.
    [(Some help here).](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
-   A simple change if you're fine with the MIT licence is to replace the `2022 Skander Moalla` with your year and name.
+   A simple change if you're fine with the MIT license is to replace the `2022 Skander Moalla` with your year and name.
    Commit.
-4. Setup and edit the development environment instructions for the platforms you'll use/support.
+4. Set up and edit the development environment instructions for the platforms you'll use/support.
    We support the following platforms:
-    - **AMD64 platforms (x86-64)** (e.g. linux server like the EPFL HaaS servers, WSL on a local machine, Kubernetes
+    - **AMD64 platforms (x86-64)** (e.g. Linux server like the EPFL HaaS servers, WSL on a local machine, Kubernetes
       clusters like the EPFL RunAI cluster), with support for NVIDIA GPUs.
       Refer to `installation/docker-amd64/README.md`.
     - **macOS with Apple Silicon (`osx-arm64`)**, with support for MPS hardware acceleration.
@@ -57,7 +57,7 @@ Give it a hyphen-separated name, then follow the instructions below to set up yo
    This is described in the next instructions.
 5. Edit this `README.md` file.
     1. Edit the title with the name of your project.
-       Replace the [Overview](#overview) section a the description of your project.
+       Replace the [Overview](#overview) section with a description of your project.
     2. Delete the installation options you don't support in
        the [Getting Started](#getting-started) section.
     3. List your direct dependencies (with major versions when relevant)
@@ -75,10 +75,10 @@ Give it a hyphen-separated name, then follow the instructions below to set up yo
        Otherwise, delete the section.
     5. Delete this getting started, to only keep the project [Getting Started](#getting-started) section.
 
-You're off to a good start! Here are a few tips for keeping your project in a good shape.
+You're off to a good start! Here are a few tips for keeping your project in good shape.
 
 - Keep this README up to date.
-  Fill the sections after the Getting Started when releasing your project.
+  Fill in the sections after the Getting Started when releasing your project.
   We give a structure and some templates for those.
 - Remember to pin your dependencies whenever you install new ones.
   More on this in the installation guides.
@@ -95,7 +95,7 @@ You're off to a good start! Here are a few tips for keeping your project in a go
 
 We support the following platforms for installing the project dependencies and running the code.
 
-* **AMD64 platforms (x86-64)** (e.g. linux server like the EPFL HaaS servers, WSL on a local machine, Kubernetes
+* **AMD64 platforms (x86-64)** (e.g. Linux server like the EPFL HaaS servers, WSL on a local machine, Kubernetes
   platforms like the EPFL RunAI Platform), with support for NVIDIA GPUs.
   Refer to `installation/docker-amd64/README.md`.
 * **macOS with Apple Silicon (`osx-arm64`)**, with support for MPS hardware acceleration.
@@ -123,10 +123,10 @@ It has a README at its root describing which scripts reproduce which experiments
 
 ### Experiment with different configurations
 
-The default configuration for each experiment are stored in the `configs/` directory.
+The default configuration for each experiment is stored in the `configs/` directory.
 They are managed by [Hydra](https://hydra.cc/docs/intro/).
 You can experiment with different configurations by passing the relevant flags.
-You can get examples on how to do so in the `reproducibility_scripts/` directory.
+You can get examples of how to do so in the `reproducibility_scripts/` directory.
 
 ### Pre-trained models and experiment results
 
@@ -134,7 +134,7 @@ We share our Weights and Biases runs in [this anonymized W&B project]().
 
 ## Repository structure
 
-Below, we give a description of main files and directories in this repository.
+Below, we give a description of the main files and directories in this repository.
 
 ```
 ├── src/ # Source code.
