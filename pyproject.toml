@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "<project-name>"
 readme = "README.md"
-license = { file="LICENSE" }
+license = { file = "LICENSE" }
 version = "0.0.1"
 requires-python = ">=<python-version>"
 classifiers = [
@@ -13,3 +13,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+
+[tool.isort]
+known_third_party = ["wandb"]

@@ -139,6 +139,11 @@ dmypy.json
 data
 _data
 !_data/README.md
+
 outputs
 _outputs
 !_outputs/README.md
+
+wandb
+_wandb
+!_wandb/README.md

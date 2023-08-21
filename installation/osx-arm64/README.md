@@ -20,7 +20,6 @@ It remains to
    Note that moving files inside an existing clone with `mv *` does not move dotfiles.)
 3. Get familiar with running the environment following the user instructions to 
    [run the environment](#instructions-to-run-the-environment).
->>>>>>> 410a6da (remove blah.)
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
    You can then add more dependencies as your project grows following
@@ -39,7 +38,10 @@ The project follows a specific tree structure that needs to be respected for the
 ├── <project-name>/      # This is the git repository root.
 ├── data/                # This is from where the data will be read.
 ├── outputs/             # This is where the outputs will be written.
+└── wandb/               # This is where wandb artifacts will be written.
 ```
+
+
 
 Create the respective directories so that the tree looks like the above:
 

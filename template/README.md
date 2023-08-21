@@ -1,5 +1,31 @@
 # Additional Details about the Template
 
+## Directory structure
+
+The python entrypoint of the template assumes a common directory structure across all installation methods.
+It is the following:
+
+```text
+PROJECT_ROOT/        # The root of the project (opt/project on the AMD64 setup and <project-name> on the macOS setup).
+├── <project-name>/  # The root of the git repository.
+├── data/            # This is from where the data will be read.
+├── outputs/         # This is where the outputs will be written.
+└── wandb/           # This is where wandb artifacts will be written.
+```
+
+The structure does not force you to put all the directories on the same filesystem, instead the instructions will tell
+you to create these directories as symlinks to anywhere else you wish.
+
+The point of this structure is to keep the python code agnostic of the installation method and platform.
+In particular the hydra configuration files will be the same across platforms and installation methods.
+We could also have used environment variables to specify the paths, but we find them not as convenient to use as
+we cannot set them automatically for you depending on the platform, especially local machines,
+which means you have to remember to set them every time.
+Furthermore, we want to keep the template as contained as possible, which means not altering the user's global
+environment.
+We thus prefer to have a longer configuration step at the beginning, that may differ on the platform and add some
+boilerplate code, but then have a seamless experience.
+
 ## Template FAQ
 
 ### Can I use this template for an already existing project? How do I do that?
