@@ -9,8 +9,8 @@ It features and encourages good practices for:
 - Reproducible environments that run and provide a good development experience on multiple platforms with hardware
   acceleration.
   Including:
-    - local computers (macOS + Apple Silicon, WSL + GPU),
-    - Linux servers (HaaS at EPFL, VMs on cloud providers),
+    - local machines (macOS + Apple Silicon, WSL + GPU),
+    - Linux servers (VMs on cloud providers, HaaS from EPFL IC),
     - the EPFL IC RunAI Kubernetes cluster (and soon other cloud services like GCP Vertex AI, AWS SageMaker).
 - Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
   and [Weights & Biases](https://wandb.ai/site).
@@ -27,7 +27,7 @@ an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5
 
 The template can also be adapted to suit many other use cases, however, its maintained form will be tailored to the
 needs of CLAIRe.
-It also contains extra EPFL-specific instructions for deployment on the RunAI Kubernetes cluster.
+It also contains extra EPFL-specific instructions for deployment on the EPFL RunAI Kubernetes cluster.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
 ## Getting started with the template
