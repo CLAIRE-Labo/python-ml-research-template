@@ -202,16 +202,16 @@ System dependencies are managed by both`apt` and `conda`.
 Python dependencies are be managed by both `conda` and `pip`.
 
 - Use `apt` for system programs (e.g. `sudo`, `zsh`, `gcc`).
-- Use `conda` for non-python dependencies needed to run the project code (e.g. `mkl`, `swig`).
-- Use `conda` for python dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
+- Use `conda` for non-Python dependencies needed to run the project code (e.g. `mkl`, `swig`).
+- Use `conda` for Python dependencies packaged with more that just Python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
-- Use `pip` for the rest of the python dependencies.
+- Use `pip` for the rest of the Python dependencies.
 - For more complex dependencies that may require a custom installation or build, use the `Dockerfile` directly.
 
 Here are references and reasons to follow the above claims:
 
 * [A guide for managing `conda` + `pip` environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment).
-* [Reasons to  use `conda` for not-python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
+* [Reasons to  use `conda` for not-Python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
 * [Ways of combining `conda` and `pip`](https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
 
 There are two ways to add dependencies to the environment:
@@ -235,12 +235,16 @@ We describe how to do so in the freeze the environment section.
       We provide a set of minimal dependencies as an example.
     - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g. image processing libraries, etc.
     - In `apt-dev.txt` put the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
+
+  If you're not familiar with which dependencies are needed for each stage, you can start with the minimal set we
+  give and when you encounter errors during the image build, add the missing dependencies to the stage where the error
+  occurred.
 - To edit the `conda` and `pip` dependencies, edit the `dependencies/environment.yml` file.
 - To edit the more complex dependencies, edit the `Dockerfile`.
 
 When manually editing the dependencies files, you do not need to specify the specific version of the dependencies,
 these will be written to the environment files when you freeze the environment.
-You will only need to specify the major versions of specific dependencies you need.
+You can of course specify the major versions of specific dependencies you need.
 
 ### Interactively (while developing)
 
