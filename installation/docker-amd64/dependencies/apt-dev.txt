@@ -4,6 +4,7 @@
 # They should only help in the interactive development images.
 openssh-server  # Required for EPFL remote development in shared clusters.
 ca-certificates # Recommended.
+sudo            # Recommended.
 git             # Recommended.
 htop            # Recommended.
 curl            # Recommended.

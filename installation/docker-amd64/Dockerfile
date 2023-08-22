@@ -158,7 +158,7 @@ COPY --link ./ ${PROJECT_ROOT}/${PROJECT_DIR}
 COPY --link installation/docker-amd64/entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
 
 # Install the Python project in editable mode.
-RUN mamba run -n ${PROJECT_NAME} install -e "${PROJECT_DIR}"
+RUN mamba run -n ${PROJECT_NAME} pip install -e "${PROJECT_DIR}"
 
 # Set the user.
 USER ${USR}
@@ -259,10 +259,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     xargs -t apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-## Install pre-commit and the pre-commit hooks.
-RUN pip install pre-commit && \
-    pre-commit install
-
 # Back to the user.
 ARG USR
 USER ${USR}
+
+## Install pre-commit and the pre-commit hooks.
+RUN RUN mamba run -n ${PROJECT_NAME} pip install pre-commit
+RUN cd ${PROJECT_DIR} && pre-commit install

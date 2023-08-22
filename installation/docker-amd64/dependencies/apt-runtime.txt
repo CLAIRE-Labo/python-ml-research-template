@@ -2,3 +2,4 @@
 # These dependencies are required to run your code.
 zsh                 # Required.
 openssl             # Required.
+htop                # Useful when checking current runs.
