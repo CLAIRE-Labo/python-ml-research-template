@@ -1,0 +1,7 @@
+template/
+installation/osx-arm64/
+installation/docker-amd64/
+!installation/docker-amd64/dependencies/
+!installation/docker-amd64/EPFL-runai-setup/interactive_startup.sh
+!installation/docker-amd64/EPFL-runai-setup/setup.sh
+!installation/docker-amd64/entrypoint.sh/

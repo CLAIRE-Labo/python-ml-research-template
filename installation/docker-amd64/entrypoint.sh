@@ -14,11 +14,6 @@ if [ -n "${WANDB_API_KEY}" ]; then
   wandb login "${WANDB_API_KEY}"
 fi
 
-# Install the package in editable mode.
-echo "Installing the project."
-pip install -e "${PROJECT_DIR}"
-python -c "import ${PACKAGE_NAME}"
-
 # Exec so that the child process receives the OS signals.
 # It will be PID 1.
 exec "$@"

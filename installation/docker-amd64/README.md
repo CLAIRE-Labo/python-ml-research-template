@@ -95,7 +95,7 @@ You can always interact directly with `docker compose` if you prefer and get exa
 * `docker` (`docker --version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 
-**build**
+**Build**
 
 We recommend building on an `amd64` platform, although the Docker BuildKit allows for cross-platform builds.
 Use at your own risk.

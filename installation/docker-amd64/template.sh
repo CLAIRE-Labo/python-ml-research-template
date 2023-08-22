@@ -21,18 +21,20 @@ CPU_OR_GPU=cpu
 LOCAL_PROJECT_DIR=../../
 LOCAL_DATA_DIR=../../_data
 LOCAL_OUTPUTS_DIR=../../_outputs
+LOCAL_WANDB_DIR=../../_wandb
 WANDB_API_KEY=0
 
 ####################
 # Project-specific environment variables.
 ## Used to avoid writing paths multiple times and creating inconsistencies.
 ## You should not need to change anything below this line.
-PROJECT_NAME=implicit-pg
-PACKAGE_NAME=implicit_pg
+PROJECT_NAME=<project-name>
+PACKAGE_NAME=<package_name>
 PROJECT_ROOT=/opt/project
 PROJECT_DIR=\${PROJECT_ROOT}/\${PROJECT_NAME}
 DATA_DIR=\${PROJECT_ROOT}/data
 OUTPUTS_DIR=\${PROJECT_ROOT}/outputs
+WWANDB_DIR=\${PROJECT_ROOT}/wandb
 IMAGE_NAME=\$REGISTRY_HOSTNAME/\${LAB_NAME}/\${PROJECT_NAME}/\${USR}
 EOF
 )

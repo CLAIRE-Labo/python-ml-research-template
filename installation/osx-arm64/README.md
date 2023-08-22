@@ -16,9 +16,17 @@ It remains to
    any subsequent user (including future you),
    the steps may feel slightly redundant now as you will have to move the current repository
    so that it matches the project directory structure.
-   (You can move it temporarility somewhere else, create the `PROJECT_ROOT`, then move it back.
-   Note that moving files inside an existing clone with `mv *` does not move dotfiles.)
-3. Get familiar with running the environment following the user instructions to 
+   You can move it temporarily somewhere else `PROJECT_ROOT`, then move it back.
+   I.e.:
+   ```bash
+   cd ..
+   mv <project-name> <project-name>-tmp # This is the git repository root.
+   mkdir <project-name> # This is the PROJECT_ROOT.
+   mv <project-name>-tmp <project-name>/<project-name>
+   ```
+   Note that moving all files inside an existing clone with `mv *` does not move the dotfiles, so will miss the git
+   files.
+3. Get familiar with running the environment following the user instructions to
    [run the environment](#instructions-to-run-the-environment).
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
@@ -41,19 +49,17 @@ The project follows a specific tree structure that needs to be respected for the
 └── wandb/               # This is where wandb artifacts will be written.
 ```
 
-
-
 Create the respective directories so that the tree looks like the above:
 
 - Create the `PROJECT_ROOT` directory.
 - Clone the git repository in the `PROJECT_ROOT` directory.
-- By default, you should symlink `data/` and `outputs/` to the `_data/` and `_outputs/`
+- By default, you should symlink `data/`, `outputs/`, and `wandb/` to the `_data/`, `_outputs/`, and `_wandb/`
   directories in the repository root.
-  Tip: symlink the directories with global paths.
   ```bash
   # When in the PROJECT_ROOT directory.
   ln -s $(pwd)/<project-name>/_data data
   ln -s $(pwd)/<project-name>/_outputs outputs
+  ln -s $(pwd)/<project-name>/_wandb wandb
   ```
   Otherwise, you can symlink them to a different location, perhaps on a mounted filesystem.
 

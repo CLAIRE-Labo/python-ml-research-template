@@ -11,6 +11,8 @@ ARG BASE_IMAGE
 ########################################################################
 # 1. Stages for downloading, installing, and building things.
 ########################################################################
+
+########################################################################
 # Download conda.
 
 FROM ${CURL_IMAGE} AS get-conda
@@ -29,8 +31,8 @@ RUN --mount=type=bind,from=get-conda,source=/tmp/conda,target=/tmp/conda \
 
 ########################################################################
 # Install apt build packages.
-# This stage can be used to build other software.
-# For example, it is used to build the conda environment.
+## This stage can be reused to build other software.
+## For example, it is used to build the conda environment in the conda-env stage.
 
 FROM ${BASE_IMAGE} AS apt-build-base
 
@@ -45,7 +47,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     /etc/apt/apt.conf.d/keep-cache
 
 ARG BUILD_DEPENDENCIES_FILE=/tmp/dependencies/apt-build.txt
-COPY --link dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
+COPY --link installation/docker-amd64/dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-build.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -70,7 +72,7 @@ ARG CONDA_ENV_FILE=/tmp/dependencies/environment.yml
 ARG PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 
 COPY --link --from=install-conda ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
-COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
+COPY --link installation/docker-amd64/dependencies/environment.yml ${CONDA_ENV_FILE}
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     --mount=type=cache,target=${CONDA_PKGS_DIRS},sharing=locked \
     mamba env create --file ${CONDA_ENV_FILE}
@@ -84,11 +86,16 @@ RUN mamba clean -fya && \
 # then copy the installation artifacts to runtime-base. (As done with the conda env).
 # Think multi-stage and cache-efficient.
 
+# You can also custom build and install pip packages starting from the conda-env stage.
+# Just make sure to prefix your pip commands with `mamba run -n ${PROJECT_NAME} pip install ...`
+# To have to package installed in the same location as the conda env of the project.
+
 ########################################################################
 # 2. Stages for setting up the runtime environment.
 ########################################################################
 # Install apt runtime packages.
 # This layer is the base for the image that you will run.
+# Observe that apt-build-base is not used anymore and will not be present in the final image.
 
 FROM ${BASE_IMAGE} AS apt-runtime-base
 
@@ -104,7 +111,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     /etc/apt/apt.conf.d/keep-cache
 
 ARG RUNTIME_DEPENDENCIES_FILE=/tmp/dependencies/apt-runtime.txt
-COPY --link dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
+COPY --link installation/docker-amd64/dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-runtime.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -120,6 +127,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 FROM apt-runtime-base AS runtime-base
 
 ARG PROJECT_NAME
+ARG PROJECT_DIR
 ARG GRPID
 ARG USRID
 ARG GRP
@@ -130,6 +138,13 @@ ENV PASSWD=${PASSWD}
 RUN groupadd -f -g ${GRPID} ${GRP} && \
     useradd --shell /bin/zsh --create-home -u ${USRID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
     usermod -aG sudo ${USR}
+
+# Copy the conda env with the directory ownership given to the user.
+# This is to be able to install more packages in interactive mode.
+ARG CONDA_INSTALL_PATH
+ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
+COPY --link --from=conda-env --chown=${USRID}:${GRPID} ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
+
 # Create a directory for the project and a directory for startup scripts.
 ARG PROJECT_ROOT
 ENV PROJECT_ROOT=${PROJECT_ROOT}
@@ -137,14 +152,38 @@ ENV ENTRYPOINTS_ROOT=/opt/entrypoints
 RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT} && \
     mkdir -p ${ENTRYPOINTS_ROOT} && chown ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
 
-# Get conda with the directory ownership given to the user.
-# This is to be able to install more packages in interactive mode.
-ARG CONDA_INSTALL_PATH
-ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
-COPY --link --from=conda-env --chown=${USRID}:${GRPID} ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
+# Copy the project directory to PROJECT_DIR in the PROJECT_ROOT
+COPY --link ./ ${PROJECT_ROOT}/${PROJECT_DIR}
+# and the entrypoint scripts in ENTRYPOINTS_ROOT.
+COPY --link installation/docker-amd64/entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
+
+# Install the Python project in editable mode.
+RUN mamba run -n ${PROJECT_NAME} install -e "${PROJECT_DIR}"
 
 # Set the user.
 USER ${USR}
+
+# Zsh configuration.
+# Also useful for unattended runs when attaching a shell for audits.
+ENV ZDOTDIR=/home/${USR}
+
+ARG PURE_PATH=${ZDOTDIR}/.zsh/pure
+ARG ZSHA_PATH=${ZDOTDIR}/.zsh/zsh-autosuggestions
+ARG ZSHS_PATH=${ZDOTDIR}/.zsh/zsh-syntax-highlighting
+COPY --link --from=get-pure --chown=${USRID}:${GRPID} /opt/zsh/pure ${PURE_PATH}
+COPY --link --from=get-pure --chown=${USRID}:${GRPID} /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
+COPY --link --from=get-pure --chown=${USRID}:${GRPID} /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
+RUN {   echo "fpath+=${PURE_PATH}"; \
+        echo "autoload -Uz promptinit; promptinit"; \
+        echo "prompt pure"; \
+        echo "source ${ZSHA_PATH}/zsh-autosuggestions.zsh"; \
+        echo "source ${ZSHS_PATH}/zsh-syntax-highlighting.zsh"; \
+        echo "alias ls='ls --color=auto'"; \
+        echo "alias ll='ls -lh'"; \
+        echo "alias wns='watch nvidia-smi'"; \
+        echo "alias hist='history 1'"; \
+        echo "alias update_env_file='source \${PROJECT_DIR}/installation/docker-amd64/dependencies/update_env_file.sh'"; \
+    } >> ${ZDOTDIR}/.zshrc
 
 # Initialize conda for interactive shells.
 ARG PROJECT_NAME
@@ -173,17 +212,15 @@ ENV OUTPUTS_DIR=${OUTPUTS_DIR}
 
 WORKDIR ${PROJECT_ROOT}
 
-# Entrypoint is an interactive shell to activate the conda environment.
-# Don't overwrite the entrypoint it is installing the project
-# and testing that you correctly mounted your volume.
-# It only needs to run once, so you can attach shells later without running it.
-COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
+# The entrypoint is run in an interactive shell so that the conda environment is activated before.
+# Don't overwrite the entrypoint is performs some important setup.
 ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
+# You call always attach shells to the running container after it started at the entrypoint.
 
-# The following is for EPFL-specific configurations.
+# The following is for EPFL-specific configurations and setup.
 ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL-runai-setup
-COPY --link EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
+COPY --link installation/docker-amd64/EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
 
 ########################################################################
 # 3. Stages for setting up the development environment.
@@ -209,8 +246,10 @@ FROM runtime AS development
 USER root
 
 # Install development packages.
+
+## Install apt development packages.
 ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
-COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
+COPY --link installation/docker-amd64/dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-dev.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -220,30 +259,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     xargs -t apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
+## Install pre-commit and the pre-commit hooks.
+RUN pip install pre-commit && \
+    pre-commit install
 
 # Back to the user.
-ARG GRPID
-ARG USRID
-ARG GRP
 ARG USR
-
 USER ${USR}
-
-# Zsh configuration.
-ARG PURE_PATH=${ZDOTDIR}/.zsh/pure
-ARG ZSHA_PATH=${ZDOTDIR}/.zsh/zsh-autosuggestions
-ARG ZSHS_PATH=${ZDOTDIR}/.zsh/zsh-syntax-highlighting
-COPY --link --from=get-pure --chown=${USRID}:${GRPID} /opt/zsh/pure ${PURE_PATH}
-COPY --link --from=get-pure --chown=${USRID}:${GRPID} /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
-COPY --link --from=get-pure --chown=${USRID}:${GRPID} /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
-RUN {   echo "fpath+=${PURE_PATH}"; \
-        echo "autoload -Uz promptinit; promptinit"; \
-        echo "prompt pure"; \
-        echo "source ${ZSHA_PATH}/zsh-autosuggestions.zsh"; \
-        echo "source ${ZSHS_PATH}/zsh-syntax-highlighting.zsh"; \
-        echo "alias ls='ls --color=auto'"; \
-        echo "alias ll='ls -lh'"; \
-        echo "alias wns='watch nvidia-smi'"; \
-        echo "alias hist='history 1'"; \
-        echo "alias update_env_file='source \${PROJECT_DIR}/installation/docker-amd64/dependencies/update_env_file.sh'"; \
-    } >> ${ZDOTDIR}/.zshrc
