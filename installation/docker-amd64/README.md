@@ -118,7 +118,7 @@ cd installation/docker-amd64
 
       (**EPFL Note:** _These will typically be your GASPAR credentials and will match the permissions
       on your lab NFS and HaaS machines._)
-    - You can ignore the rest of the variables after `## For running:`.
+    - You can ignore the rest of the variables after `## For running locally`.
       These don't influence the build, they will be used later to run your image.
 
 2. Build the images with
