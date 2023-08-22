@@ -168,9 +168,10 @@ This is to ensure that the environment is reproducible and that the dependencies
 
 To do so, run the following command.
 The script overwrites the `environment.yml` file with the current environment specification,
-so it's a good idea to commit the changes to the environment file before/after running it.
+so it's a good idea to commit the changes to the environment file before and after running it.
 
 ```bash
+# When in the PROJECT_ROOT directory.
 source <project-name>/installation/osx-arm64/update_env_file.sh
 ```
 
