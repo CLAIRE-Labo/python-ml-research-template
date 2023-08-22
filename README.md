@@ -71,7 +71,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
     4. If you use datasets, describe how to obtain them in the [datasets](#datasets) section.
        You can refer the users to `_data/README.md` and write the instructions there.
        The template has a common directory structure across all installation methods.
-       So you should ask the users to put the data somewhere in the `data/` directory.
+       So you should ask the users to put or create symlinks to the data somewhere in the `data/` directory.
        (More info on the directory structure in the `template/README.md` file.).
        ```
        PROJECT_ROOT/        # The root of the project can be any name.

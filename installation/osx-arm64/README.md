@@ -3,12 +3,12 @@
 ## [TEMPLATE] Template info
 
 This template provides a minimal `environment.yml` file for starting a `conda` environment.
-The python version and package name have already been filled by the `fill_template.sh` script.
+The Python version and package name have already been filled by the `fill_template.sh` script.
 It remains to
 
 1. Specify your initial dependencies.
    Follow the [instructions to maintain the environment](#instructions-to-maintain-the-environment)
-   up to (including) the manual editing section.
+   up to (including) the manual editing section without actually creating the environment.
    Commit so that you can get back to this file to edit it manually.
 2. Create the environment following the user
    [instructions to create the environment](#instructions-to-create-the-environment) below.
@@ -26,14 +26,14 @@ It remains to
    ```
    Note that moving all files inside an existing clone with `mv *` does not move the dotfiles, so will miss the git
    files.
-3. Get familiar with running the environment following the user instructions to
-   [run the environment](#instructions-to-run-the-environment).
+3. Get familiar with running the environment following the user [instructions to
+   run the environment](#instructions-to-run-the-environment).
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
    You can then add more dependencies as your project grows following
    the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
    Commit.
-5. Delete the [TEMPLATE] sections from this file.
+5. Delete this [TEMPLATE]-prefixed section from this file.
 
 ## Instructions to create the environment
 
@@ -53,15 +53,15 @@ Create the respective directories so that the tree looks like the above:
 
 - Create the `PROJECT_ROOT` directory.
 - Clone the git repository in the `PROJECT_ROOT` directory.
-- By default, you should symlink `data/`, `outputs/`, and `wandb/` to the `_data/`, `_outputs/`, and `_wandb/`
-  directories in the repository root.
+- By default, you should symlink `data/`, `outputs/`, and `wandb/` to the placeholder `_data/`, `_outputs/`, and `_wandb/`
+  directories we created in the template repository root.
   ```bash
   # When in the PROJECT_ROOT directory.
   ln -s $(pwd)/<project-name>/_data data
   ln -s $(pwd)/<project-name>/_outputs outputs
   ln -s $(pwd)/<project-name>/_wandb wandb
   ```
-  Otherwise, you can symlink them to a different location, perhaps on a mounted filesystem.
+  Otherwise, you can symlink them to different locations, perhaps on a larger disk or mounted filesystem.
 
 ### Development environment
 
@@ -104,18 +104,18 @@ System dependencies are managed by `conda`, otherwise `brew` (we try to keep eve
 possible).
 Python dependencies are be managed by both `conda` and `pip`.
 
-- Use `conda` for system and non-python dependencies needed to run the project code (e.g.`swig`).
+- Use `conda` for system and non-Python dependencies needed to run the project code (e.g.`swig`).
   If not available on `conda` use `brew`.
-- Use `conda` for python dependencies packaged with more that just python code (e.g. `pytorch`, `numpy`).
+- Use `conda` for Python dependencies packaged with more that just Python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
-- Use `pip` for the rest of the python dependencies.
+- Use `pip` for the rest of the Python dependencies (e.g. `tqdm`).
 - For more complex dependencies that may require a custom installation or build,
   manually follow their installation steps.
 
 Here are references and reasons to follow the above claims:
 
 * [A guide for managing `conda` + `pip` environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment).
-* [Reasons to  use `conda` for not-python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
+* [Reasons to  use `conda` for not-Python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
 * [Ways of combining `conda` and `pip`](https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
 
 There are two ways to add dependencies to the environment:
@@ -138,9 +138,9 @@ We describe how to do so in the freeze the environment section.
 
 When manually editing the `environment.yml` file, you do not need to specify the specific version of the dependencies,
 these will be written to the file when you freeze the environment.
-You will only need to specify the major versions of specific dependencies you need.
+You can of course specify the major versions of specific dependencies you need.
 
-After manually editing the `environment.yml` file, you need need to recreate the environment.
+After manually editing the `environment.yml` file, you need to recreate the environment.
 
 ```bash
 mamba deactivate
