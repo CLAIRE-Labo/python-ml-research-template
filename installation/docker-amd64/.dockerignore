@@ -1,0 +1,5 @@
+**
+!dependencies/
+!EPFL-runai-setup/interactive_startup.sh
+!EPFL-runai-setup/setup.sh
+!entrypoint.sh

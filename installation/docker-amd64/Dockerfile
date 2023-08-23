@@ -60,7 +60,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     /etc/apt/apt.conf.d/keep-cache
 
 ARG BUILD_DEPENDENCIES_FILE=/tmp/dependencies/apt-build.txt
-COPY --link installation/docker-amd64/dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
+COPY --link dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-build.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -85,7 +85,7 @@ ARG CONDA_ENV_FILE=/tmp/dependencies/environment.yml
 ARG PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 
 COPY --link --from=install-conda ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
-COPY --link installation/docker-amd64/dependencies/environment.yml ${CONDA_ENV_FILE}
+COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     --mount=type=cache,target=${CONDA_PKGS_DIRS},sharing=locked \
     mamba env create --file ${CONDA_ENV_FILE}
@@ -126,7 +126,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     /etc/apt/apt.conf.d/keep-cache
 
 ARG RUNTIME_DEPENDENCIES_FILE=/tmp/dependencies/apt-runtime.txt
-COPY --link installation/docker-amd64/dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
+COPY --link dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-runtime.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -137,7 +137,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm -rf /var/lib/apt/lists/*
 
 ########################################################################
-# Setting up a user.
+# Setting up a user and moving the conda env to the user.
 
 FROM apt-runtime-base AS runtime-base
 
@@ -149,7 +149,6 @@ ARG GRP
 ARG USR
 ARG PASSWD
 ENV PASSWD=${PASSWD}
-
 RUN groupadd -f -g ${GRPID} ${GRP} && \
     useradd --shell /bin/zsh --create-home -u ${USRID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
     usermod -aG sudo ${USR}
@@ -167,26 +166,8 @@ ENV ENTRYPOINTS_ROOT=/opt/entrypoints
 RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT} && \
     mkdir -p ${ENTRYPOINTS_ROOT} && chown ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
 
-# Copy the project directory to PROJECT_DIR in the PROJECT_ROOT
-COPY --link --chown=${USRID}:${GRPID} . ${PROJECT_DIR}
-# and the entrypoint scripts in ENTRYPOINTS_ROOT.
-COPY --link --chown=${USRID}:${GRPID} installation/docker-amd64/entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
-
-# Install the Python project in editable mode.
-ARG PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
-RUN mamba run -n ${PROJECT_NAME} pip install -e "${PROJECT_DIR}"
-
-# Set the user.
+# Use the user to do its shell configuration.
 USER ${USR}
-
-# Create the project directory structure.
-ARG DATA_DIR
-ARG OUTPUTS_DIR
-ARG WWANDB_DIR
-RUN ln -s ${PROJECT_DIR}/_data ${DATA_DIR} && \
-    ln -s ${PROJECT_DIR}/_outputs ${OUTPUTS_DIR} && \
-    ln -s ${PROJECT_DIR}/_wandb ${WWANDB_DIR}
-# These directories will likely be overridden by other symlinks of mounted volumes.
 
 # Zsh configuration.
 # Also useful for unattended runs when attaching a shell for audits.
@@ -237,17 +218,30 @@ ENV DATA_DIR=${DATA_DIR}
 ENV OUTPUTS_DIR=${OUTPUTS_DIR}
 ENV WWANDB_DIR=${WWANDB_DIR}
 
+# PROJECT, DATA, OUTPUTS, and WWANDB _DIR are where you will mount your code data and outputs.
+# The project assumes a fixed structure:
+
+# PROJECT_ROOT
+# ├── PROJECT_DIR
+# ├── DATA_DIR
+# ├── OUTPUTS_DIR
+# └── WWANDB_DIR
+
+# PROJECT_ROOT is where you want all your scripts to run from.
 WORKDIR ${PROJECT_ROOT}
 
 # The entrypoint is run in an interactive shell so that the conda environment is activated before.
-# Don't overwrite the entrypoint is performs some important setup.
+# Don't overwrite the entrypoint it is installing the project
+# and testing that you correctly mounted the project code and data and output directories.
+# It also performs some other important setup depending on the deployment platform.
+COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
 ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
 # You call always attach shells to the running container after it started at the entrypoint.
 
 # The following is for EPFL-specific configurations and setup.
 ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL-runai-setup
-COPY --link --chown=${USRID}:${GRPID} installation/docker-amd64/EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
+COPY --link --chown=${USRID}:${GRPID} EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
 
 ########################################################################
 # 3. Stages for setting up the development environment.
@@ -265,7 +259,7 @@ USER root
 
 ## Install apt development packages.
 ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
-COPY --link installation/docker-amd64/dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
+COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-dev.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -278,7 +272,3 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # Back to the user.
 ARG USR
 USER ${USR}
-
-## Install pre-commit and the pre-commit hooks.
-RUN mamba run -n ${PROJECT_NAME} pip install pre-commit
-RUN cd ${PROJECT_DIR} && mamba run -n ${PROJECT_NAME} pre-commit install --install-hooks
