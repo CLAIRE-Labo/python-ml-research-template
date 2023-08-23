@@ -131,12 +131,11 @@ cd installation/docker-amd64
 
 ## Instructions to run the environment
 
-You can either run the environment locally or on a managed cluster.
-
-For local deployments follow the instructions below.
-
-For managed cluster deployments, EPFL RunAI cluster users should refer to the `./EPFL-runai-setup/README.md`.
-Other users can get inspiration from it too, otherwise, we leave it to you to deploy on your managed cluster.
+We provide the following guides for running the environment:
+- To run on the same machine where you built the image, follow 
+  [Running locally with Docker Compose](#running-locally-with-docker-compose).
+- To run on the EPFL RunAI cluster refer to the `./EPFL-runai-setup/README.md`.
+  Other managed cluster users can get inspiration from it too, but we leave it to you to deploy on your managed cluster.
 
 ### Running locally with Docker Compose
 
