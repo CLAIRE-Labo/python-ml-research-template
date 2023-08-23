@@ -11,7 +11,7 @@ It features and encourages good practices for:
   Including:
     - local machines (macOS + Apple Silicon, WSL + GPU),
     - Linux servers (VMs on cloud providers, HaaS from EPFL IC),
-    - the EPFL IC RunAI Kubernetes cluster (and soon other cloud services like GCP Vertex AI, AWS SageMaker).
+    - the EPFL IC RunAI Kubernetes cluster (and soon other cloud services like GCP Vertex AI, AWS SageMaker, ...).
 - Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
   and [Weights & Biases](https://wandb.ai/site).
 - Python project packaging following the
