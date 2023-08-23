@@ -108,7 +108,7 @@ cd installation/docker-amd64
 
 1. Create an environment file for your personal configuration with
    ```bash
-   ./template env
+   ./template.sh env
    ```
    This creates a `.env` file with pre-filled values.
     - The `USRID/GRPID` are used to give the container user read/write access to the volumes that will be mounted
