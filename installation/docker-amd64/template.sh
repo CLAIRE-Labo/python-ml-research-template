@@ -22,7 +22,7 @@ LOCAL_PROJECT_DIR=../../
 LOCAL_DATA_DIR=../../_data
 LOCAL_OUTPUTS_DIR=../../_outputs
 LOCAL_WANDB_DIR=../../_wandb
-WANDB_API_KEY=0
+WANDB_API_KEY=
 
 ####################
 # Project-specific environment variables.
