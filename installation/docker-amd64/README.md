@@ -39,11 +39,11 @@ Here's a summary of all the files in this directory.
 
 ```
 docker-amd64/
-├── Dockerfile              # Dockerfile template. Edit if you are buildings things manually.
+├── Dockerfile              # Dockerfile template. Edit if you are building things manually.
 ├── docker-compose.yml      # Docker Compose template. Edit if you have a custom local deployment.
-├── entrypoint.sh           # Entrypoint script. Edit you need to start programs when the container starts.
-├── template.sh             # A utility script to help you interact with the template (build, deploy, etc).
-├── .env                    # Will contain yout personal configuration.
+├── entrypoint.sh           # Entrypoint script. Edit if you need to start programs when the container starts.
+├── template.sh             # A utility script to help you interact with the template (build, deploy, etc.).
+├── .env                    # Will contain your personal configuration.
 ├── dependencies/
 │   ├── environment.yml     # Conda and pip dependencies.
 │   ├── apt-build.txt       # System dependencies (from apt) for building the conda environment, and potentially other software.
@@ -55,7 +55,7 @@ docker-amd64/
 
 ### Details on the Dockerfile
 
-The Dockerfile specifies all the steps to build the environment that in which your code will run.
+The Dockerfile specifies all the steps to build the environment in which your code will run.
 It makes efficient use of multi-stage builds to speed up build time and keep final images small.
 
 Broadly, it has 3 main stages:
@@ -67,7 +67,7 @@ Broadly, it has 3 main stages:
 2. A stage to install runtime dependencies and copy the conda environment from the previous stage.
    Runtime dependencies are typically lighter than build-time dependencies.
 3. A stage extending the runtime stage with development dependencies.
-   These dependencies and utilities (e.g. vim, pretty shell, SSH server, etc) are not needed at runtime
+   These dependencies and utilities (e.g. vim, pretty shell, SSH server, etc.) are not needed at runtime
    but are useful when developing in the container.
 
 The base image is an Ubuntu image and most of the machine learning and hardware acceleration dependencies are installed
@@ -76,7 +76,7 @@ This includes CUDA and deep learning libraries.
 (Note that this is different from starting from the CUDA or PyTorch images which include the hardware acceleration
 libraries as system libraries.)
 
-### Details on the on Docker Compose file
+### Details on the Docker Compose file
 
 The Docker Compose file is used to configure variables used by the Dockerfile when building the images and
 to configure the container when running it locally.
@@ -111,7 +111,7 @@ cd installation/docker-amd64
    ./template.sh env
    ```
    This creates a `.env` file with pre-filled values.
-    - The `USRID/GRPID` are used to give the container user read/write access to the volumes that will be mounted
+    - The `USRID` and `GRPID` are used to give the container user read/write access to the volumes that will be mounted
       when the container is run, containing the code of the project, the data, and where you'll write your outputs.
       These need to match the user permissions on the mounted volumes.
       (If you're deploying locally, i.e. where you're building, these values should be filled correctly by default.)
@@ -127,7 +127,7 @@ cd installation/docker-amd64
    ./template.sh build dev
    ```
    The runtime images will be used to run the code in an unattended way.
-   The dev image has additional utilities that facilitates development in the container.
+   The dev image has additional utilities that facilitate development in the container.
 
 ## Instructions to run the environment
 
@@ -136,7 +136,7 @@ You can either run the environment locally or on a managed cluster.
 For local deployments follow the instructions below.
 
 For managed cluster deployments, EPFL RunAI cluster users should refer to the `./EPFL-runai-setup/README.md`.
-Other users can get inspiration from it too, otherwise we leave it to you to deploy on your managed cluster.
+Other users can get inspiration from it too, otherwise, we leave it to you to deploy on your managed cluster.
 
 ### Running locally with Docker Compose
 
@@ -189,7 +189,7 @@ Then you can:
     ./template.sh run python --version
     ./template.sh run python -m a_project.main some_arg=some_value
     ```
-  These containers start with the entrypoint then run the command you specified.
+  These containers start with the entrypoint and then run the command you specified.
   By default, they are automatically removed after they exit.
   The not-so-nice syntax is due to `make` which is not really made to be used like this.
 
@@ -199,12 +199,12 @@ Only do so, if you need to debug the container, or you have a custom use case.
 
 ## Instructions to maintain the environment
 
-System dependencies are managed by both`apt` and `conda`.
-Python dependencies are be managed by both `conda` and `pip`.
+System dependencies are managed by both `apt` and `conda`.
+Python dependencies are managed by both `conda` and `pip`.
 
 - Use `apt` for system programs (e.g. `sudo`, `zsh`, `gcc`).
 - Use `conda` for non-Python dependencies needed to run the project code (e.g. `mkl`, `swig`).
-- Use `conda` for Python dependencies packaged with more that just Python code (e.g. `pytorch`, `numpy`).
+- Use `conda` for Python dependencies packaged with more than just Python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
 - Use `pip` for the rest of the Python dependencies.
 - For more complex dependencies that may require a custom installation or build, use the `Dockerfile` directly.
@@ -226,7 +226,7 @@ There are two ways to add dependencies to the environment:
 
 In both cases, after any change, a snapshot of the full environment specification should be written to the dependencies
 files.
-We describe how to do so in the freeze the environment section.
+We describe how to do so in the Freeze the Environment section.
 
 ### Manual editing (before/while building)
 
@@ -243,8 +243,8 @@ We describe how to do so in the freeze the environment section.
 - To edit the `conda` and `pip` dependencies, edit the `dependencies/environment.yml` file.
 - To edit the more complex dependencies, edit the `Dockerfile`.
 
-When manually editing the dependencies files, you do not need to specify the specific version of the dependencies,
-these will be written to the environment files when you freeze the environment.
+When manually editing the dependencies files, you do not need to specify the specific version of the dependencies.
+These will be written to the environment files when you freeze the environment.
 You can of course specify the major versions of specific dependencies you need.
 
 ### Interactively (while developing)
@@ -264,7 +264,7 @@ dependencies files.
 This includes changes during a build and changes made interactively.
 This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
 
-To do so, run the following from login shell in the container.
+To do so, run the following from the login shell in the container.
 The script overwrites the `dependencies/environment.yml` file with the current environment specification,
 so it's a good idea to commit the changes to the environment file before/after running it.
 
@@ -274,17 +274,17 @@ update_env_file
 
 For `apt` dependencies add them manually to the `apt-*.txt` files.
 
-For dependencies that required a custom installation or build, edit the `Dockerfile`.
+For dependencies that require a custom installation or build, edit the `Dockerfile`.
 
 ## Troubleshooting
 
 ### My image doesn't build with my initial dependencies.
 
-Try removing the dependencies causing the issue, rebuilding, then installing them interactively when running the
+Try removing the dependencies causing the issue, rebuilding, and then installing them interactively when running the
 container.
 The error messages will possibly be more informative and you will be able to dig into the issue.
 
-Alternatively you can open a container at the sub-image before the installation of the conda environment, say at
+Alternatively, you can open a container at the sub-image before the installation of the conda environment, say at
 `apt-build-base`, and try to install the conda environment manually.
 
 ## Acknowledgements
