@@ -49,7 +49,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
    Commit.
 4. Set up and edit the development environment instructions for the platforms you will use and support.
    Each platform group supports a group of use cases:
-    - **AMD64(x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops with WSL,
+    - **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops with WSL,
       macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster, and other cloud services. With support for NVIDIA GPUs.
       Refer to `installation/docker-amd64/README.md`.
     - **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon and for the MPS (Apple Silicon) hardware acceleration.
@@ -102,7 +102,7 @@ You're off to a good start! Here are a few tips for keeping your project in good
 
 We support the following platforms for installing the project dependencies and running the code.
 
-- **AMD64(x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops with WSL,
+- **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops with WSL,
   macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster, and other cloud services. With support for NVIDIA GPUs.
   Refer to `installation/docker-amd64/README.md`.
 - **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon and for the MPS (Apple Silicon) hardware acceleration.
