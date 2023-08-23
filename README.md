@@ -155,21 +155,17 @@ Below, we give a description of the main files and directories in this repositor
 ## Contributing
 
 We use [`pre-commit`](https://pre-commit.com) hooks to ensure high code quality.
+Make sure it's installed on the system where you're developing
+(it is in the dependencies of the project, but you may be editing the code from outside the development environment).
+Install the pre-commit hooks with
 
-These should be installed automatically in the development environment and will run before any `git commit` ran
-from the environment.
-You can also trigger then manually with:
+```
+# When in the PROJECT_DIR directory.
+pre-commit install
+```
+
+You can also trigger them manually with:
 
 ```bash
 pre-commit run --all-files
 ```
-
-Otherwise, when from committing from outside the development environment, make
-sure [`pre-commit`](https://pre-commit.com) is installed on
-you local system and install the hooks with:
-
-```bash
-pre-commit install
-```
-
-Then, every time you commit, the hooks will run and check your code.
