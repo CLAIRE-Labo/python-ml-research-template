@@ -20,7 +20,7 @@ It features and encourages best practices for:
 
 Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
 With this template, sharing your work will be a breeze, and its adoption will be straightforward,
-maximizing its impact.
+[maximizing its impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501).
 The practices in this template earned its authors
 an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5dI5aEn) at the
 [ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
