@@ -123,8 +123,8 @@ cd installation/docker-amd64
 
 2. Build the images with
    ```bash
-   ./template build runtime
-   ./template build dev
+   ./template.sh build runtime
+   ./template.sh build dev
    ```
    The runtime images will be used to run the code in an unattended way.
    The dev image has additional utilities that facilitates development in the container.
@@ -163,7 +163,7 @@ Then you can:
 
 - Start the development container with
     ```bash
-    ./template up
+    ./template.sh up
     ```
   This will start a container running the development image in the background.
   It has an entrypoint that installs the project,
@@ -171,23 +171,23 @@ Then you can:
 
   You can check its logs with
     ```bash
-    ./template logs
+    ./template.sh logs
     ```
   and open a shell in this background container with
     ```bash
-    ./template shell
+    ./template.sh shell
     ```
   You can stop the container or delete it with
     ```bash
-    ./template stop
-    ./template down
+    ./template.sh stop
+    ./template.sh down
     ```
 
 - Run jobs in independent containers running the `runtime` image with
     ```bash
-    ./template run your_command
-    ./template run python --version
-    ./template run python -m a_project.main some_arg=some_value
+    ./template.sh run your_command
+    ./template.sh run python --version
+    ./template.sh run python -m a_project.main some_arg=some_value
     ```
   These containers start with the entrypoint then run the command you specified.
   By default, they are automatically removed after they exit.
