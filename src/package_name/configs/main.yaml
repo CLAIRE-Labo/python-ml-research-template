@@ -3,4 +3,5 @@ defaults:
   - wandb
   - _self_
 
+seed: ${generate_random_seed:}
 some_arg: "some_default_value"

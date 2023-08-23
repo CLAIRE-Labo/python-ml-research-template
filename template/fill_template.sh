@@ -14,6 +14,7 @@ for file in \
   "LICENSE" \
   ".pre-commit-config.yaml" \
   "src/package_name/main.py" \
+  "src/package_name/utils/__init__.py" \
   "$OSX64_DIR/README.md" \
   "$OSX64_DIR/update_env_file.sh" \
   "$OSX64_DIR/environment.yml" \
