@@ -6,12 +6,11 @@ This is a template used for starting Python machine-learning research
 projects with hardware acceleration at the EPFL CLAIRe (tentative name) lab.
 It features and encourages best practices for:
 
-- Reproducible environments that run and provide a good development experience on multiple platforms with hardware
-  acceleration.
-  Including:
-    - local machines (macOS + Apple Silicon, WSL + GPU),
-    - Linux servers (VMs on cloud providers, HaaS from EPFL IC),
-    - the EPFL IC RunAI Kubernetes cluster (and soon other cloud services like GCP Vertex AI, AWS SageMaker, ...).
+- Reproducible environments on major platforms with hardware acceleration (x86-64/AMD64 + Docker-supporting OS + NVIDIA GPU and macOS + Apple Silicon)
+  with a great user and development experience covering multiple use cases, including:
+    - Your local machine, e.g. macOS + Apple Silicon or Intel CPU, Windows with WSL or Linux + GPU,
+    - Remote servers with GPUs, e.g. VMs on cloud providers, HaaS from EPFL IC,
+    - Managed platforms GPUs, e.g. the EPFL IC RunAI Kubernetes cluster (and soon other public cloud services like GCP Vertex AI, AWS SageMaker, ...).
 - Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
   and [Weights & Biases](https://wandb.ai/site).
 - Python project packaging following the
@@ -49,11 +48,11 @@ It's useful to commit after some checkpoints to be able to go back if you make a
    A simple change if you're fine with the MIT license is to replace the `2022 Skander Moalla` with your year and name.
    Commit.
 4. Set up and edit the development environment instructions for the platforms you will use and support.
-   We support shared instructions for:
-    - **AMD64 platforms (x86-64)** to run on Linux servers like the EPFL HaaS servers, WSL on locals machines,
-      Kubernetes clusters like the EPFL RunAI cluster and other cloud services, and supports for NVIDIA GPUs.
+   Each platform group supports a group of use cases:
+    - **AMD64(x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops with WSL,
+      macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster, and other cloud services. With support for NVIDIA GPUs.
       Refer to `installation/docker-amd64/README.md`.
-    - **macOS with Apple Silicon (`osx-arm64`)** with support for MPS hardware acceleration.
+    - **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon and for the MPS (Apple Silicon) hardware acceleration.
       Refer to `installation/osx-arm64/README.md`.
 
    Delete the installation directory for the platforms you don't use.
@@ -61,7 +60,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
    In addition, it is good to list your direct dependencies (with major versions when relevant)
    for users with other needs.
    This is described in the next instructions in the [development environment](#development-environment) section.
-5. Edit this `README.md` file.
+6. Edit this `README.md` file.
     1. Edit the title with the name of your project.
        Replace the [Overview](#overview) section with a description of your project.
     2. Delete the installation options you don't support in
@@ -103,10 +102,10 @@ You're off to a good start! Here are a few tips for keeping your project in good
 
 We support the following platforms for installing the project dependencies and running the code.
 
-- **AMD64 platforms (x86-64)** to run on Linux servers like the EPFL HaaS servers, WSL on locals machines,
-  Kubernetes clusters like the EPFL RunAI cluster and other cloud services, and supports for NVIDIA GPUs.
+- **AMD64(x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops with WSL,
+  macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster, and other cloud services. With support for NVIDIA GPUs.
   Refer to `installation/docker-amd64/README.md`.
-- **macOS with Apple Silicon (`osx-arm64`)** with support for MPS hardware acceleration.
+- **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon and for the MPS (Apple Silicon) hardware acceleration.
   Refer to `installation/osx-arm64/README.md`.
 
 We list below our direct dependencies (with major versions when relevant) for users with other needs.
