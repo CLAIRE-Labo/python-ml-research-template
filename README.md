@@ -4,7 +4,7 @@
 
 This is a template used for starting Python machine-learning research
 projects with hardware acceleration at the EPFL CLAIRe (tentative name) lab.
-It features and encourages good practices for:
+It features and encourages best practices for:
 
 - Reproducible environments that run and provide a good development experience on multiple platforms with hardware
   acceleration.
