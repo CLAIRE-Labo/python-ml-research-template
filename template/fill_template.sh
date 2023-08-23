@@ -21,9 +21,11 @@ for file in \
   "$AMD64_DIR/dependencies/update_env_file.sh" \
   "$AMD64_DIR/README.md" \
   "$AMD64_DIR/template.sh"; do
-  sed -i '' "s/<project-name>/${PROJECT_NAME}/g" "$file"
-  sed -i '' "s/<package_name>/${PACKAGE_NAME}/g" "$file"
-  sed -i '' "s/<python-version>/${PYTHON_VERSION}/g" "$file"
+  sed -i.deleteme "s/<project-name>/${PROJECT_NAME}/g" "$file" && rm "${file}.deleteme"
+  sed -i.deleteme "s/<package_name>/${PACKAGE_NAME}/g" "$file" && rm "${file}.deleteme"
+  sed -i.deleteme "s/<python-version>/${PYTHON_VERSION}/g" "$file" && rm "${file}.deleteme"
+  # .deleteme is a trick to make sed work on both Linux and OSX.
+  # https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
 done
 
 mv "src/package_name/" "src/${PACKAGE_NAME}"
