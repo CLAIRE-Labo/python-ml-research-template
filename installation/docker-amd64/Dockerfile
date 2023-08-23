@@ -13,6 +13,19 @@ ARG BASE_IMAGE
 ########################################################################
 
 ########################################################################
+# Download Z-Shell related libraries.
+
+FROM ${GIT_IMAGE} AS get-pure
+
+ARG PURE_URL=https://github.com/sindresorhus/pure.git
+ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions
+ARG ZSHS_URL=https://github.com/zsh-users/zsh-syntax-highlighting.git
+
+RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
+RUN git clone --depth 1 ${ZSHA_URL} /opt/zsh/zsh-autosuggestions
+RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
+
+########################################################################
 # Download conda.
 
 FROM ${CURL_IMAGE} AS get-conda
@@ -93,6 +106,8 @@ RUN mamba clean -fya && \
 ########################################################################
 # 2. Stages for setting up the runtime environment.
 ########################################################################
+
+########################################################################
 # Install apt runtime packages.
 # This layer is the base for the image that you will run.
 # Observe that apt-build-base is not used anymore and will not be present in the final image.
@@ -153,15 +168,25 @@ RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT} && \
     mkdir -p ${ENTRYPOINTS_ROOT} && chown ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
 
 # Copy the project directory to PROJECT_DIR in the PROJECT_ROOT
-COPY --link ./ ${PROJECT_ROOT}/${PROJECT_DIR}
+COPY --link --chown=${USRID}:${GRPID} . ${PROJECT_DIR}
 # and the entrypoint scripts in ENTRYPOINTS_ROOT.
-COPY --link installation/docker-amd64/entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
+COPY --link --chown=${USRID}:${GRPID} installation/docker-amd64/entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
 
 # Install the Python project in editable mode.
+ARG PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 RUN mamba run -n ${PROJECT_NAME} pip install -e "${PROJECT_DIR}"
 
 # Set the user.
 USER ${USR}
+
+# Create the project directory structure.
+ARG DATA_DIR
+ARG OUTPUTS_DIR
+ARG WWANDB_DIR
+RUN ln -s ${PROJECT_DIR}/_data ${DATA_DIR} && \
+    ln -s ${PROJECT_DIR}/_outputs ${OUTPUTS_DIR} && \
+    ln -s ${PROJECT_DIR}/_wandb ${WWANDB_DIR}
+# These directories will likely be overridden by other symlinks of mounted volumes.
 
 # Zsh configuration.
 # Also useful for unattended runs when attaching a shell for audits.
@@ -204,11 +229,13 @@ ARG PACKAGE_NAME
 ARG PROJECT_DIR
 ARG DATA_DIR
 ARG OUTPUTS_DIR
+ARG WWANDB_DIR
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PACKAGE_NAME=${PACKAGE_NAME}
 ENV PROJECT_DIR=${PROJECT_DIR}
 ENV DATA_DIR=${DATA_DIR}
 ENV OUTPUTS_DIR=${OUTPUTS_DIR}
+ENV WWANDB_DIR=${WWANDB_DIR}
 
 WORKDIR ${PROJECT_ROOT}
 
@@ -220,22 +247,11 @@ CMD ["/bin/zsh"]
 
 # The following is for EPFL-specific configurations and setup.
 ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL-runai-setup
-COPY --link installation/docker-amd64/EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
+COPY --link --chown=${USRID}:${GRPID} installation/docker-amd64/EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
 
 ########################################################################
 # 3. Stages for setting up the development environment.
 ########################################################################
-# Download Z-Shell related libraries.
-
-FROM ${GIT_IMAGE} AS get-pure
-
-ARG PURE_URL=https://github.com/sindresorhus/pure.git
-ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions
-ARG ZSHS_URL=https://github.com/zsh-users/zsh-syntax-highlighting.git
-
-RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
-RUN git clone --depth 1 ${ZSHA_URL} /opt/zsh/zsh-autosuggestions
-RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
 
 ########################################################################
 # Final layer for development.
@@ -264,5 +280,5 @@ ARG USR
 USER ${USR}
 
 ## Install pre-commit and the pre-commit hooks.
-RUN RUN mamba run -n ${PROJECT_NAME} pip install pre-commit
-RUN cd ${PROJECT_DIR} && pre-commit install
+RUN mamba run -n ${PROJECT_NAME} pip install pre-commit
+RUN cd ${PROJECT_DIR} && mamba run -n ${PROJECT_NAME} pre-commit install --install-hooks

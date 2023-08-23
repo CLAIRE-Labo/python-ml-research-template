@@ -11,4 +11,3 @@ curl            # Recommended.
 wget            # Recommended.
 vim             # Recommended.
 tmux            # Recommended.
-

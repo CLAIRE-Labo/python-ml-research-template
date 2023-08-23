@@ -6,12 +6,12 @@ services:
       platforms:
         - "linux/amd64"
       context: ../..
-      dockerfile: ./Dockerfile
+      dockerfile: installation/docker-amd64/Dockerfile
       target: runtime
       args:
         BASE_IMAGE: ubuntu:22.04                # Ubuntu: https://hub.docker.com/_/ubuntu
         CURL_IMAGE: curlimages/curl:8.2.1       # https://hub.docker.com/r/curlimages/curl/tags
-        GIT_IMAGE: alpine/git:edge-2.40.1       # https://hub.docker.com/r/alpine/git/tags
+        GIT_IMAGE: alpine/git:2.40.1            # https://hub.docker.com/r/alpine/git/tags
         CONDA_URL:
           https://github.com/conda-forge/miniforge/releases/download/23.3.1-0/Mambaforge-23.3.1-0-Linux-x86_64.sh
         # https://github.com/conda-forge/miniforge/releases/
@@ -28,6 +28,7 @@ services:
         PROJECT_DIR: ${PROJECT_DIR}
         DATA_DIR: ${DATA_DIR}
         OUTPUTS_DIR: ${OUTPUTS_DIR}
+        WWANDB_DIR: ${WWANDB_DIR}
 
   dev-image: # Service to build the development image.
     extends:
