@@ -20,9 +20,9 @@ It remains to
    I.e.:
    ```bash
    cd ..
-   mv <project-name> <project-name>-tmp # This is the git repository root.
-   mkdir <project-name> # This is the PROJECT_ROOT.
-   mv <project-name>-tmp <project-name>/<project-name>
+   mv a-project a-project-tmp # This is the git repository root.
+   mkdir a-project # This is the PROJECT_ROOT.
+   mv a-project-tmp a-project/a-project
    ```
    Note that moving all files inside an existing clone with `mv *` does not move the dotfiles, so will miss the git
    files.
@@ -42,8 +42,8 @@ It remains to
 The project follows a specific tree structure that needs to be respected for the installation to work.
 
 ```
-<project-name>/          # To which we will refer as the PROJECT_ROOT can be any directory name.
-├── <project-name>/      # This is the git repository root.
+a-project/          # To which we will refer as the PROJECT_ROOT can be any directory name.
+├── a-project/      # This is the git repository root.
 ├── data/                # This is from where the data will be read.
 ├── outputs/             # This is where the outputs will be written.
 └── wandb/               # This is where wandb artifacts will be written.
@@ -57,9 +57,9 @@ Create the respective directories so that the tree looks like the above:
   directories we created in the template repository root.
   ```bash
   # When in the PROJECT_ROOT directory.
-  ln -s $(pwd)/<project-name>/_data data
-  ln -s $(pwd)/<project-name>/_outputs outputs
-  ln -s $(pwd)/<project-name>/_wandb wandb
+  ln -s $(pwd)/a-project/_data data
+  ln -s $(pwd)/a-project/_outputs outputs
+  ln -s $(pwd)/a-project/_wandb wandb
   ```
   Otherwise, you can symlink them to different locations, perhaps on a larger disk or mounted filesystem.
 
@@ -80,22 +80,23 @@ The `conda` environment:
 
 ```bash
 # When in the PROJECT_ROOT directory.
-mamba env create --file <project-name>/installation/osx-arm64/environment.yml
+mamba env create --file a-project/installation/osx-arm64/environment.yml
 ```
 
 ## Instructions to run the environment
 
 ```bash
-conda activate <project-name>
+conda activate a-project
 ```
 
 Run your scripts from the `PROJECT_ROOT` directory.
 Here are some examples.
 
 ```bash
-python <project-name>/src/<package_name>/main.py some_number=10
-python -m <package_name>.main some_string=some_word
-source <project-name>/reproducibility_scripts/some_experiment.sh
+# When in the PROJECT_ROOT directory.
+python a-project/src/a_project/main.py some_arg=some_value
+python -m a_project.main some_arg=some_value
+source a-project/reproducibility_scripts/some_experiment.sh
 ```
 
 ## Instructions to maintain the environment
@@ -144,9 +145,9 @@ After manually editing the `environment.yml` file, you need to recreate the envi
 
 ```bash
 mamba deactivate
-mamba env remove --name <project-name>
-mamba env create --file <project-name>/installation/osx-arm64/environment.yml
-mamba activate <project-name>
+mamba env remove --name a-project
+mamba env create --file a-project/installation/osx-arm64/environment.yml
+mamba activate a-project
 ```
 
 ### Interactively (while developing)
@@ -172,7 +173,7 @@ so it's a good idea to commit the changes to the environment file before and aft
 
 ```bash
 # When in the PROJECT_ROOT directory.
-source <project-name>/installation/osx-arm64/update_env_file.sh
+source a-project/installation/osx-arm64/update_env_file.sh
 ```
 
 For `brew` and more complex dependencies describe how to install them in the system dependencies section of

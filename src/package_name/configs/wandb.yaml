@@ -1,0 +1,8 @@
+# @package wandb
+
+project: <project-name>
+dir: ${hydra:runtime.cwd}/wandb # Workaround as .../wandb is a symlink. It will create an additional directory there.
+anonymous: allow
+mode: offline
+tags:
+  - development

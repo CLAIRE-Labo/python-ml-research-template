@@ -1,0 +1,6 @@
+defaults:
+  - hydra
+  - wandb
+  - _self_
+
+some_arg: "some_default_value"

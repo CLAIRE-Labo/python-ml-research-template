@@ -185,8 +185,9 @@ Then you can:
 
 - Run jobs in independent containers running the `runtime` image with
     ```bash
-    ./template run your_command some_arg some_other_arg
+    ./template run your_command
     ./template run python --version
+    ./template run python -m a_project.main some_arg=some_value
     ```
   These containers start with the entrypoint then run the command you specified.
   By default, they are automatically removed after they exit.
