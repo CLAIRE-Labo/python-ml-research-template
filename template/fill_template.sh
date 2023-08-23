@@ -4,8 +4,6 @@
 set -eo pipefail
 source template/template_variables.env
 
-mv "src/package_name/" "src/${PACKAGE_NAME}"
-
 OSX64_DIR="installation/osx-arm64"
 AMD64_DIR="installation/docker-amd64"
 
@@ -15,6 +13,7 @@ for file in \
   "pyproject.toml" \
   "LICENSE" \
   ".pre-commit-config.yaml" \
+  "src/package_name/main.py" \
   "$OSX64_DIR/README.md" \
   "$OSX64_DIR/update_env_file.sh" \
   "$OSX64_DIR/environment.yml" \
@@ -26,3 +25,5 @@ for file in \
   sed -i '' "s/<package_name>/${PACKAGE_NAME}/g" "$file"
   sed -i '' "s/<python-version>/${PYTHON_VERSION}/g" "$file"
 done
+
+mv "src/package_name/" "src/${PACKAGE_NAME}"
