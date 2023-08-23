@@ -5,7 +5,7 @@
 This template provides a Docker setup to use the environment.
 For detailed information on the setup refer to the next section [(_More details on the
 setup_)](#_delete-me_-more-details-on-the-setup).
-The python version and package name have already been filled by the `fill_template.sh` script.
+The Python version and package name have already been filled by the `fill_template.sh` script.
 It remains to
 
 1. Specify your initial dependencies.
