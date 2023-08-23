@@ -1,8 +1,7 @@
 # @package wandb
 
 project: <project-name>
-dir: ${hydra:runtime.cwd}/wandb # Workaround as .../wandb is a symlink. It will create an additional directory there.
-anonymous: allow
+dir: ${hydra:runtime.cwd}/wandb # This is needed to follow ${hydra:runtime.cwd}/wandb if it's a symlink. Bug from wandb.
 mode: offline
 tags:
   - development
