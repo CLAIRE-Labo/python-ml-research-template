@@ -1,8 +1,8 @@
-name: <project-name>
+name: template-project-name
 channels:
   - conda-forge
 dependencies:
-  - python=<python-version>
+  - python=3.10
   - pip
   - pip:
       - hydra-core

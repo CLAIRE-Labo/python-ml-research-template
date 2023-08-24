@@ -28,8 +28,8 @@ WANDB_API_KEY=
 # Project-specific environment variables.
 ## Used to avoid writing paths multiple times and creating inconsistencies.
 ## You should not need to change anything below this line.
-PROJECT_NAME=<project-name>
-PACKAGE_NAME=<package_name>
+PROJECT_NAME=template-project-name
+PACKAGE_NAME=template_package_name
 PROJECT_ROOT=/opt/project
 PROJECT_DIR=\${PROJECT_ROOT}/\${PROJECT_NAME}
 DATA_DIR=\${PROJECT_ROOT}/data

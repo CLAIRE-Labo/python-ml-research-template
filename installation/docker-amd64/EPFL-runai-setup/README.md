@@ -69,9 +69,9 @@ the project, forwards your ssh keys, and allows you to clone your repository on 
 
    ```bash
    # Somewhere in your PVC.
-   mkdir <project-name>
-   git clone <repo-url> <project-name>/dev
-   git clone <repo-url> <project-name>/run
+   mkdir template-project-name
+   git clone <repo-url> template-project-name/dev
+   git clone <repo-url> template-project-name/run
    ```
 We also recommend that you make Git ignore the executable bit as the repo is moved across filesystems.
 You can do so by running `git config core.filemode false` in both repositories.

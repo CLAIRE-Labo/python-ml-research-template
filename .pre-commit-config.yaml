@@ -3,7 +3,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 
 default_language_version:
-  python: python<python-version>
+  python: python3.10
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

@@ -22,11 +22,15 @@ for file in \
   "$AMD64_DIR/dependencies/update_env_file.sh" \
   "$AMD64_DIR/README.md" \
   "$AMD64_DIR/template.sh"; do
-  sed -i.deleteme "s/<project-name>/${PROJECT_NAME}/g" "$file" && rm "${file}.deleteme"
-  sed -i.deleteme "s/<package_name>/${PACKAGE_NAME}/g" "$file" && rm "${file}.deleteme"
-  sed -i.deleteme "s/<python-version>/${PYTHON_VERSION}/g" "$file" && rm "${file}.deleteme"
-  # .deleteme is a trick to make sed work on both Linux and OSX.
-  # https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
+  sed -i.deleteme "s/template-project-name/${PROJECT_NAME}/g" "$file" && rm "${file}.deleteme"
+  sed -i.deleteme "s/template_package_name/${PACKAGE_NAME}/g" "$file" && rm "${file}.deleteme"
+  sed -i.deleteme "s/python=3.10/python=${PYTHON_VERSION}/g" "$file" && rm "${file}.deleteme"
+  sed -i.deleteme "s/python3.10/python${PYTHON_VERSION}/g" "$file" && rm "${file}.deleteme"
+  sed -i.deleteme "s/Python 3.10/Python ${PYTHON_VERSION}/g" "$file" && rm "${file}.deleteme"
+  sed -i.deleteme "s/requires-python = \">=3.10\"/requires-python = \">=${PYTHON_VERSION}\"/g" "$file" \
+    && rm "${file}.deleteme"
+    # .deleteme is a trick to make sed work on both Linux and OSX.
+    # https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
 done
 
-mv "src/package_name/" "src/${PACKAGE_NAME}"
+mv "src/template_package_name/" "src/${PACKAGE_NAME}"

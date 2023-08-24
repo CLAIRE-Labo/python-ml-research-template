@@ -1,7 +1,8 @@
 # @package wandb
 
-project: <project-name>
+project: template-project-name
 dir: ${hydra:runtime.cwd}/wandb # This is needed to follow ${hydra:runtime.cwd}/wandb if it's a symlink. Bug from wandb.
 mode: offline
+anonymous: allow
 tags:
   - development

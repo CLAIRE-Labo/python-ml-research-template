@@ -1,1 +1,0 @@
-from <package_name>.utils import seeding

@@ -74,7 +74,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
        (More info on the directory structure in the `template/README.md` file.).
        ```
        PROJECT_ROOT/        # The root of the project can be any name.
-       ├── <project-name>/  # The root of the the git repository.
+       ├── template-project-name/  # The root of the the git repository.
        ├── data/            # This is from where the data will be read (will mount/symlink to somewhere by the user).
        ├── outputs/         # This is where the outputs will be written (will mount/symlink to somewhere by the user).
        └── wandb/           # This is where wandb artifacts will be written.
@@ -111,7 +111,7 @@ We support the following platforms for installing the project dependencies and r
 We list below our direct dependencies (with major versions when relevant) for users with other needs.
 
 ```text
-Python <python-version>
+Python 3.10
 
 Python packages:
 wandb

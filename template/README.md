@@ -6,8 +6,8 @@ The python entrypoint of the template assumes a common directory structure acros
 It is the following:
 
 ```text
-PROJECT_ROOT/        # The root of the project (opt/project on the AMD64 setup and <project-name> on the macOS setup).
-├── <project-name>/  # The root of the git repository.
+PROJECT_ROOT/        # The root of the project (opt/project on the AMD64 setup and template-project-name on the macOS setup).
+├── template-project-name/  # The root of the git repository.
 ├── data/            # This is from where the data will be read.
 ├── outputs/         # This is where the outputs will be written.
 └── wandb/           # This is where wandb artifacts will be written.

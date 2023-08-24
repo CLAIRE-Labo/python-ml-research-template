@@ -17,6 +17,7 @@ if [ -n "${WANDB_API_KEY}" ]; then
 fi
 
 # Install the package in editable mode.
+# Also ensures the code is mounted correctly.
 echo "[TEMPLATE] Installing the project."
 pip install -e "${PROJECT_DIR}"
 python -c "import ${PACKAGE_NAME}"
