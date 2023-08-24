@@ -15,29 +15,35 @@ This template ensures the reproducibility of your results through 3 artifacts:
 
 ## Directory structure
 
-The python entrypoint of the template assumes a common directory structure across all installation methods.
-It is the following:
+The template sets the following directory structure across all installation methods:
 
 ```text
 PROJECT_ROOT/        # The root of the project (opt/project on the AMD64 setup and template-project-name on the macOS setup).
-├── template-project-name/  # The root of the git repository.
+├── PROJECT_NAME/  # The root of the git repository.
 ├── data/            # This is from where the data will be read.
 ├── outputs/         # This is where the outputs will be written.
 └── wandb/           # This is where wandb artifacts will be written.
 ```
 
-The structure does not force you to put all the directories on the same filesystem, instead the instructions will tell
-you to create these directories as symlinks to anywhere else you wish.
+The structure does not enforce storing the data and outputs physically under the same directory as the project,
+instead these will be symlinks, contain symlinks, or be mounted directories.
 
-The point of this structure is to keep the python code agnostic of the installation method and platform.
-In particular the hydra configuration files will be the same across platforms and installation methods.
-We could also have used environment variables to specify the paths, but we find them not as convenient to use as
-we cannot set them automatically for you depending on the platform, especially local machines,
+The point of this structure is to keep the python code identical across installation methods and platforms.
+In particular, the `hydra` configuration files will be the same,
+instructing your scripts to read from and write to the same directories.
+
+It also allows as much freedom as possible (e.g. mount data from one filesystem, outputs from another, etc.) while
+respecting the best practices and limitations of all deployment options 
+(e.g. not having nested mounts in a Docker container)
+and providing a great user experience on all platforms 
+(e.g. we could  have used environment variables to specify the paths, but we find them not as convenient to use,
+particularly on the native Apple Silicon option, where cannot set them automatically for you,
 which means you have to remember to set them every time.
 Furthermore, we want to keep the template as contained as possible, which means not altering the user's global
-environment.
-We thus prefer to have a longer configuration step at the beginning, that may differ on the platform and add some
-boilerplate code, but then have a seamless experience.
+environment.)
+
+This may add dome configuration steps at the beginning, that may differ on the platform and add some
+boilerplate code, but then we have a seamless experience.
 
 ## Template FAQ
 

@@ -1,6 +1,6 @@
 # Installation on amd64 platforms with Docker
 
-## [TEMPLATE] Template info
+## [TEMPLATE] TTemplate getting started
 
 This template provides a Docker setup to use the environment.
 For detailed information on the setup refer to the next section [(_More details on the

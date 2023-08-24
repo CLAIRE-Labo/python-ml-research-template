@@ -230,6 +230,12 @@ ENV WWANDB_DIR=${WWANDB_DIR}
 # PROJECT_ROOT is where you want all your scripts to run from.
 WORKDIR ${PROJECT_ROOT}
 
+# Create dummy project, data, outputs, and wandb directories.
+RUN mkdir -p ${PROJECT_DIR} && \
+    mkdir -p ${DATA_DIR} && \
+    mkdir -p ${OUTPUTS_DIR} && \
+    mkdir -p ${WWANDB_DIR}
+
 # The entrypoint is run in an interactive shell so that the conda environment is activated before.
 # Don't overwrite the entrypoint it is installing the project
 # and testing that you correctly mounted the project code and data and output directories.
@@ -238,6 +244,20 @@ COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
 ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
 # You call always attach shells to the running container after it started at the entrypoint.
+
+########################################################################
+# The above should be created in the runtime image.
+# User layer should not inherit any code and should not need any context.
+# This is what it would do
+
+USER root
+
+# Change ownership of project root and so on
+RUN chown -R ${USR}:${GRP} ${PROJECT_ROOT} && \
+    chown -R ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
+
+
+
 
 # The following is for EPFL-specific configurations and setup.
 ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL-runai-setup

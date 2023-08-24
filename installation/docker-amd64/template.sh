@@ -20,6 +20,11 @@ REGISTRY_HOSTNAME=docker.io
 CPU_OR_GPU=cpu
 LOCAL_PROJECT_DIR=../../
 LOCAL_DATA_DIR=../../_data
+# If your datasets are spread across multiple filesystems you can mount them individually.
+# Specify
+# LOCAL_DATASET_1_DIR=/somewhere/dataset_1
+# LOCAL_DATASET_2_DIR=/somewhere/dataset_2
+# And use the LOCAL_DATASET_I variables in the compose.yaml file instead of the LOCAL_DATA_DIR.
 LOCAL_OUTPUTS_DIR=../../_outputs
 LOCAL_WANDB_DIR=../../_wandb
 WANDB_API_KEY=

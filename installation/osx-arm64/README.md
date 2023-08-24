@@ -1,45 +1,29 @@
 # Installation on macOS arm64
 
-## [TEMPLATE] Template info
+## [TEMPLATE] Template getting started
 
 This template provides a minimal `environment.yml` file for starting a `conda` environment.
 The Python version and package name have already been filled by the `fill_template.sh` script.
 It remains to
 
 1. Specify your initial dependencies.
-   Follow the [instructions to maintain the environment](#instructions-to-maintain-the-environment)
+   Follow the [instructions to maintain the environment](#maintaining-the-environment)
    up to (including) the manual editing section without actually creating the environment.
    Commit so that you can get back to this file to edit it manually.
 2. Create the environment following the user
-   [instructions to create the environment](#instructions-to-create-the-environment) below.
-   As we want the documentation in that section to be readily usable by you when you initiate the project and
-   any subsequent user (including future you),
-   the steps may feel slightly redundant now as you will have to move the current repository
-   so that it matches the project directory structure.
-   You can move it temporarily somewhere else `PROJECT_ROOT`, then move it back.
-   I.e.:
-   ```bash
-   cd ..
-   mv template-project-name template-project-name-tmp # This is the git repository root.
-   mkdir template-project-name # This is the PROJECT_ROOT.
-   mv template-project-name-tmp template-project-name/template-project-name
-   ```
-   Note that moving all files inside an existing clone with `mv *` does not move the dotfiles, so will miss the git
-   files.
+   [instructions to create the environment](#creating-the-environment) below.
 3. Get familiar with running the environment following the user [instructions to
-   run the environment](#instructions-to-run-the-environment).
+   run the environment](#running-the-code-in-the-environment).
 4. If everything works fine, (we suggest trying to import your dependencies and running simple scripts), then
    pin the dependencies you just got following the [freeze the environment](#freeze-the-environment) section.
    You can then add more dependencies as your project grows following
-   the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
+   the [instructions to maintain the environment](#maintaining-the-environment).
    Commit.
 5. Delete this [TEMPLATE]-prefixed section from this file.
 
-## Instructions to create the environment
+## Cloning the repository
 
-### Directory structure
-
-The project follows a specific tree structure that needs to be respected for the installation to work.
+The project follows a specific tree structure that needs to be followed for the installation to work.
 
 ```
 template-project-name/          # To which we will refer as the PROJECT_ROOT can be any directory name.
@@ -51,19 +35,36 @@ template-project-name/          # To which we will refer as the PROJECT_ROOT can
 
 Create the respective directories so that the tree looks like the above:
 
-- Create the `PROJECT_ROOT` directory.
-- Clone the git repository in the `PROJECT_ROOT` directory.
-- By default, you should symlink `data/`, `outputs/`, and `wandb/` to the placeholder `_data/`, `_outputs/`, and `_wandb/`
-  directories we created in the template repository root.
-  ```bash
-  # When in the PROJECT_ROOT directory.
-  ln -s $(pwd)/template-project-name/_data data
-  ln -s $(pwd)/template-project-name/_outputs outputs
-  ln -s $(pwd)/template-project-name/_wandb wandb
-  ```
-  Otherwise, you can symlink them to different locations, perhaps on a larger disk or mounted filesystem.
+> [TEMPLATE INFO] READ ME AND DELETE ME:
+>
+> If you're setting up the template and already cloned the repository, replace 1. and 2. below with the following
+> ```bash
+> # When in the repository root.
+> mkdir template-project-name
+> mv {.,}* template-project-name
+> # Ignore the error message.
+>  ```
+> Be careful, moving all files with `mv *` does not move the dotfiles, so will miss the git 
+> files.
 
-### Development environment
+1. Create the `PROJECT_ROOT` directory.
+   ```bash
+   mkdir template-project-name && cd template-project-name
+   ```
+2. Clone the git repository in the `PROJECT_ROOT` directory.
+   ```bash
+   git clone <URL/SSH> template-project-name
+   ```
+3. Symlink `data/`, `outputs/`, and `wandb/` to the placeholder `_data/`, `_outputs/`, and `_wandb/`
+   directories we created in the repository root.
+   ```bash
+   # When in the PROJECT_ROOT directory.
+   ln -s $(pwd)/template-project-name/_data data
+   ln -s $(pwd)/template-project-name/_outputs outputs
+   ln -s $(pwd)/template-project-name/_wandb wandb
+   ```
+
+## Creating the environment
 
 **Prerequisites**
 
@@ -83,7 +84,7 @@ The `conda` environment:
 mamba env create --file template-project-name/installation/osx-arm64/environment.yml
 ```
 
-## Instructions to run the environment
+## Running the code in the environment
 
 ```bash
 conda activate template-project-name
@@ -99,7 +100,7 @@ python -m template-project-name.main some_arg=some_value
 source template-project-name/reproducibility_scripts/some_experiment.sh
 ```
 
-## Instructions to maintain the environment
+## Maintaining the environment
 
 System dependencies are managed by `conda`, otherwise `brew` (we try to keep everything self-container as much as
 possible).
@@ -144,6 +145,7 @@ You can of course specify the major versions of specific dependencies you need.
 After manually editing the `environment.yml` file, you need to recreate the environment.
 
 ```bash
+# When in the PROJECT_ROOT directory.
 mamba deactivate
 mamba env remove --name template-project-name
 mamba env create --file template-project-name/installation/osx-arm64/environment.yml

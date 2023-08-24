@@ -31,6 +31,9 @@ needs of CLAIRe.
 It also contains extra EPFL-specific instructions for deployment on the EPFL RunAI Kubernetes cluster.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
+> [TEMPLATE] EDIT ME:
+> Replace the above with a description of your project, then delete this note.
+
 ## Getting started with the template
 
 Click on the `Use this template` GitHub button to create a new GitHub repository from this template.
@@ -51,7 +54,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
 
 2. Fill the template variables in `template/template_variables.env` and run the script
    ```bash
-   ./template/fill_template.sh
+   template/fill_template.sh
    ```
    Then delete the `template` directory and commit.
 3. Edit the `LICENCE` file.
@@ -60,16 +63,19 @@ It's useful to commit after some checkpoints to be able to go back if you make a
    A simple change if you're fine with the MIT license is to replace the `2022 Skander Moalla` with your year and name.
    Commit.
 4. Set up and edit the development environment instructions for the platforms you will use and support.
-   Each platform group supports specific of use cases:
-    - **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops
-      with WSL,
-      macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster, and other cloud services. With support for
-      NVIDIA GPUs.
+   Each platform group supports specific use cases:
+    - **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers),
+      Windows laptops with WSL, macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster,
+      and other cloud services. With support for NVIDIA GPUs.
+
       Refer to `installation/docker-amd64/README.md`.
+
       This is shipped as a Docker image ensuring the highest level of reproducibility.
-    - **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon and for the MPS (Apple Silicon) hardware
-      acceleration.
+    - **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon
+      with support for the MPS (Apple Silicon) hardware acceleration.
+
       Refer to `installation/osx-arm64/README.md`.
+
       The level of reproducibility is lower than with Docker, as system dependencies will not be strictly recorded.
 
    Naturally, results will be reproducible on machines within the same platform group, but not necessarily across
@@ -89,48 +95,45 @@ It's useful to commit after some checkpoints to be able to go back if you make a
        the [Getting Started](#getting-started) section.
     3. List your direct dependencies (with major versions when relevant)
        in the [Getting Started](#getting-started) section.
-    4. If you use datasets, describe how to obtain them in the [datasets](#datasets) section.
-       You can refer the users to `_data/README.md` and write the instructions there.
-       The template has a common directory structure across all installation methods.
-       So you should ask the users to put or create symlinks to the data somewhere in the `data/` directory.
-       (More info on the directory structure in the `template/README.md` file.).
-       ```
-       PROJECT_ROOT/        # Will be .../PROJECT_NAME/ on macOS and /opt/project/ in Docker.
-       ├── template-project-name/  # The root of the the git repository.
-       ├── data/            # This is from where the data will be read (will mount/symlink to somewhere by the user).
-       ├── outputs/         # This is where the outputs will be written (will mount/symlink to somewhere by the user).
-       └── wandb/           # This is where wandb artifacts will be written.
-       ```
-       Otherwise, delete the section.
-    5. Delete this getting started, to only keep the project [Getting Started](#getting-started) section.
+    4. Have a look at the last paragraph below describing how to keep your project in good shape,
+       then delete this getting started, to only keep the project [Getting Started](#getting-started) section.
 
 You're off to a good start! Here are a few tips for keeping your project in good shape.
 
 - Keep this README up to date.
   Fill in the rest of the sections after the Getting Started when releasing your project.
   We give a structure and some templates for those.
+
+  If you use datasets, follow `_data/README.md` to set them and write the instructions 
+  for the subsequent users there.
+  Otherwise, delete the [datasets](#datasets) section.
 - Remember to pin your dependencies whenever you install new ones.
-  More on this in the installation guides.
+  This is well described in the Maintaining the environment section of the installation instructions.
 - Keep your `reproducibility_scripts/` directory up to date.
   Commit it regularly and run your jobs with those scripts.
   More on this in the [Reproducibility](#reproducibility) section.
 - Maintain good commit hooks. More on this in the [Contributing](#contributing) section.
 - Have a look at the [ML Code Completeness Checklist](https://github.com/paperswithcode/releasing-research-code).
   This template facilitates meeting all the checklist items, with a different design.
+  Have a look at the checklist when you will ship your project.
+
+> [TEMPLATE] DELETE ME:
+> Delete this whole section when you're done with the template getting started.
 
 ## Getting Started
 
-### Development environment
+### Code and development environment
 
 We support the following platforms for installing the project dependencies and running the code.
 
-- **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops with
-  WSL,
-  macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster, and other cloud services. With support for
-  NVIDIA GPUs.
+- **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers),
+  Windows laptops with WSL, macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster,
+  and other cloud services. With support for NVIDIA GPUs.
+
   Refer to `installation/docker-amd64/README.md`.
-- **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon and for the MPS (Apple Silicon) hardware
-  acceleration.
+- **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon and
+  for the MPS (Apple Silicon) hardware acceleration.
+
   Refer to `installation/osx-arm64/README.md`.
 
 We list below our direct dependencies (with major versions when relevant) for users with other needs.
@@ -144,9 +147,15 @@ hydra
 tqdm
 ```
 
-### Datasets
+> [TEMPLATE] UPDATE ME:
+> Update the above with your direct dependencies before shipping your project, then delete this note.
+
+### Data
 
 Refer to `_data/README.md`.
+
+> [TEMPLATE] UPDATE ME:
+> Fill `_data/README.md` or delete this section, then delete this note.
 
 ## Reproduction and Experimentation
 
@@ -159,12 +168,18 @@ It has a README at its root describing which scripts reproduce which experiments
 
 The default configuration for each script is stored in the `configs/` directory.
 They are managed by [Hydra](https://hydra.cc/docs/intro/).
-You can experiment with different configurations by passing the relevant flags.
+You can experiment with different configurations by passing the relevant arguments.
 You can get examples of how to do so in the `reproducibility_scripts/` directory.
 
-### Pre-trained models and experiment results
+### Trained models and experiment with results
 
 We share our Weights and Biases runs in [this W&B project](fill-me).
+
+Moreover, we make our trained models available.
+You can follow the instructions in `_outputs/README.md` to download and use them.
+
+> [TEMPLATE] UPDATE ME:
+> Do provide the runs and trained models or update/delete this section, then delete this note.
 
 ## Repository structure
 
@@ -175,6 +190,11 @@ Below, we give a description of the main files and directories in this repositor
     ├── configs/    # Hydra configuration files.
     └── main.py     # Main entry point.
 ```
+
+> [TEMPLATE] UPDATE ME:
+> Provide a quick overview of the main files in the repo for users to experiment with your code,
+> then delete this note.
+
 
 ## Contributing
 
