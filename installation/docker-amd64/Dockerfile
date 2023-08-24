@@ -137,9 +137,88 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm -rf /var/lib/apt/lists/*
 
 ########################################################################
-# Setting up a user and moving the conda env to the user.
+# Copy over the conda env and other build artifacts and software.
+# You can use this stage to debug the conda env and other build artifacts.
 
 FROM apt-runtime-base AS runtime-base
+
+# Copy the conda env
+# The ownership of the conda directory will later be changed to the user to install packages interactively.
+ARG CONDA_INSTALL_PATH
+ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
+ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
+COPY --link --from=conda-env ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
+
+########################################################################
+# This stage is the final user agnostic stage.
+# It contains all the dependencies of the environment and the setup scripts.
+# It will be extended to do the final user configuration.
+# This layer can be distributed so that subsequent users
+# don't have to build the whole environment from scratch.
+# Only their user configuration will be added on top of this layer.
+# This would improve the reproducibility of the project.
+
+FROM runtime-base AS runtime-project-base-no-user
+
+ARG PROJECT_NAME
+ARG PACKAGE_NAME
+ARG PROJECT_ROOT
+ARG PROJECT_DIR
+ARG DATA_DIR
+ARG OUTPUTS_DIR
+ARG WWANDB_DIR
+ENV PROJECT_NAME=${PROJECT_NAME}
+ENV PACKAGE_NAME=${PACKAGE_NAME}
+ENV PROJECT_DIR=${PROJECT_DIR}
+ENV PROJECT_ROOT=${PROJECT_ROOT}
+ENV DATA_DIR=${DATA_DIR}
+ENV OUTPUTS_DIR=${OUTPUTS_DIR}
+ENV WWANDB_DIR=${WWANDB_DIR}
+
+# {PROJECT, DATA, OUTPUTS, WWANDB}_DIR are where you will mount your code data and outputs.
+# The template sets a base structure for the I/O directories of the project.
+#
+# PROJECT_ROOT
+# ├── PROJECT_DIR
+# ├── DATA_DIR
+# ├── OUTPUTS_DIR
+# └── WWANDB_DIR
+
+# Create a directory for the project root and dummy project, data, outputs, and wandb directories.
+RUN mkdir -p ${PROJECT_ROOT} && \
+    mkdir -p ${PROJECT_DIR} && \
+    mkdir -p ${DATA_DIR} && \
+    mkdir -p ${OUTPUTS_DIR} && \
+    mkdir -p ${WWANDB_DIR}
+
+# Create a directory for the startup scripts.
+ENV ENTRYPOINTS_ROOT=/opt/entrypoints
+RUN mkdir -p ${ENTRYPOINTS_ROOT}
+
+# The entrypoint is run in an interactive shell so that the conda environment is activated before.
+# Don't overwrite the entrypoint, it is installing the project
+# and testing that you correctly mounted the project code and data and output directories.
+# It also performs some other important setup depending on the deployment platform.
+COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
+ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
+CMD ["/bin/zsh"]
+# You call always attach shells to the running container after it started at the entrypoint.
+
+# The following is for EPFL-specific configurations and setup.
+ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL-runai-setup
+COPY --link EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
+
+# PROJECT_ROOT is where you want all your scripts to run from.
+WORKDIR ${PROJECT_ROOT}
+
+########################################################################
+# 3. Stages for setting up the user and the development environment.
+########################################################################
+
+########################################################################
+# Final runtime layer for the user.
+
+FROM runtime-project-base-no-user AS runtime
 
 ARG PROJECT_NAME
 ARG PROJECT_DIR
@@ -149,22 +228,15 @@ ARG GRP
 ARG USR
 ARG PASSWD
 ENV PASSWD=${PASSWD}
+
 RUN groupadd -f -g ${GRPID} ${GRP} && \
     useradd --shell /bin/zsh --create-home -u ${USRID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
     usermod -aG sudo ${USR}
 
-# Copy the conda env with the directory ownership given to the user.
-# This is to be able to install more packages in interactive mode.
-ARG CONDA_INSTALL_PATH
-ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
-COPY --link --from=conda-env --chown=${USRID}:${GRPID} ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
-
-# Create a directory for the project and a directory for startup scripts.
-ARG PROJECT_ROOT
-ENV PROJECT_ROOT=${PROJECT_ROOT}
-ENV ENTRYPOINTS_ROOT=/opt/entrypoints
-RUN mkdir -p ${PROJECT_ROOT} && chown ${USR}:${GRP} ${PROJECT_ROOT} && \
-    mkdir -p ${ENTRYPOINTS_ROOT} && chown ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
+# Change ownership of all relevant directories to the user.
+RUN chown -R ${USR}:${GRP} ${PROJECT_ROOT} && \
+    chown -R ${USR}:${GRP} ${ENTRYPOINTS_ROOT} && \
+    chown -R ${USR}:${GRP} ${CONDA_INSTALL_PATH}
 
 # Use the user to do its shell configuration.
 USER ${USR}
@@ -192,7 +264,6 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
     } >> ${ZDOTDIR}/.zshrc
 
 # Initialize conda for interactive shells.
-ARG PROJECT_NAME
 ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 ENV ZDOTDIR=/home/${USR}
 RUN /bin/zsh -i -c "mamba init zsh" && \
@@ -200,75 +271,9 @@ RUN /bin/zsh -i -c "mamba init zsh" && \
         echo "alias conda=mamba # For those who still think it's conda :)"; \
     } >> ${ZDOTDIR}/.zshrc
 
-########################################################################
-# Final layer.
-
-FROM runtime-base AS runtime
-
-ARG PROJECT_NAME
-ARG PACKAGE_NAME
-ARG PROJECT_DIR
-ARG DATA_DIR
-ARG OUTPUTS_DIR
-ARG WWANDB_DIR
-ENV PROJECT_NAME=${PROJECT_NAME}
-ENV PACKAGE_NAME=${PACKAGE_NAME}
-ENV PROJECT_DIR=${PROJECT_DIR}
-ENV DATA_DIR=${DATA_DIR}
-ENV OUTPUTS_DIR=${OUTPUTS_DIR}
-ENV WWANDB_DIR=${WWANDB_DIR}
-
-# PROJECT, DATA, OUTPUTS, and WWANDB _DIR are where you will mount your code data and outputs.
-# The project assumes a fixed structure:
-
-# PROJECT_ROOT
-# ├── PROJECT_DIR
-# ├── DATA_DIR
-# ├── OUTPUTS_DIR
-# └── WWANDB_DIR
-
-# PROJECT_ROOT is where you want all your scripts to run from.
-WORKDIR ${PROJECT_ROOT}
-
-# Create dummy project, data, outputs, and wandb directories.
-RUN mkdir -p ${PROJECT_DIR} && \
-    mkdir -p ${DATA_DIR} && \
-    mkdir -p ${OUTPUTS_DIR} && \
-    mkdir -p ${WWANDB_DIR}
-
-# The entrypoint is run in an interactive shell so that the conda environment is activated before.
-# Don't overwrite the entrypoint it is installing the project
-# and testing that you correctly mounted the project code and data and output directories.
-# It also performs some other important setup depending on the deployment platform.
-COPY --link entrypoint.sh ${ENTRYPOINTS_ROOT}/entrypoint.sh
-ENTRYPOINT ["/bin/zsh", "-i", "/opt/entrypoints/entrypoint.sh"]
-CMD ["/bin/zsh"]
-# You call always attach shells to the running container after it started at the entrypoint.
 
 ########################################################################
-# The above should be created in the runtime image.
-# User layer should not inherit any code and should not need any context.
-# This is what it would do
-
-USER root
-
-# Change ownership of project root and so on
-RUN chown -R ${USR}:${GRP} ${PROJECT_ROOT} && \
-    chown -R ${USR}:${GRP} ${ENTRYPOINTS_ROOT}
-
-
-
-
-# The following is for EPFL-specific configurations and setup.
-ENV EPFL_RUNAI_SETUP_DIR=${ENTRYPOINTS_ROOT}/EPFL-runai-setup
-COPY --link --chown=${USRID}:${GRPID} EPFL-runai-setup ${EPFL_RUNAI_SETUP_DIR}
-
-########################################################################
-# 3. Stages for setting up the development environment.
-########################################################################
-
-########################################################################
-# Final layer for development.
+# Final development layer for the user.
 
 FROM runtime AS development
 
