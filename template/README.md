@@ -1,5 +1,18 @@
 # Additional Details about the Template
 
+## Reproducibility and replicability
+
+This template ensures the reproducibility of your results through 3 artifacts:
+
+- The development environment, strictly recorded in environment files:
+    - Python dependencies in the conda environment.
+    - System dependencies in the `apt` files for the Docker option and less strictly with brew for the MPS option.
+    - The whole environment can also be recovered from the Docker image without building it again.
+- The project code.
+    - Recorded in the git repository.
+- The data.
+    - Up to you to record it, but we provide a common directory structure across all installation methods.
+
 ## Directory structure
 
 The python entrypoint of the template assumes a common directory structure across all installation methods.
@@ -28,24 +41,25 @@ boilerplate code, but then have a seamless experience.
 
 ## Template FAQ
 
-### Can I use this template for an already existing project? How do I do that?
-
-TODO. Future work.
-
-### Why Docker? Why not just Conda?
+### Why Docker? Why not just Conda? (At least for the AMD64 setup.)
 
 1. Conda environments are not so self-contained, some packages can just work on your machine because they use some of
    your system libraries.
+   The environment will not run on another machine missing those libraries.
 2. Reinforcement learning (RL) environments usually require system libraries not available in Conda
    and RL is a big part of our work.
-3. It is not trivial to port Conda environments across platforms.
 
-Docker is a good solution to these problems.
+To record those faithfully, we use Docker.
+
+### Why does the deployment option on macOS not use Docker?
+
+MPS hardware acceleration is not supported on Docker for
+macOS. [(Reference)](https://github.com/pytorch/pytorch/issues/81224).
 
 ### Why is the template so complex?
 
 It probably seems complex at first sight because you are not familiar with the tools and practices it uses.
-However, these practices (probably not usually combined in a research project, whence this template) are
+However, these practices (usually not all combined in a research project, whence this template) are
 well established and have been proven to be very useful.
 
 For example the `Dockerfile` seems complex because it leverages multi-staging to be very
@@ -53,35 +67,26 @@ time and cache-efficient.
 Different build stages can run in parallel and changing your build dependencies,
 or installing something in the Dockerfile will cause very little rebuilds.
 
-It is worth noting that the authors of this template have received an outstanding mention at MLRC2022 (TODO. link) using
-the practices and tools in this template.
+Using Docker Compose is also very convenient to define all the build arguments and multiple deployment options
+in a single file, avoiding long build and run commands
 
-### What's the difference between this template and [Cresset](https://github.com/cresset-template/cresset)?
-
-Cresset and this template share the same goals and philosophy.
-However, they differ in implementation details and their target audience.
-Cresset has started as a template for building PyTorch from source in Docker images and for offering multiple build
-customization.
-From there, it has evolved to include non PyTorch-specific deployment options and may continue to change in the future.
-
-This template is heavily inspired by Cresset in its build system and its philosophy, however it extends it to include
-a default python project structure, a default set of tools and practices, and a default workflow.
-
-The authors of this template have used Cresset in the past and have collaborated with its authors.
-
-### Why is the template so big?
+### Why does the template include so many files?
 
 Same as above, but we're happy to get your feedback on how to make it smaller.
 
 ### Why does the template use so many tools by default (e.g. `hydra`, `wandb`, `black`, etc.)?
 
-This template is mainly addressed to students and researchers at the <lab-name> lab.
+This template is mainly addressed to students and researchers at the CLAIRe (tentative name) lab.
 Frequently students are not aware of the tools and practices that are available to them, until they face the problems
 we've all faced at some point in our career.
 We chose to include these tools by default to help students and researchers avoid these problems from the start,
 and to encourage them to use them.
 
-### Why does the deployment option on macOS not use Docker?
+### Can I use this template for an already existing project? How do I do that?
 
-MPS hardware acceleration is not supported on Docker for
-macOS. [(Reference)](https://github.com/pytorch/pytorch/issues/81224).
+Yes. It's likely that your project is a bunch of Python files and a `requirements.txt` or `environment.yml` file.
+You can copy those files and potentially refactor the package structures and put all of them under `src`.
+You will also have to transfer the dependencies to the `environment.yml` file and identify the system dependencies.
+
+We recommend you start the template as if you were creating a new project and then copy your files over and add the
+relevant dependencies.
