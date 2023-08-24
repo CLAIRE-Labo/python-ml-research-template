@@ -32,28 +32,34 @@ For more information on the template and a discussion of its design choices see 
 ## Getting started with the template
 
 Click on the `Use this template` GitHub button to create a new GitHub repository from this template.
-Give it a (hyphen-separated) name, then follow the instructions below to set up your project.
+Give it a lowercase hyphen-separated name (we will refer to this name as `PROJECT_NAME`),
+then follow the instructions below to set up your project.
 It's useful to commit after some checkpoints to be able to go back if you make a mistake.
 
 1. Clone the repo.
-2. Fill the template variables in `template/template_variables.env` and run the script
+   - If you plan to develop on your local computer, clone it there.
+   - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
+   - If you plan to develop or deploy on a managed cluster (e.g. EPFL IC RunAI cluster), clone on you local machine, or ideally an AMD64 platform.
+3. Fill the template variables in `template/template_variables.env` and run the script
    ```bash
    ./template/fill_template.sh
    ```
    Then delete the `template` directory and commit.
-
-3. Edit the `LICENCE` file.
+4. Edit the `LICENCE` file.
    Or delete it and remember to add one when open-sourcing your code.
    [(Some help here).](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
    A simple change if you're fine with the MIT license is to replace the `2022 Skander Moalla` with your year and name.
    Commit.
-4. Set up and edit the development environment instructions for the platforms you will use and support.
-   Each platform group supports a group of use cases:
+5. Set up and edit the development environment instructions for the platforms you will use and support.
+   Each platform group supports specific of use cases:
     - **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers), Windows laptops with WSL,
       macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster, and other cloud services. With support for NVIDIA GPUs.
       Refer to `installation/docker-amd64/README.md`.
     - **macOS with Apple Silicon (`osx-arm64`)** to run on native Apple Silicon and for the MPS (Apple Silicon) hardware acceleration.
       Refer to `installation/osx-arm64/README.md`.
+   Naturally, results will be reproducible on machines within the same platform group, but not necessarily accross platform groups.
+   This is because dependecy versions may vary accross platforms and hardware acceleration may behave differently.
+   Try to keep the dependency versions as close as possible to ensure the replicability of your results. 
 
    Delete the installation directory for the platforms you don't use.
 
