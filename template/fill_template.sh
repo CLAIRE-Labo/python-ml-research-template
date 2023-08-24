@@ -13,8 +13,8 @@ for file in \
   "pyproject.toml" \
   "LICENSE" \
   ".pre-commit-config.yaml" \
-  "src/package_name/main.py" \
-  "src/package_name/utils/__init__.py" \
+  "src/template_package_name/main.py" \
+  "src/template_package_name/utils/__init__.py" \
   "$OSX64_DIR/README.md" \
   "$OSX64_DIR/update_env_file.sh" \
   "$OSX64_DIR/environment.yml" \
@@ -34,3 +34,4 @@ for file in \
 done
 
 mv "src/template_package_name/" "src/${PACKAGE_NAME}"
+
