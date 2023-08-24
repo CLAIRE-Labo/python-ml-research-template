@@ -40,7 +40,7 @@ Here's a summary of all the files in this directory.
 ```
 docker-amd64/
 ├── Dockerfile              # Dockerfile template. Edit if you are building things manually.
-├── docker-compose.yml      # Docker Compose template. Edit if you have a custom local deployment.
+├── compose.yaml      # Docker Compose template. Edit if you have a custom local deployment.
 ├── entrypoint.sh           # Entrypoint script. Edit if you need to start programs when the container starts.
 ├── template.sh             # A utility script to help you interact with the template (build, deploy, etc.).
 ├── .env                    # Will contain your personal configuration.
