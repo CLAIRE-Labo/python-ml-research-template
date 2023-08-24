@@ -34,12 +34,16 @@ For more information on the template and a discussion of its design choices see 
 Click on the `Use this template` GitHub button to create a new GitHub repository from this template.
 Give it a lowercase hyphen-separated name (we will refer to this name as `PROJECT_NAME`),
 then follow the instructions below to set up your project.
+You can also give your repo another name format if you prefer, but for the template you will have to pick a `PROJECT_NAME` as well.
 It's useful to commit after some checkpoints to be able to go back if you make a mistake.
 
-1. Clone the repo.
+1. Clone the repo as the `PROJECT_NAME`.
    - If you plan to develop on your local computer, clone it there.
    - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
    - If you plan to develop or deploy on a managed cluster (e.g. EPFL IC RunAI cluster), clone on you local machine, or ideally an AMD64 platform.
+  ```
+  git clone <URL/SSH> PROJECT_NAME
+  ```
 3. Fill the template variables in `template/template_variables.env` and run the script
    ```bash
    ./template/fill_template.sh
