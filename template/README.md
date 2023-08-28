@@ -33,9 +33,9 @@ In particular, the `hydra` configuration files will be the same,
 instructing your scripts to read from and write to the same directories.
 
 It also allows as much freedom as possible (e.g. mount data from one filesystem, outputs from another, etc.) while
-respecting the best practices and limitations of all deployment options 
+respecting the best practices and limitations of all deployment options
 (e.g. not having nested mounts in a Docker container)
-and providing a great user experience on all platforms 
+and providing a great user experience on all platforms
 (e.g. we could  have used environment variables to specify the paths, but we find them not as convenient to use,
 particularly on the native Apple Silicon option, where cannot set them automatically for you,
 which means you have to remember to set them every time.

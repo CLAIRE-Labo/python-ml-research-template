@@ -15,7 +15,7 @@ The template has a common directory structure across all installation methods.
 
 By default, the `data/` `outputs/` and `wandb/` directories
 are symlinks to or mount the `_data/` `_outputs/` and `_wandb/` directories, so you if your datasets
-are small enough, you can store them directly in `_data/` and they will be exposed in the `data/` directory.  
+are small enough, you can store them directly in `_data/` and they will be exposed in the `data/` directory.
 You can then easily instruct your users in the following sections to do the same.
 
 Otherwise, if your datasets are very large and spread across filesystems, say you share them with your team,

@@ -104,7 +104,7 @@ You're off to a good start! Here are a few tips for keeping your project in good
   Fill in the rest of the sections after the Getting Started when releasing your project.
   We give a structure and some templates for those.
 
-  If you use datasets, follow `_data/README.md` to set them and write the instructions 
+  If you use datasets, follow `_data/README.md` to set them and write the instructions
   for the subsequent users there.
   Otherwise, delete the [datasets](#datasets) section.
 - Remember to pin your dependencies whenever you install new ones.

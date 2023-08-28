@@ -35,4 +35,3 @@ for file in \
 done
 
 mv "src/template_package_name/" "src/${PACKAGE_NAME}"
-

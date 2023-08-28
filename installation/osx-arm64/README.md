@@ -44,7 +44,7 @@ Create the respective directories so that the tree looks like the above:
 > mv {.,}* template-project-name
 > # Ignore the error message.
 >  ```
-> Be careful, moving all files with `mv *` does not move the dotfiles, so will miss the git 
+> Be careful, moving all files with `mv *` does not move the dotfiles, so will miss the git
 > files.
 
 1. Create the `PROJECT_ROOT` directory.
