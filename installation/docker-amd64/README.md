@@ -148,8 +148,8 @@ We provide the following guides for running the environment:
 
 Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 
-* `docker` (`docker --version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
-* `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
+* `docker` (`docker --version` >= v20.10). [Install here for servers](https://docs.docker.com/engine/), [and here for desktops](https://docs.docker.com/get-docker/).
+* `docker compose` (`docker compose version` >= v2). [Install here for servers](https://docs.docker.com/compose/install/).
 * [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc)
 * [CUDA] `nvidia-docker` (the NVIDIA Container
   Toolkit). [Install here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
