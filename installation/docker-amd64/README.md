@@ -40,7 +40,7 @@ Here's a summary of all the files in this directory.
 ```
 docker-amd64/
 ├── Dockerfile              # Dockerfile template. Edit if you are building things manually.
-├── compose.yaml      # Docker Compose template. Edit if you have a custom local deployment.
+├── compose.yaml            # Docker Compose template. Edit if you have a custom local deployment.
 ├── entrypoint.sh           # Entrypoint script. Edit if you need to start programs when the container starts.
 ├── template.sh             # A utility script to help you interact with the template (build, deploy, etc.).
 ├── .env                    # Will contain your personal configuration.
@@ -134,7 +134,12 @@ cd installation/docker-amd64
 We provide the following guides for running the environment:
 - To run on the same machine where you built the image, follow
   [Running locally with Docker Compose](#running-locally-with-docker-compose).
+
+  Moreover, if this machine is a remote server, you can also plug the remote development features
+  of popular IDEs such as VSCode or PyCharm with the Docker Compose service running the environment.
 - To run on the EPFL RunAI cluster refer to the `./EPFL-runai-setup/README.md`.
+  
+  The guide also provides instructions to do remote development on the RunAI cluster.
   Other managed cluster users can get inspiration from it too, but we leave it to you to deploy on your managed cluster.
 
 ### Running locally with Docker Compose
@@ -289,3 +294,4 @@ Alternatively, you can open a container at the sub-image before the installation
 ## Acknowledgements
 
 This Docker setup is heavily based on the [Cresset template](https://github.com/cresset-template/cresset).
+We thank them for their work and for making it available to the community.
