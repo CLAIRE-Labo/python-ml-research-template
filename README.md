@@ -49,8 +49,8 @@ It's useful to commit after some checkpoints to be able to go back if you make a
    ```
     - If you plan to develop on your local computer, clone it there.
     - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
-    - If you plan to develop or deploy on a managed cluster (e.g. EPFL IC RunAI cluster), clone on you local machine, or
-      ideally an AMD64 platform.
+    - If you plan to develop or deploy on a managed cluster (e.g. EPFL IC RunAI cluster), clone on you local machine,
+      and ideally an AMD64 platform.
 
 2. Fill the template variables in `template/template_variables.env` and run the script
    ```bash
@@ -194,7 +194,6 @@ Below, we give a description of the main files and directories in this repositor
 > [TEMPLATE] UPDATE ME:
 > Provide a quick overview of the main files in the repo for users to experiment with your code,
 > then delete this note.
-
 
 ## Contributing
 
