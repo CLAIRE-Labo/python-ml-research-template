@@ -1,0 +1,6 @@
+# This config completes the main.yaml config with read-only variables that are
+# directly computed and determined from user-set variable.
+# They are not meant to be edited.
+# They will be useful when navigating the experiments (filtering, sorting, etc.).
+
+seed_times_2: ${eval:'${seed} * 2'}

@@ -146,7 +146,7 @@ We provide the following guides for running the environment:
   Moreover, if this machine is a remote server, you can also plug the remote development features
   of popular IDEs such as VSCode or PyCharm with the Docker Compose service running the environment.
 - To run on the EPFL RunAI cluster refer to the `./EPFL-runai-setup/README.md`.
-  
+
   The guide also provides instructions to do remote development on the RunAI cluster.
   Other managed cluster users can get inspiration from it too, but we leave it to you to deploy on your managed cluster.
 

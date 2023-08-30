@@ -1,7 +1,19 @@
 defaults:
+
+  # WandB and Hydra defaults.
   - hydra
   - wandb
+
+  # This file.
   - _self_
 
+  # Optional override for development.
+  - optional override: example
+
+  # Read-only variables.
+  - _main
+
 seed: ${generate_random_seed:}
+
 some_arg: "some_default_value"
+example_override: not overridden
