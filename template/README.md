@@ -6,7 +6,8 @@ This template ensures the reproducibility of your results through 3 artifacts:
 
 - The development environment, strictly recorded in environment files:
     - Python dependencies in the conda environment.
-    - System dependencies in the `apt` files for the Docker option and less strictly with brew for the MPS option.
+    - System dependencies in the `apt` files for the Docker option and less strictly with brew for the Apple Silicon
+      option.
     - The whole environment can also be recovered from the Docker image without building it again.
 - The project code.
     - Recorded in the git repository.
@@ -36,7 +37,7 @@ It also allows as much freedom as possible (e.g. mount data from one filesystem,
 respecting the best practices and limitations of all deployment options
 (e.g. not having nested mounts in a Docker container)
 and providing a great user experience on all platforms
-(e.g. we could  have used environment variables to specify the paths, but we find them not as convenient to use,
+(e.g. we could have used environment variables to specify the paths, but we find them not as convenient to use,
 particularly on the native Apple Silicon option, where cannot set them automatically for you,
 which means you have to remember to set them every time.
 Furthermore, we want to keep the template as contained as possible, which means not altering the user's global

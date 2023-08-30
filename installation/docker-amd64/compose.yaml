@@ -2,6 +2,7 @@ services:
   runtime-image: # Base service to build the runtime image.
     image: ${IMAGE_NAME}:runtime
     platform: "linux/amd64"
+    env_file: .env
     build:
       platforms:
         - "linux/amd64"
