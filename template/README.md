@@ -26,10 +26,10 @@ PROJECT_ROOT/        # The root of the project (opt/project on the AMD64 setup a
 └── wandb/           # This is where wandb artifacts will be written.
 ```
 
-The structure does not enforce storing the data and outputs physically under the same directory as the project,
-instead these will be symlinks, contain symlinks, or be mounted directories.
+The structure does not enforce storing the data and outputs physically under the same directory as the project.
+Instead, these will be symlinks, contain symlinks, or be mounted directories.
 
-The point of this structure is to keep the python code identical across installation methods and platforms.
+The point of this structure is to keep the Python code identical across installation methods and platforms.
 In particular, the `hydra` configuration files will be the same,
 instructing your scripts to read from and write to the same directories.
 
@@ -38,12 +38,12 @@ respecting the best practices and limitations of all deployment options
 (e.g. not having nested mounts in a Docker container)
 and providing a great user experience on all platforms
 (e.g. we could have used environment variables to specify the paths, but we find them not as convenient to use,
-particularly on the native Apple Silicon option, where cannot set them automatically for you,
+particularly on the native Apple Silicon option, where you cannot set them automatically for you,
 which means you have to remember to set them every time.
 Furthermore, we want to keep the template as contained as possible, which means not altering the user's global
 environment.)
 
-This may add dome configuration steps at the beginning, that may differ on the platform and add some
+This may add dome configuration steps at the beginning, which may differ on the platform, and add some
 boilerplate code, but then we have a seamless experience.
 
 ## Template FAQ
@@ -69,10 +69,10 @@ It probably seems complex at first sight because you are not familiar with the t
 However, these practices (usually not all combined in a research project, whence this template) are
 well established and have been proven to be very useful.
 
-For example the `Dockerfile` seems complex because it leverages multi-staging to be very
+For example, the `Dockerfile` seems complex because it leverages multi-staging to be very
 time and cache-efficient.
-Different build stages can run in parallel and changing your build dependencies,
-or installing something in the Dockerfile will cause very little rebuilds.
+Different build stages can run in parallel, so changing your build dependencies,
+or installing something in the Dockerfile will cause very few rebuilds.
 
 Using Docker Compose is also very convenient to define all the build arguments and multiple deployment options
 in a single file, avoiding long build and run commands
@@ -81,10 +81,10 @@ in a single file, avoiding long build and run commands
 
 Same as above, but we're happy to get your feedback on how to make it smaller.
 
-### Why does the template use so many tools by default (e.g. `hydra`, `wandb`, `black`, etc.)?
+### Why does the template have so many tools by default (e.g. `hydra`, `wandb`, `black`, etc.)?
 
-This template is mainly addressed to students and researchers at the CLAIRe (tentative name) lab.
-Frequently students are not aware of the tools and practices that are available to them, until they face the problems
+This template is mainly addressed to students and researchers at CLAIRE.
+Frequently students are not aware of the tools and practices that are available to them until they face the problems
 we've all faced at some point in our career.
 We chose to include these tools by default to help students and researchers avoid these problems from the start,
 and to encourage them to use them.
