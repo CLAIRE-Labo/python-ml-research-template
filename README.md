@@ -3,7 +3,7 @@
 ## Overview
 
 This is a template used for starting Python machine-learning research
-projects with hardware acceleration at the EPFL CLAIRe (tentative name) lab.
+projects with hardware acceleration at the EPFL CLAIRE lab.
 It features and encourages best practices for:
 
 - Reproducible environments on major platforms with hardware acceleration (x86-64/AMD64 + Docker-supporting OS + NVIDIA
@@ -27,7 +27,7 @@ an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5
 [ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
 
 The template can also be adapted to suit many other use cases, however, its maintained form will be tailored to the
-needs of CLAIRe.
+needs of CLAIRE.
 It also contains extra EPFL-specific instructions for deployment on the EPFL RunAI Kubernetes cluster.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
