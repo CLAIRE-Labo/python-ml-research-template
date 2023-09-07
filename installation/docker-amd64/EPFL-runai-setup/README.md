@@ -5,7 +5,7 @@
 At this point, you should have an image that can be deployed on multiple platforms.
 This guide will show you how to deploy your image on the EPFL IC Run:ai cluster and use it for:
 
-1. Remote development. (At CLAIRe we use the Run:ai platform as our daily driver.)
+1. Remote development. (At CLAIRE we use the Run:ai platform as our daily driver.)
 2. Running unattended jobs.
 
 Using the image on HaaS machines falls into the public instructions
