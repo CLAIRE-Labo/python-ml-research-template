@@ -1,6 +1,10 @@
-# Installation on amd64 platforms with Docker
+# Installation on AMD64 platforms with Docker
 
-## [TEMPLATE] TTemplate getting started
+## Template getting started
+
+> [!IMPORTANT] 
+> **TEMPLATE TODO:**
+> Follow the instructions, then delete this section.
 
 This template provides a Docker setup to use the environment.
 For detailed information on the setup refer to the next section [(_More details on the
@@ -21,9 +25,13 @@ It remains to
    You can then add more dependencies as your project grows following
    the [instructions to maintain the environment](#instructions-to-maintain-the-environment).
    Commit.
-5. Delete the [TEMPLATE] sections from this file.
+5. Delete the template sections from this file (indicated with **TEMPLATE TODO**).
 
-## [TEMPLATE] More details on the setup
+## More details on the setup
+
+> [!IMPORTANT] 
+> **TEMPLATE TODO:**
+> Read/skim over this section, then delete it.
 
 The setup is based on Docker and Docker Compose and is heavily inspired by
 the [Cresset template](https://github.com/cresset-template/cresset).
