@@ -30,15 +30,11 @@ needs of CLAIRE.
 It also contains extra EPFL-specific instructions for deployment on the EPFL RunAI Kubernetes cluster.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
-> 📘 [TEMPLATE] EDIT ME:
+> 📘 
+
+> [!NOTE]
+> [TEMPLATE] EDIT ME:
 > Replace the above with a description of your project, then delete this note.
-
-> [!NOTE] Gooo
-> Each step has it's own virtual environment and requirements.txt file to accommodate the requirements of each step.
-
-> [!WARN]
-> Each step has it's own virtual environment and requirements.txt file to accommodate the requirements of each step.
-
 
 ## Getting started with the template
 
