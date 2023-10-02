@@ -1,6 +1,15 @@
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> Replace the above with your project title, then delete this note.
+
 # Python Machine Learning Research Project Template
 
 ## Overview
+
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> Replace the above with a description of your project, then delete this note.
+
 
 This is a template used for starting Python machine-learning research
 projects with hardware acceleration at the EPFL CLAIRE lab.
@@ -29,11 +38,6 @@ The template can also be adapted to suit many other use cases, however, its main
 needs of CLAIRE.
 It also contains extra EPFL-specific instructions for deployment on the EPFL RunAI Kubernetes cluster.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
-
-> [!IMPORTANT]
-> **TEMPLATE TODO:**
-> Replace the above with a description of your project, then delete this note.
-
 
 > [!Note]
 > **TEMPLATE EDIT ME:**
