@@ -30,8 +30,8 @@ It features and encourages best practices for:
 Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
 With this template, sharing your work will be a breeze, and its adoption will be straightforward,
 [maximizing its impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501).
-The practices in this template earned its authors
-an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5dI5aEn) at the
+The practices in this template [earned its authors](https://openreview.net/forum?id=E0qO5dI5aEn)
+an Outstanding Paper (Honorable Mention) at the
 [ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
 
 The template can also be adapted to suit many other use cases, however, its maintained form will be tailored to the
@@ -131,6 +131,10 @@ You're off to a good start! Here are a few tips for keeping your project in good
 
 ### Code and development environment
 
+> [!IMPORTANT]
+> **TEMPLATE TODO**:
+> Update the platform you support, then delete this note.
+
 We support the following platforms for installing the project dependencies and running the code.
 
 - **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers),
@@ -145,6 +149,10 @@ We support the following platforms for installing the project dependencies and r
 
 We list below our direct dependencies (with major versions when relevant) for users with other needs.
 
+> [!IMPORTANT]
+> **TEMPLATE TODO**:
+> Update the platform you support, then delete this note.
+
 ```text
 Python 3.10
 
@@ -154,19 +162,21 @@ hydra
 tqdm
 ```
 
-> [TEMPLATE] UPDATE ME:
-> Update the above with your direct dependencies before shipping your project, then delete this note.
-
 ### Data
 
-Refer to `_data/README.md`.
-
-> [TEMPLATE] UPDATE ME:
+> [!IMPORTANT]
+> **TEMPLATE TODO**:
 > Fill `_data/README.md` or delete this section, then delete this note.
+
+Refer to `_data/README.md`.
 
 ## Reproduction and Experimentation
 
 ### Reproducing our results
+
+> [!IMPORTANT]
+> **TEMPLATE TODO**:
+> Keep these scripts up to date and run your experiments using them. Delete this note when shipping.
 
 We provide scripts to reproduce our work in the `reproducibility_scripts/` directory.
 It has a README at its root describing which scripts reproduce which experiments.
@@ -178,17 +188,25 @@ They are managed by [Hydra](https://hydra.cc/docs/intro/).
 You can experiment with different configurations by passing the relevant arguments.
 You can get examples of how to do so in the `reproducibility_scripts/` directory.
 
-### Trained models and experiment with results
+### Using trained models and experimenting with results
+
+> [!IMPORTANT]
+> **TEMPLATE TODO**:
+> Do provide the runs and trained models or update/delete this section, then delete this note.
 
 We share our Weights and Biases runs in [this W&B project](fill-me).
 
 Moreover, we make our trained models available.
 You can follow the instructions in `_outputs/README.md` to download and use them.
 
-> [TEMPLATE] UPDATE ME:
-> Do provide the runs and trained models or update/delete this section, then delete this note.
 
 ## Repository structure
+
+
+> [!IMPORTANT]
+> **TEMPLATE TODO**:
+> Provide a quick overview of the main files in the repo for users to experiment with your code,
+> then delete this note.
 
 Below, we give a description of the main files and directories in this repository.
 
@@ -198,9 +216,6 @@ Below, we give a description of the main files and directories in this repositor
     └── main.py     # Main entry point.
 ```
 
-> [TEMPLATE] UPDATE ME:
-> Provide a quick overview of the main files in the repo for users to experiment with your code,
-> then delete this note.
 
 ## Contributing
 
