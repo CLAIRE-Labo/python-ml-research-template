@@ -9,10 +9,9 @@ It features and encourages best practices for:
 - Reproducible environments on major platforms with hardware acceleration (x86-64/AMD64 + Docker-supporting OS + NVIDIA
   GPU and macOS + Apple Silicon)
   with a great user and development experience covering multiple use cases, including:
-    - Your local machine, e.g. macOS + Apple Silicon or Intel CPU, Windows with WSL or Linux + GPU,
-    - Remote servers with GPUs, e.g. VMs on cloud providers, HaaS from EPFL IC,
-    - Managed platforms GPUs, e.g. the EPFL IC RunAI Kubernetes cluster (and soon other public cloud services like GCP
-      Vertex AI, AWS SageMaker, ...).
+    - Your local machine, e.g. macOS + Apple Silicon or Intel CPU, Windows with WSL or Linux + GPU.
+    - Remote servers with GPUs, e.g. VMs on cloud providers, HaaS from EPFL IC.
+    - Managed platforms with GPUs, e.g. the EPFL IC RunAI Kubernetes cluster.
 - Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
   and [Weights & Biases](https://wandb.ai/site).
 - Python project packaging following the
@@ -31,7 +30,7 @@ needs of CLAIRE.
 It also contains extra EPFL-specific instructions for deployment on the EPFL RunAI Kubernetes cluster.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
-> [TEMPLATE] EDIT ME:
+> ℹ️ [TEMPLATE] EDIT ME:
 > Replace the above with a description of your project, then delete this note.
 
 ## Getting started with the template
