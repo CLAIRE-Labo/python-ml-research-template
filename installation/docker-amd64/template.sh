@@ -86,8 +86,9 @@ push() {
   # Push the runtime and dev image to a specified registry.
   # ./template.sh push registry_hostname
   # Pushes the latest and current git commit images.
+  check
   REGISTRY_HOSTNAME="${1}"
-  if [[ -z "${REGISTRY_HOSTNAME}" ]]; then
+  if [ "${REGISTRY_HOSTNAME}" == "" ]; then
     echo "Please specify a registry hostname."
     exit 1
   fi
