@@ -36,7 +36,7 @@ For more information on the template and a discussion of its design choices see 
 > [!NOTE]
 > Each step has it's own virtual environment and requirements.txt file to accommodate the requirements of each step.
 
-> [!WARNING]
+> [!WARN]
 > Each step has it's own virtual environment and requirements.txt file to accommodate the requirements of each step.
 
 
