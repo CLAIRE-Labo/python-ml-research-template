@@ -31,8 +31,10 @@ It also contains extra EPFL-specific instructions for deployment on the EPFL Run
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
 {% note %}
+
 **TEMPLATE EDIT ME:**
 Replace the above with a description of your project, then delete this note.
+
 {% endnote %}
 
 
