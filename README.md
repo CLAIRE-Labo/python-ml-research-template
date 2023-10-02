@@ -35,7 +35,7 @@ For more information on the template and a discussion of its design choices see 
 > Replace the above with a description of your project, then delete this note.
 
 
-> [!WARN]
+> [!WARNING]
 > **TEMPLATE EDIT ME:**
 > Replace the above with a description of your project, then delete this note.
 
