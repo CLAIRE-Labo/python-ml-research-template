@@ -34,6 +34,16 @@ For more information on the template and a discussion of its design choices see 
 > **TEMPLATE EDIT ME:**
 > Replace the above with a description of your project, then delete this note.
 
+
+> [!WARN]
+> **TEMPLATE EDIT ME:**
+> Replace the above with a description of your project, then delete this note.
+
+
+> [!IMPORTANT]
+> **TEMPLATE EDIT ME:**
+> Replace the above with a description of your project, then delete this note.
+
 ## Getting started with the template
 
 Click on the `Use this template` GitHub button to create a new GitHub repository from this template.
