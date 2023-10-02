@@ -17,18 +17,26 @@ fi
 
 # Error if those variables are not set.
 if [ -z "${PROJECT_DIR_IN_PVC}" ]; then
-  echo "PROJECT_DIR_IN_PVC is not set. Exiting."
+  echo "[TEMPLATE INFO] PROJECT_DIR_IN_PVC is not set. Exiting."
   exit 1
 fi
 if [ -z "${DATA_DIR_IN_PVC}" ]; then
-  echo "DATA_DIR_IN_PVC is not set. Exiting."
+  echo "[TEMPLATE INFO] DATA_DIR_IN_PVC is not set. Exiting."
   exit 1
 fi
 if [ -z "${OUTPUTS_DIR_IN_PVC}" ]; then
-  echo "OUTPUTS_DIR_IN_PVC is not set. Exiting."
+  echo "[TEMPLATE INFO] OUTPUTS_DIR_IN_PVC is not set. Exiting."
+  exit 1
+fi
+if [ -z "${WANDB_DIR_IN_PVC}" ]; then
+  echo "[TEMPLATE INFO] WANDB_DIR_IN_PVC is not set. Exiting."
   exit 1
 fi
 
+echo "[TEMPLATE INFO] Creating symlinks to directories in PVCs."
 ln -s "${PROJECT_DIR_IN_PVC}" "${PROJECT_DIR}"
+echo "[TEMPLATE INFO] Sym-linked ${PROJECT_DIR} to ${PROJECT_DIR_IN_PVC}"
 ln -s "${DATA_DIR_IN_PVC}" "${DATA_DIR}"
+echo "[TEMPLATE INFO] Sym-linked ${DATA_DIR} to ${DATA_DIR_IN_PVC}"
 ln -s "${OUTPUTS_DIR_IN_PVC}" "${OUTPUTS_DIR}"
+echo "[TEMPLATE INFO] Sym-linked ${OUTPUTS_DIR} to ${OUTPUTS_DIR_IN_PVC}"

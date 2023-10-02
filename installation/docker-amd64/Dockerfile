@@ -118,6 +118,7 @@ ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 ENV PYTHONIOENCODING=UTF-8
 ARG DEBIAN_FRONTEND=noninteractive
+ENV HYDRA_FULL_ERROR=1
 
 # Enable caching for `apt` packages in Docker.
 # https://docs.docker.com/engine/reference/builder/#run---mounttypecache
@@ -148,6 +149,18 @@ ARG CONDA_INSTALL_PATH
 ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
 ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 COPY --link --from=conda-env ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
+
+# Optional optimizations.
+# Enable Intel MKL optimizations on AMD CPUs.
+# https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
+RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > ${CONDA_INSTALL_PATH}/fakeintel.c && \
+    gcc -shared -fPIC -o ${CONDA_INSTALL_PATH}/libfakeintel.so ${CONDA_INSTALL_PATH}/fakeintel.c
+ENV LD_PRELOAD=${CONDA_INSTALL_PATH}/libfakeintel.so:${LD_PRELOAD}
+# Configure Jemalloc as the default memory allocator.
+# https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html#switch-memory-allocator
+# https://github.com/jemalloc/jemalloc/blob/dev/TUNING.md
+ENV LD_PRELOAD=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/lib/libjemalloc.so:${LD_PRELOAD}
+ENV MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:30000,muzzy_decay_ms:30000"
 
 ########################################################################
 # This stage is the final user agnostic stage.
@@ -270,8 +283,6 @@ RUN /bin/zsh -i -c "mamba init zsh" && \
     {   echo "mamba activate ${PROJECT_NAME}"; \
         echo "alias conda=mamba # For those who still think it's conda :)"; \
     } >> ${ZDOTDIR}/.zshrc
-
-
 ########################################################################
 # Final development layer for the user.
 

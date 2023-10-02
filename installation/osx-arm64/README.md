@@ -93,7 +93,7 @@ mamba env create --file template-project-name/installation/osx-arm64/environment
 ## Running the code in the environment
 
 ```bash
-conda activate template-project-name
+mamba activate template-project-name
 ```
 
 Run your scripts from the `PROJECT_ROOT` directory.
