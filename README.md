@@ -33,7 +33,7 @@ For more information on the template and a discussion of its design choices see 
 > 📘 [TEMPLATE] EDIT ME:
 > Replace the above with a description of your project, then delete this note.
 
-> [!NOTE]
+> [!NOTE] Gooo
 > Each step has it's own virtual environment and requirements.txt file to accommodate the requirements of each step.
 
 > [!WARN]
