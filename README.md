@@ -8,7 +8,7 @@
 
 > [!IMPORTANT]
 > **TEMPLATE TODO:**
-> Replace the above with a description of your project, then delete this note.
+> Replace the description below with a description of your project, then delete this note.
 
 
 This is a template used for starting Python machine-learning research
@@ -39,16 +39,16 @@ needs of CLAIRE.
 It also contains extra EPFL-specific instructions for deployment on the EPFL RunAI Kubernetes cluster.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
-> [!Note]
-> **TEMPLATE EDIT ME:**
-> Replace the above with a description of your project, then delete this note.
-
 ## Getting started with the template
+
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> Delete this whole section when you're done with the template getting started.
 
 Click on the `Use this template` GitHub button to create a new GitHub repository from this template.
 Give it a lowercase hyphen-separated name (we will refer to this name as `PROJECT_NAME`),
 then follow the instructions below to set up your project.
-You can also give your repo another name format if you prefer, but for the template you will have to pick
+You can also give your repo another name format if you prefer, but for the template, you will have to pick
 a `PROJECT_NAME` as well.
 It's useful to commit after some checkpoints to be able to go back if you make a mistake.
 
@@ -58,8 +58,9 @@ It's useful to commit after some checkpoints to be able to go back if you make a
    ```
     - If you plan to develop on your local computer, clone it there.
     - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
-    - If you plan to develop or deploy on a managed cluster (e.g. EPFL IC RunAI cluster), clone on you local machine,
-      and ideally an AMD64 platform.
+    - If you plan to develop or deploy on a managed cluster (e.g. EPFL IC RunAI cluster), clone on your local machine
+      (ideally an AMD64 platform, or plan to have a Docker engine on an AMD64 platform.
+      For CLAIRE members we have the `claire-build-machine`.)
 
 2. Fill the template variables in `template/template_variables.env` and run the script
    ```bash
@@ -125,9 +126,6 @@ You're off to a good start! Here are a few tips for keeping your project in good
 - Have a look at the [ML Code Completeness Checklist](https://github.com/paperswithcode/releasing-research-code).
   This template facilitates meeting all the checklist items, with a different design.
   Have a look at the checklist when you will ship your project.
-
-> [TEMPLATE] DELETE ME:
-> Delete this whole section when you're done with the template getting started.
 
 ## Getting Started
 
