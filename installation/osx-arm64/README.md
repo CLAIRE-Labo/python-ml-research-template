@@ -1,6 +1,10 @@
 # Installation on macOS arm64
 
-## [TEMPLATE] Template getting started
+## Template getting started
+
+> [!IMPORTANT] 
+> **TEMPLATE TODO:**
+> Follow the instructions then delete this section.
 
 This template provides a minimal `environment.yml` file for starting a `conda` environment.
 The Python version and package name have already been filled by the `fill_template.sh` script.
@@ -35,8 +39,8 @@ template-project-name/          # To which we will refer as the PROJECT_ROOT can
 
 Create the respective directories so that the tree looks like the above:
 
-> [TEMPLATE INFO] READ ME AND DELETE ME:
->
+> [!IMPORTANT] 
+> **TEMPLATE TODO:**
 > If you're setting up the template and already cloned the repository, replace 1. and 2. below with the following
 > ```bash
 > # When in the repository root.
@@ -46,6 +50,8 @@ Create the respective directories so that the tree looks like the above:
 >  ```
 > Be careful, moving all files with `mv *` does not move the dotfiles, so will miss the git
 > files.
+>
+> Delete this note.
 
 1. Create the `PROJECT_ROOT` directory.
    ```bash
