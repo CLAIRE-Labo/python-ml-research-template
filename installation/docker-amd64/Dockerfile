@@ -94,6 +94,11 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
 RUN mamba clean -fya && \
     find ${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME} -name '__pycache__' | xargs rm -rf
 
+# Enable Intel MKL optimizations on AMD CPUs.
+# https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
+RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > ${CONDA_INSTALL_PATH}/fakeintel.c && \
+    gcc -shared -fPIC -o ${CONDA_INSTALL_PATH}/libfakeintel.so ${CONDA_INSTALL_PATH}/fakeintel.c
+
 ########################################################################
 # Here you can install other software starting from apt-build-base,
 # then copy the installation artifacts to runtime-base. (As done with the conda env).
@@ -153,14 +158,7 @@ COPY --link --from=conda-env ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
 # Optional optimizations.
 # Enable Intel MKL optimizations on AMD CPUs.
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
-RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > ${CONDA_INSTALL_PATH}/fakeintel.c && \
-    gcc -shared -fPIC -o ${CONDA_INSTALL_PATH}/libfakeintel.so ${CONDA_INSTALL_PATH}/fakeintel.c
 ENV LD_PRELOAD=${CONDA_INSTALL_PATH}/libfakeintel.so:${LD_PRELOAD}
-# Configure Jemalloc as the default memory allocator.
-# https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html#switch-memory-allocator
-# https://github.com/jemalloc/jemalloc/blob/dev/TUNING.md
-ENV LD_PRELOAD=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/lib/libjemalloc.so:${LD_PRELOAD}
-ENV MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:30000,muzzy_decay_ms:30000"
 
 ########################################################################
 # This stage is the final user agnostic stage.

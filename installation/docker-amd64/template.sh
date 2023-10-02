@@ -13,8 +13,6 @@ USR=$(id -un)
 # it is only there to avoid running password-less sudo commands accidentally.
 PASSWD=$(id -un)
 LAB_NAME=$(id -un)
-REGISTRY_HOSTNAME=docker.io
-# EPFL-IC users should change the REGISTRY_HOSTNAME to ic-registry.epfl.ch.
 
 ### For running locally
 CPU_OR_GPU=cpu
@@ -40,7 +38,7 @@ PROJECT_DIR=\${PROJECT_ROOT}/\${PROJECT_NAME}
 DATA_DIR=\${PROJECT_ROOT}/data
 OUTPUTS_DIR=\${PROJECT_ROOT}/outputs
 WWANDB_DIR=\${PROJECT_ROOT}/wandb
-IMAGE_NAME=\$REGISTRY_HOSTNAME/\${LAB_NAME}/\${PROJECT_NAME}/\${USR}
+IMAGE_NAME=\${LAB_NAME}/\${PROJECT_NAME}/\${USR}
 EOF
 )
 
@@ -54,7 +52,7 @@ env() {
     exit 1
   fi
   echo "${ENV_TEXT}" >"${ENV_FILE}"
-  echo "Created ${ENV_FILE}. Edit it to set your user-specific variables."
+  echo "Created the ${ENV_FILE} file. Edit it to set your user-specific variables."
 }
 
 check() {
@@ -68,16 +66,49 @@ check() {
 }
 
 build() {
-  # Build the image without creating a new container.
-  # Examples:
-  # ./template.sh build runtime
-  # ./template.sh build dev
+  # Build the runtime and dev images and tag them with the current git commit.
+  # ./template.sh build
   check
-  IMAGE="${1}-image"
   COMPOSE_DOCKER_CLI_BUILD=1 \
     DOCKER_BUILDKIT=1 \
-    docker compose -p "${COMPOSE_PROJECT}" build "$IMAGE"
+    docker compose -p "${COMPOSE_PROJECT}" build runtime-image
+  COMPOSE_DOCKER_CLI_BUILD=1 \
+    DOCKER_BUILDKIT=1 \
+    docker compose -p "${COMPOSE_PROJECT}" build dev-image
+
+  # Tag the images with the current git commit.
+  GIT_COMMIT=$(git rev-parse --short HEAD)
+  docker tag "${IMAGE_NAME}:latest-runtime" "${IMAGE_NAME}:${GIT_COMMIT}-runtime"
+  docker tag "${IMAGE_NAME}:latest-dev" "${IMAGE_NAME}:${GIT_COMMIT}-dev"
 }
+
+push() {
+  # Push the runtime and dev image to a specified registry.
+  # ./template.sh push registry_hostname
+  # Pushes the latest and current git commit images.
+  REGISTRY_HOSTNAME="${1}"
+  if [[ -z "${REGISTRY_HOSTNAME}" ]]; then
+    echo "Please specify a registry hostname."
+    exit 1
+  fi
+  if [ "${REGISTRY_HOSTNAME}" == "IC" ]; then
+    REGISTRY_HOSTNAME="ic-registry.epfl.ch"
+  fi
+  if [ "${REGISTRY_HOSTNAME}" == "RCP" ]; then
+    REGISTRY_HOSTNAME="registry.rcp.epfl.ch"
+  fi
+
+  GIT_COMMIT=$(git rev-parse --short HEAD)
+  docker tag "${IMAGE_NAME}:latest-runtime" "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:latest-runtime"
+  docker tag "${IMAGE_NAME}:latest-dev" "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:latest-dev"
+  docker tag "${IMAGE_NAME}:${GIT_COMMIT}-runtime" "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:${GIT_COMMIT}-runtime"
+  docker tag "${IMAGE_NAME}:${GIT_COMMIT}-dev" "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:${GIT_COMMIT}-dev"
+  docker push "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:latest-runtime"
+  docker push "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:latest-dev"
+  docker push "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:${GIT_COMMIT}-runtime"
+  docker push "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:${GIT_COMMIT}-dev"
+}
+
 
 up() {
   # Start service.

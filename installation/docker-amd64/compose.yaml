@@ -1,6 +1,6 @@
 services:
   runtime-image: # Base service to build the runtime image.
-    image: ${IMAGE_NAME}:runtime
+    image: ${IMAGE_NAME}:latest-runtime
     platform: "linux/amd64"
     env_file: .env
     build:
@@ -34,7 +34,7 @@ services:
   dev-image: # Service to build the development image.
     extends:
       service: runtime-image
-    image: ${IMAGE_NAME}:dev
+    image: ${IMAGE_NAME}:latest-dev
     build:
       target: development
 
