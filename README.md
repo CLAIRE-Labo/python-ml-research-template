@@ -1,6 +1,6 @@
 > [!IMPORTANT]
 > **TEMPLATE TODO:**
-> Replace the above with your project title, then delete this note.
+> Replace the title below with your project title, then delete this note.
 
 # Python Machine Learning Research Project Template
 
