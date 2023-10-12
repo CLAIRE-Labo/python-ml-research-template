@@ -163,7 +163,7 @@ run() {
   # ./template.sh run python -c "print('hello world')"
   check
   SERVICE="runtime-local-${CPU_OR_GPU}"
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${SERVICE}" "${@:2}"
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${SERVICE}" "${@:1}"
 }
 
 # Call the function passed as the first argument
