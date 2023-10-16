@@ -58,7 +58,7 @@ docker-amd64/
 │   ├── apt-runtime.txt     # System dependencies (from apt) needed to run your code.
 │   ├── apt-dev.txt         # System dependencies (from apt) needed to develop in a container e.g. vim.
 │   └── update_env_file.sh  # A utility script to update the environment files.
-└── EPFL-runai-setup/       # Template files to deploy on the EPFL RunAI Kubernetes cluster. Refer to the README.md in this directory.
+└── EPFL-runai-setup/       # Template files to deploy on the EPFL Run:ai Kubernetes cluster. Refer to the README.md in this directory.
 ```
 
 ### Details on the Dockerfile
@@ -70,7 +70,7 @@ Broadly, it has 3 main stages:
 
 1. A stage to download, install, and build dependencies.
    It is used to build the Conda environment for example.
-   This stage typically requires build-time dependencies such as compilers, headers, etc. which are not needed
+   This stage typically requires build-time dependencies such as compilers, etc. which are not needed
    at runtime.
 2. A stage to install runtime dependencies and copy the conda environment from the previous stage.
    Runtime dependencies are typically lighter than build-time dependencies.
@@ -105,10 +105,10 @@ You can always interact directly with `docker compose` if you prefer and get exa
 
 **Build**
 
-We recommend building on an `amd64` platform, although the Docker BuildKit allows for cross-platform builds.
+We recommend building on an `AMD64` platform, although the Docker BuildKit allows for cross-platform builds.
 Use at your own risk.
 
-All commands should be run from the installation directory.
+All commands should be run from the `installation/docker-amd64` directory.
 
 ```bash
 cd installation/docker-amd64
@@ -124,16 +124,16 @@ cd installation/docker-amd64
       These need to match the user permissions on the mounted volumes.
       (If you're deploying locally, i.e. where you're building, these values should be filled correctly by default.)
 
-      (**EPFL Note:** _These will typically be your GASPAR credentials and will match the permissions
-      on your lab NFS and HaaS machines._)
+      (**EPFL Note:** _These will typically be your GASPAR credentials and will match the permissions on your lab NFS._)
     - You can ignore the rest of the variables after `## For running locally`.
       These don't influence the build, they will be used later to run your image.
 
 2. Build the images with
    ```bash
-   ./template.sh build runtime
-   ./template.sh build dev
+   ./template.sh build
    ```
+   This will build both the `runtime` and `dev` images and tag them with both `latest-*` and the latest git commit hash
+   `<sha>-*`. 
    The runtime images will be used to run the code in an unattended way.
    The dev image has additional utilities that facilitate development in the container.
 
@@ -145,9 +145,9 @@ We provide the following guides for running the environment:
 
   Moreover, if this machine is a remote server, you can also plug the remote development features
   of popular IDEs such as VSCode or PyCharm with the Docker Compose service running the environment.
-- To run on the EPFL RunAI cluster refer to the `./EPFL-runai-setup/README.md`.
+- To run on the EPFL Run:ai cluster refer to the `./EPFL-runai-setup/README.md`.
 
-  The guide also provides instructions to do remote development on the RunAI cluster.
+  The guide also provides instructions to do remote development on the Run:ai cluster.
   Other managed cluster users can get inspiration from it too, but we leave it to you to deploy on your managed cluster.
 
 ### Running locally with Docker Compose

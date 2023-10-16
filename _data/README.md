@@ -24,7 +24,7 @@ you will have to follow different steps depending on the installation method.
 * For the local deployment option with Docker, you can edit the `../installation/docker-amd64/compose.yaml` and
   `../installation/docker-amd64/template.sh` files to mount the individual datasets inside the `DATA_DIR` directory.
   Comments are left in those files to guide you.
-* For managed clusters like the EPFL IC RunAI cluster, you can mount all the PVCs where you have
+* For managed clusters like the EPFL IC Run:ai cluster, you can mount all the PVCs where you have
   your datasets then edit the
   `../installation/docker-amd64/EPFL-runai-setup/setup.sh` file so that it creates symlinks inside `DATA_DIR`
   to the datasets inside the mounted PVCs.

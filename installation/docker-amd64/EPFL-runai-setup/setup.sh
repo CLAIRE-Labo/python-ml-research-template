@@ -1,5 +1,5 @@
 ## Overview:
-## Startup script for EPFL RunAI: setup paths and run interactive setup for remote development.
+## Startup script for EPFL Run:ai: setup paths and run interactive setup for remote development.
 
 ## Remote development configuration
 # Run interactive setup in the background if interactive job.
@@ -8,12 +8,12 @@ if [ -n "${EPFL_RUNAI_INTERACTIVE}" ]; then
 fi
 
 ## Workarounds to setup paths for EPFL.
-# RunAI does not allow to mount specific directories from PVCs.
+# Run:ai does not allow to mount specific directories from PVCs.
 # Instead we will create symlinks to the specific directories in the PVCs.
 
 ## Variables
 # *_DIR are environment variables already defined in the Dockerfile.
-# *_DIR_IN_PVC are environment variables injected with the RunAI submit command.
+# *_DIR_IN_PVC are environment variables injected with the Run:ai submit command.
 
 # Error if those variables are not set.
 if [ -z "${PROJECT_DIR_IN_PVC}" ]; then

@@ -1,9 +1,9 @@
-# Guide for using the template with the EPFL IC Run:ai cluster
+# Guide for using the template with the EPFL IC and RCP Run:ai clusters
 
 ## Overview
 
-At this point, you should have an image that can be deployed on multiple platforms.
-This guide will show you how to deploy your image on the EPFL IC Run:ai cluster and use it for:
+At this point, you should have runtime and dev images that can be deployed on multiple platforms.
+This guide will show you how to deploy your images on the EPFL IC and RCP Run:ai clusters and use it for:
 
 1. Remote development. (At CLAIRE we use the Run:ai platform as our daily driver.)
 2. Running unattended jobs.
@@ -16,13 +16,23 @@ instructions in the `installation/docker-amd64/README.md` file.
 
 **Docker image**:
 
-You should be able to deploy your docker image locally (e.g. on the machine you built it).
+You should be able to run your Docker images locally (e.g. on the machine you built it).
 It will be hard to debug your image on Run:ai if you can't even run it locally.
+A simple
+```bash
+docker run --rm --entrypoint zsh -it <image-name> -c "conda list"
+# Check all your dependencies are there.
+# Get a shell and check manually other things.
+docker run --rm --entrypoint zsh -it <image-name>
+# This will only contain the environment and not the project code.
+# Project code can be debugged on the cluster directly.
+```
+will be enough.
 
 **Run:ai**:
 
 1. You should be familiar with the Run:ai platform, be able to run jobs on it, and know how to check their status.
-2. You should have access to [Harbor](https://ic-registry.epfl.ch), the EPFL IC Docker registry.
+2. You should have access to the image registries the EPFL IC Docker registry.
 3. You should have one or more PVC(s) (Persistent Volume Claim) that you can use to store your data on the cluster.
 
 Refer to this tutorial for an introduction to these tools (TODO: link to the EPIC guide.)
@@ -85,7 +95,7 @@ As in the example, when you specify the `EPFL_RUNAI=1` environment variable with
 the entrypoint of the container will run a setup script that:
 
 - Creates symlinks to the relevant directories in your PVCs on the `${PROJECT_ROOT}=/opt/project/` in the container.
-  (Currently this is a workaround as RunAI does not support directly mounting subdirectories of PVCs)
+  (Currently this is a workaround as Run:ai does not support directly mounting subdirectories of PVCs)
 - Installs the project in editable mode. This is a lightweight installation that allows you to edit the code
   on your local machine and have the changes reflected in the container.
 - Executes a provided command (e.g. `sleep infinity`), otherwise by default will run a shell and stop.
@@ -126,7 +136,7 @@ Note the emphasis on having a frozen copy of the repository for running unattend
 
 ### Remote development
 
-This would be the typical use case for a researcher at CLAIRe using the RunAI cluster as their daily driver to do
+This would be the typical use case for a researcher at CLAIRe using the Run:ai cluster as their daily driver to do
 development, testing, and debugging.
 Your job would be running a remote IDE/code editor on the cluster, and you would only have a lightweight local client
 running
@@ -146,7 +156,7 @@ Below, we list and describe in more detail the tools and IDEs supported for remo
 Your job will open an ssh server when set the environment variable `SSH_SERVER=1`.
 
 The ssh server is configured to run on port 22 of the container.
-With RunAI, you can forward a local port on your machine to this port on the container.
+With Run:ai, you can forward a local port on your machine to this port on the container.
 
 That is, when your container is up, run
 
@@ -211,7 +221,7 @@ There are two main ways to use PyCharm Remote development with an ssh server (he
 
 The template supports both options.
 We suggest using option 1 when you don't have access to the PyCharm remote IDE binaries as a first time.
-Then settle with option 2 as it makes using RunAI as your daily driver feel like just opening a local IDE.
+Then settle with option 2 as it makes using Run:ai as your daily driver feel like just opening a local IDE.
 
 For both options your project directory will be the `${PROJECT_ROOT}=/opt/project` in the container.
 
@@ -385,7 +395,7 @@ script).
 ### Examples
 
 We provide examples of how to use the template in the `submit-examples` directory.
-We use `submit` commands and not YAML files to specify job configurations because the RunAI API for kubernetes resources
+We use `submit` commands and not YAML files to specify job configurations because the Run:ai API for kubernetes resources
 is still in alpha phase.
 
 ### Troubleshooting

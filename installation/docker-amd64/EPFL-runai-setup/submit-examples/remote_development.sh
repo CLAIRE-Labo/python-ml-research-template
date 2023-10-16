@@ -33,7 +33,7 @@ runai submit \
 
 ## The new bits here are:
 # -e EPFL_RUNAI_INTERACTIVE=1
-# which runs the EPFL RunAI interactive startup.
+# which runs the EPFL Run:ai interactive startup.
 # -e SSH_SERVER=1
 # which starts an ssh server in the container.
 # -e PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm

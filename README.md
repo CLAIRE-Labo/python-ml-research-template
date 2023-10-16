@@ -20,7 +20,7 @@ It features and encourages best practices for:
   with a great user and development experience covering multiple use cases, including:
     - Your local machine, e.g. macOS + Apple Silicon or Intel CPU, Windows with WSL or Linux + GPU.
     - Remote servers with GPUs, e.g. VMs on cloud providers, HaaS from EPFL IC.
-    - Managed platforms with GPUs, e.g. the EPFL IC RunAI Kubernetes cluster.
+    - Managed platforms with GPUs, e.g. the EPFL IC and RCP Run:ai (Kubernetes) clusters.
 - Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
   and [Weights & Biases](https://wandb.ai/site).
 - Python project packaging following the
@@ -36,7 +36,7 @@ an Outstanding Paper (Honorable Mention) at the
 
 The template can also be adapted to suit many other use cases, however, its maintained form will be tailored to the
 needs of CLAIRE.
-It also contains extra EPFL-specific instructions for deployment on the EPFL RunAI Kubernetes cluster.
+It also contains extra EPFL-specific instructions for deployment on the EPFL Run:ai clusters.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
 ## Getting started with the template
@@ -58,7 +58,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
    ```
     - If you plan to develop on your local computer, clone it there.
     - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
-    - If you plan to develop or deploy on a managed cluster (e.g. EPFL IC RunAI cluster), clone on your local machine
+    - If you plan to develop or deploy on a managed cluster (e.g. EPFL Run:ai clusters), clone on your local machine
       (ideally an AMD64 platform, or plan to have a Docker engine on an AMD64 platform.
       For CLAIRE members we have the `claire-build-machine`.)
 
@@ -75,7 +75,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
 4. Set up and edit the development environment instructions for the platforms you will use and support.
    Each platform group supports specific use cases:
     - **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers),
-      Windows laptops with WSL, macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster,
+      Windows laptops with WSL, macOS with Intel CPU, Kubernetes clusters like the EPFL Run:ai clusters,
       and other cloud services. With support for NVIDIA GPUs.
 
       Refer to `installation/docker-amd64/README.md`.
@@ -138,7 +138,7 @@ You're off to a good start! Here are a few tips for keeping your project in good
 We support the following platforms for installing the project dependencies and running the code.
 
 - **AMD64 (x86-64) platforms supporting Docker** to run on Linux machines (e.g. EPFL HaaS servers),
-  Windows laptops with WSL, macOS with Intel CPU, Kubernetes clusters like the EPFL RunAI cluster,
+  Windows laptops with WSL, macOS with Intel CPU, Kubernetes clusters like the EPFL Run:ai clusters,
   and other cloud services. With support for NVIDIA GPUs.
 
   Refer to `installation/docker-amd64/README.md`.
