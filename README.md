@@ -19,7 +19,7 @@ It features and encourages best practices for:
   GPU and macOS + Apple Silicon)
   with a great user and development experience covering multiple use cases, including:
     - Your local machine, e.g. macOS + Apple Silicon or Intel CPU, Windows with WSL or Linux + GPU.
-    - Remote servers with GPUs, e.g. VMs on cloud providers, HaaS from EPFL IC.
+    - Remote servers with GPUs, e.g. VMs on cloud providers, HaaS at EPFL IC and RCP.
     - Managed platforms with GPUs, e.g. the EPFL IC and RCP Run:ai (Kubernetes) clusters.
 - Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
   and [Weights & Biases](https://wandb.ai/site).
@@ -59,7 +59,8 @@ It's useful to commit after some checkpoints to be able to go back if you make a
     - If you plan to develop on your local computer, clone it there.
     - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
     - If you plan to develop or deploy on a managed cluster (e.g. EPFL Run:ai clusters), clone on your local machine
-      (ideally an AMD64 platform, or plan to have a Docker engine on an AMD64 platform.
+      (ideally an AMD64 platform, or with access to a Docker engine on an AMD64 platform.
+      It's much faster than emulation.
       For CLAIRE members we have the `claire-build-machine`.)
 
 2. Fill the template variables in `template/template_variables.env` and run the script
