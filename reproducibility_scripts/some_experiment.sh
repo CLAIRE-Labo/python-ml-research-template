@@ -1,1 +1,1 @@
-python -m template_package_name.main
+python -m template_package_name.some_experiment

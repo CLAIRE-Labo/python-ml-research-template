@@ -4,7 +4,7 @@ echo "[TEMPLATE INFO] Running entrypoint.sh"
 
 # If the user sets EPFL_RUNAI=1, call the EPFL setup script.
 if [ -n "${EPFL_RUNAI}" ]; then
-  echo "[TEMPLATE INFO] Running EPFL setup script."
+  echo "[TEMPLATE INFO] Running EPFL Run:ai setup script."
   zsh "${EPFL_RUNAI_SETUP_DIR}"/setup.sh
 fi
 

@@ -3,7 +3,7 @@
 ## Overview
 
 At this point, you should have runtime and dev images that can be deployed on multiple platforms.
-This guide will show you how to deploy your images on the EPFL IC and RCP Run:ai clusters and use it for:
+This guide will show you how to deploy your images on the EPFL IC and RCP Run:ai clusters and use them for:
 
 1. Remote development. (At CLAIRE we use the Run:ai platform as our daily driver.)
 2. Running unattended jobs.
@@ -16,37 +16,44 @@ instructions in the `installation/docker-amd64/README.md` file.
 
 **Docker image**:
 
-You should be able to run your Docker images locally (e.g. on the machine you built it).
+You should be able to run your Docker images locally (e.g. on the machine you built it, or for CLAIRE on our `claire-build-machine`).
 It will be hard to debug your image on Run:ai if you can't even run it locally.
-A simple
+The simple checks below will be enough.
 ```bash
-docker run --rm --entrypoint zsh -it <image-name> -c "conda list"
 # Check all your dependencies are there.
+./template list-env
+
 # Get a shell and check manually other things.
-docker run --rm --entrypoint zsh -it <image-name>
 # This will only contain the environment and not the project code.
 # Project code can be debugged on the cluster directly.
+./template empty-interactive
 ```
-will be enough.
 
 **Run:ai**:
 
-1. You should be familiar with the Run:ai platform, be able to run jobs on it, and know how to check their status.
-2. You should have access to the image registries the EPFL IC Docker registry.
-3. You should have one or more PVC(s) (Persistent Volume Claim) that you can use to store your data on the cluster.
+1. You should have minimum knowledge of the Run:ai platform, e.g. know the commands to submit jobs and check their status.
+2. You should have access to a project on the IC or RCP image registry and should be logged in.
+   (CLAIRE members should use [ic-registry.epfl.ch/claire](https://ic-registry.epfl.ch/harbor/projects/113/summary))
+3. You should have one or more PVC(s) (Persistent Volume Claim) connecting some persistent storage to the cluster, say your lab NFS. 
+   (CLAIRE members should use `runai-claire-gaspar-scratch`).
 
-Refer to this tutorial for an introduction to these tools (TODO: link to the EPIC guide.)
+EPIC provides an introduction to these tools [here](https://epic-guide.github.io/tools/ic-compute-storage).
 
 ## First steps
 
-### Push your image to the EPFL IC Docker registry
+### Push your image to the RCP or IC Docker registry
+
+The following will push 2 images with 2 tags each:
+- `LAB_NAME/PROJECT_NAME/USR:latest-runtime`
+- `LAB_NAME/PROJECT_NAME/USR:<commit-sha>-runtime`
+- `LAB_NAME/PROJECT_NAME/USR:latest-dev`
+- `LAB_NAME/PROJECT_NAME/USR:<commit-sha>-dev`
 
 ```bash
-# Get your image name from the last line of the build output (ic-registry.epfl.ch/.../:...)
-docker push <image-name>
+./template push IC
+# Or (both clusters can read from both registries)
+./template push RCP
 ```
-
-Do this for both the `runtime` and `dev` images.
 
 ### Clone your repository in your PVCs
 
@@ -59,9 +66,10 @@ In addition, if you have multiple PVCs with different performance characteristic
 you may want to put your data and outputs on a different PVC than your code.
 This is straightforward with this template and is covered in the examples provided.
 
-If you already have your repository in your PVC, e.g. because you have your PVC mounted on an ssh server that you use
+If you already have your repository in your PVC, e.g. because you have your NFS mounted on an ssh server that you use
 for development,
-you can skip to the next section.
+you can skip step 1 and 2.
+(E.g. CLAIRE members can use the `claire-build-machine` for this.)
 Otherwise, the template covers a deployment options that simply opens an ssh server on your container without setting up
 the project, forwards your ssh keys, and allows you to clone your repository on the container.
 
@@ -69,9 +77,13 @@ the project, forwards your ssh keys, and allows you to clone your repository on 
    specifying your image name, and PVC(s).
    Checking its logs will give:
    ```bash
-    $ runai logs implicit-pg-first-steps
+    $ runai logs example-first-steps
     Running entrypoint.sh
-    SSH_ONLY is set. Only starting an ssh server without setup.
+    [TEMPLATE INFO] Running entrypoint.sh
+    [TEMPLATE INFO] Running EPFL Run:ai setup script.
+    [TEMPLATE INFO] Entering EPFL Run:ai interactive startup.
+    [TEMPLATE INFO] Configuring ssh server.
+    [TEMPLATE INFO] SSH_ONLY mode enabled.
    ```
 2. Follow the steps in the [SSH configuration section](#ssh-configuration) and ssh to your container.
 3. Clone your repository in your PVCs. (Don't forget to push & pull the changes you did after initializing the
@@ -82,6 +94,8 @@ the project, forwards your ssh keys, and allows you to clone your repository on 
    mkdir template-project-name
    git clone <repo-url> template-project-name/dev
    git clone <repo-url> template-project-name/run
+   # cd dev && git config core.filemode false
+   # cd run && git config core.filemode false
    ```
 We also recommend that you make Git ignore the executable bit as the repo is moved across filesystems.
 You can do so by running `git config core.filemode false` in both repositories.
@@ -94,8 +108,8 @@ in the PVC(s).
 As in the example, when you specify the `EPFL_RUNAI=1` environment variable with your submit command,
 the entrypoint of the container will run a setup script that:
 
-- Creates symlinks to the relevant directories in your PVCs on the `${PROJECT_ROOT}=/opt/project/` in the container.
-  (Currently this is a workaround as Run:ai does not support directly mounting subdirectories of PVCs)
+- Creates symlinks to the relevant directories in your PVCs inside the `${PROJECT_ROOT}=/opt/project/` in the container.
+  (This is a workaround as Run:ai does not support directly mounting subdirectories of PVCs)
 - Installs the project in editable mode. This is a lightweight installation that allows you to edit the code
   on your local machine and have the changes reflected in the container.
 - Executes a provided command (e.g. `sleep infinity`), otherwise by default will run a shell and stop.
@@ -108,16 +122,19 @@ You should expect to see something like:
 
 ```bash
 $ runai logs example-minimal
-Running entrypoint.sh
-Installing the project.
-Obtaining file:///opt/project/machrou3
+[TEMPLATE INFO] Running entrypoint.sh
+[TEMPLATE INFO] Running EPFL Run:ai setup script.
+[TEMPLATE INFO] Creating symlinks to directories in PVCs.
+[TEMPLATE INFO] Sym-linked /opt/project/template-project-name to /claire-rcp-scratch/home/moalla/template-project-name/dev
+[TEMPLATE INFO] Sym-linked /opt/project/data to /claire-rcp-scratch/home/moalla/template-project-name/dev/_data
+[TEMPLATE INFO] Sym-linked /opt/project/outputs to /claire-rcp-scratch/home/moalla/template-project-name/dev/_outputs
+[TEMPLATE INFO] Sym-linked /opt/project/wandb to /claire-rcp-scratch/home/moalla/template-project-name/dev/_wandb
+[TEMPLATE INFO] Installing the project.
+Obtaining file:///opt/project/template-project-name
   Installing build dependencies: started
-  Installing build dependencies: finished with status 'done'
   ...
-Successfully built machrou3
-Installing collected packages: machrou3
-Successfully installed machrou3-0.0.1
-Project imported successfully.
+Successfully installed template-project-name-0.0.1
+[TEMPLATE INFO] Executing the command sleep infinity
 ````
 
 You can then open a shell in the container and check that everything is working as expected:
@@ -136,11 +153,10 @@ Note the emphasis on having a frozen copy of the repository for running unattend
 
 ### Remote development
 
-This would be the typical use case for a researcher at CLAIRe using the Run:ai cluster as their daily driver to do
+This would be the typical use case for a researcher at CLAIRE using the Run:ai cluster as their daily driver to do
 development, testing, and debugging.
 Your job would be running a remote IDE/code editor on the cluster, and you would only have a lightweight local client
-running
-on you laptop.
+running on you laptop.
 
 When you specify the additional environment variable with your submitted job `EPFL_RUNAI_INTERACTIVE=1`,
 the entrypoint will run an additional setup script that can start an ssh server and a remote development server
@@ -151,9 +167,9 @@ An example of an interactive job submission can be found in `submit-examples/rem
 
 Below, we list and describe in more detail the tools and IDEs supported for remote development.
 
-#### SSH Configuration
+### SSH Configuration - Necessary for PyCharm and VS Code
 
-Your job will open an ssh server when set the environment variable `SSH_SERVER=1`.
+Your job will open an ssh server when you set the environment variable `SSH_SERVER=1`.
 
 The ssh server is configured to run on port 22 of the container.
 With Run:ai, you can forward a local port on your machine to this port on the container.
@@ -171,7 +187,7 @@ Connect with the user and password you specified in your `.env` file when you bu
 
 ```bash
 # ssh to local machine is forwarded to the pod.
-ssh -p 2222 <user>@127.0.0.1
+ssh -p 2222 <USR>@127.0.0.1
 ```
 
 As the container will each time be on a different machine, you will have to reset the ssh key for the remote server.
@@ -184,11 +200,13 @@ ssh-keygen -R '[127.0.0.1]:2222'
 Moreover, so that you don't have to put your ssh keys on the remote server, you can forward your ssh keys with your ssh
 agent (e.g. to connect to GitHub).
 Follow the guide
-[here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/using-ssh-agent-forwarding).
-With the following changes to your ssh config file.
+[here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/using-ssh-agent-forwarding) with the following changes to your ssh config file.
 
 ```bash
-Match host 127.0.0.1 exec "test %p = 2222"
+Host runai
+	HostName 127.0.0.1
+	User <USR>
+	Port 2222
 	ForwardAgent yes
 ```
 
@@ -316,12 +334,12 @@ your IDE configuration.
 **ssh configuration**
 
 VS Code takes ssh configuration from files.
-Edit your `~/.ssh/config` file to add the following:
+Edit your `~/.ssh/config` file to add the following if you didn't already.
 
 ```bash
 Host runai
 	HostName 127.0.0.1
-	User <user>
+	User <USRID in .env>
 	Port 2222
 	ForwardAgent yes
 ```
@@ -345,7 +363,7 @@ Set the root directory of your VS Code workspace to the `${PROJECT_ROOT}=/opt/pr
       and directly exec a shell into the container.
 - Support for programs with graphical interfaces (e.g. simulators) has not been tested yet.
 
-#### JupyterLab
+### JupyterLab
 
 If you have `jupyterlab` in your `conda` dependencies, then the template can open a Jupyter Lab server for you when
 the container starts.

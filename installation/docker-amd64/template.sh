@@ -12,6 +12,7 @@ USR=$(id -un)
 # PASSWD is not secret,
 # it is only there to avoid running password-less sudo commands accidentally.
 PASSWD=$(id -un)
+# LAB_NAME will be the first component in the image path.
 LAB_NAME=$(id -un)
 
 ### For running locally
@@ -110,7 +111,6 @@ push() {
   docker push "${REGISTRY_HOSTNAME}/${IMAGE_NAME}:${GIT_COMMIT}-dev"
 }
 
-
 up() {
   # Start service.
   # Creates a detached container from the development image.
@@ -164,6 +164,18 @@ run() {
   check
   SERVICE="runtime-local-${CPU_OR_GPU}"
   docker compose -p "${COMPOSE_PROJECT}" run --rm "${SERVICE}" "${@:1}"
+}
+
+list-env() {
+  # List the conda environment
+  check
+  docker run --rm --entrypoint zsh "${IMAGE_NAME}:latest-runtime" -c "mamba list"
+}
+
+empty-interactive() {
+  # List the conda environment
+  check
+  docker run --rm -it --entrypoint zsh "${IMAGE_NAME}:latest-runtime"
 }
 
 # Call the function passed as the first argument

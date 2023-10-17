@@ -213,8 +213,8 @@ Below, we give a description of the main files and directories in this repositor
 
 ```
 ├── src/ # Source code.
-    ├── configs/    # Hydra configuration files.
-    └── main.py     # Main entry point.
+    ├── configs/               # Hydra configuration files.
+    └── some_experiment.py     # Some experiment.
 ```
 
 

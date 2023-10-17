@@ -1,3 +1,5 @@
+# An example file to run an experiment.
+
 import logging
 from pathlib import Path
 
@@ -22,7 +24,7 @@ OmegaConf.register_new_resolver(
 )  # Generate a random seed and record it in the config of the experiment.
 
 
-@hydra.main(version_base=None, config_path="configs", config_name="main")
+@hydra.main(version_base=None, config_path="configs", config_name="some_experiment")
 def main(config: DictConfig) -> None:
     wandb.init(
         config=OmegaConf.to_container(config, resolve=True, throw_on_missing=True),

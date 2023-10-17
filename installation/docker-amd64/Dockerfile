@@ -195,12 +195,8 @@ ENV WWANDB_DIR=${WWANDB_DIR}
 # ├── OUTPUTS_DIR
 # └── WWANDB_DIR
 
-# Create a directory for the project root and dummy project, data, outputs, and wandb directories.
-RUN mkdir -p ${PROJECT_ROOT} && \
-    mkdir -p ${PROJECT_DIR} && \
-    mkdir -p ${DATA_DIR} && \
-    mkdir -p ${OUTPUTS_DIR} && \
-    mkdir -p ${WWANDB_DIR}
+# Create a directory for the project root.
+RUN mkdir -p ${PROJECT_ROOT}
 
 # Create a directory for the startup scripts.
 ENV ENTRYPOINTS_ROOT=/opt/entrypoints

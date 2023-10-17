@@ -1,21 +1,20 @@
 runai submit \
   --name example-first-steps \
   --interactive \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:dev \
-  --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
+  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
   -e EPFL_RUNAI_INTERACTIVE=1 \
   -e SSH_SERVER=1 \
-  -e SSH_ONLY=1 \
-  -- sleep infinity
+  -e SSH_ONLY=1
 
 ## Notes:
 # This will start an ssh server in the container, without setting the paths for your project.
 # The important bits here are:
-# -e EPFL_RUNAI=1
-# -e EPFL_RUNAI_INTERACTIVE=1
-# -e SSH_SERVER=1
-# -e SSH_ONLY=1
+# -e EPFL_RUNAI=1 (this will start the EPFL Run:ai setup script)
+# -e EPFL_RUNAI_INTERACTIVE=1 (this will start the interactive setup script)
+# -e SSH_SERVER=1 (this will make the interactive script start an ssh server)
+# -e SSH_ONLY=1 (this will make the ssh server run in foreground with no more setup)
 # --pvc your_pvc_name:/where_to_mount_your_pvc (you can mount it anywhere)
 
 ## Useful commands.

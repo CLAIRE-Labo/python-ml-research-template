@@ -1,12 +1,10 @@
 runai submit \
   --name example-minimal \
   --interactive \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:dev \
-  --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
+  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
-  -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev \
-  -e DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_data \
-  -e OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
+  -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -- sleep infinity
 
 ## Notes:
@@ -16,17 +14,14 @@ runai submit \
 # The important bits here are:
 # -e EPFL_RUNAI=1
 # -e PROJECT_DIR_IN_PVC must specify the project directory in your PVC.
-# -e DATA_DIR_IN_PVC must specify the data directory in your PVC.
-# -e OUTPUTS_DIR_IN_PVC must specify the outputs directory in your PVC.
-# In the example I'm using the default placeholder _data and _outputs directories of the project.
 
-## If I wanted my outputs to be in a different PVC I could
+## If I wanted my data to be in a different PVC I could
 # 1. add the the second PVC
-#  --pvc runai-mlo-moalla-mloraw1:/mloraw1
-# 2. change the OUTPUTS_DIR_IN_PVC to point to the new PVC
-#  -e OUTPUTS_DIR_IN_PVC=/mloraw1/moalla/machrou3/dev/_outputs
+#  --pvc runai-claire-moalla-nas:/claire-rcp-nas \
+# 2. Add the DATA_DIR_IN_PVC to point to the new PVC
+#  -e DATA_DIR_IN_PVC=/claire-rcp-nas/home/moalla/template-project-name/dev/_data
 
-# The same applies to the data directory with DATA_DIR_IN_PVC.
+# The same applies to the outputs directory with OUTPUTS_DIR_IN_PVC.
 
 ## Useful commands.
 # runai describe job example-minimal

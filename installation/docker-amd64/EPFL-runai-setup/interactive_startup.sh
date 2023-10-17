@@ -1,11 +1,11 @@
-echo "[TEMPLATE INFO] Entering EPFL runai interactive startup."
+echo "[TEMPLATE INFO] Entering EPFL Run:ai interactive startup."
 
 ####################
 # Git config.
 
 if [ -n "${GIT_CONFIG_IN_PVC}" ]; then
   ln -s "${GIT_CONFIG_IN_PVC}" "${HOME}/.gitconfig"
-  echo "[TEMPLATE] Sym-linked Git config to ${GIT_CONFIG_IN_PVC}."
+  echo "[TEMPLATE INFO] Sym-linked Git config to ${GIT_CONFIG_IN_PVC}."
 fi
 
 ####################
@@ -21,7 +21,7 @@ if [ -n "${SSH_SERVER}" ]; then
   echo "cd ${PROJECT_ROOT}" >>"${ZDOTDIR}"/.zshrc
 
   # Export environment variables relevant for ssh connection.
-  # SSH connection don't have the environment variables, so we need to set them.
+  # SSH connections don't have the environment variables, so we need to set them.
   {
     echo "export PROJECT_NAME=${PROJECT_NAME}"
     echo "export PACKAGE_NAME=${PACKAGE_NAME}"
@@ -33,7 +33,6 @@ if [ -n "${SSH_SERVER}" ]; then
     echo "export PYTHONENCODING=${PYTHONENCODING}"
     echo "export PASSWD=${PASSWD}"
     echo "export LD_PRELOAD=${LD_PRELOAD}"
-    echo "export MALLOC_CONF=${MALLOC_CONF}"
   } >>"${ZDOTDIR}"/.zshrc
 
   if [ -n "${SSH_ONLY}" ]; then
@@ -54,7 +53,7 @@ fi
 # You can the env variable PYCHARM_IDE_LOCATION to the location of the PyCharm binaries in your NFS.
 
 if [ -n "${PYCHARM_PROJECT_CONFIG_LOCATION}" ]; then
-  echo "[TEMPLATE] Sym-linking to PyCharm project config files."
+  echo "[TEMPLATE INFO] Sym-linking to PyCharm project config files."
 
   # Project config.
   ln -s "${PYCHARM_PROJECT_CONFIG_LOCATION}/_idea" "${PROJECT_ROOT}/.idea"

@@ -101,8 +101,8 @@ Here are some examples.
 
 ```bash
 # When in the PROJECT_ROOT directory.
-python template-project-name/src/template_package_name/main.py some_arg=some_value
-python -m template-project-name.main some_arg=some_value
+python template-project-name/src/template_package_name/some_experiment.py some_arg=some_value
+python -m template-project-name.some_experiment some_arg=some_value
 source template-project-name/reproducibility_scripts/some_experiment.sh
 ```
 

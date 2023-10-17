@@ -106,7 +106,6 @@ You can always interact directly with `docker compose` if you prefer and get exa
 **Build**
 
 We recommend building on an `AMD64` platform, although the Docker BuildKit allows for cross-platform builds.
-Use at your own risk.
 
 All commands should be run from the `installation/docker-amd64` directory.
 
@@ -124,7 +123,8 @@ cd installation/docker-amd64
       These need to match the user permissions on the mounted volumes.
       (If you're deploying locally, i.e. where you're building, these values should be filled correctly by default.)
 
-      (**EPFL Note:** _These will typically be your GASPAR credentials and will match the permissions on your lab NFS._)
+      (**EPFL Note:** _These will typically be your GASPAR credentials and will match the permissions on your lab NFS.
+      CLAIRE members should use the `claire-storage` group._)
     - You can ignore the rest of the variables after `## For running locally`.
       These don't influence the build, they will be used later to run your image.
 
@@ -191,7 +191,11 @@ Then you can:
     ```
   You can stop the container or delete it with
     ```bash
+    # To stop.
     ./template.sh stop
+    # Which can then be restarted with
+    ./template.sh start 
+    # Or, to delete.
     ./template.sh down
     ```
 
@@ -199,14 +203,14 @@ Then you can:
     ```bash
     ./template.sh run your_command
     ./template.sh run python --version
-    ./template.sh run python -m a_project.main some_arg=some_value
+    ./template.sh run python -m a_project.some_experiment some_arg=some_value
     ```
   These containers start with the entrypoint and then run the command you specified.
   By default, they are automatically removed after they exit.
   The not-so-nice syntax is due to `make` which is not really made to be used like this.
 
 You should not need to override the entrypoint of the service container.
-It is necessary to install the project.
+It is necessary to install the project from its mounted location.
 Only do so, if you need to debug the container, or you have a custom use case.
 
 ## Instructions to maintain the environment
