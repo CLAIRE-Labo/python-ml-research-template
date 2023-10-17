@@ -4,31 +4,27 @@
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:dev \
-  --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
+  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
-  -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev \
-  -e DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_data \
-  -e OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
+  -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e EPFL_RUNAI_INTERACTIVE=1 \
   -e SSH_SERVER=1 \
-  -e PYCHARM_PROJECT_CONFIG_LOCATION=/mloraw1/moalla/implicit-pg/_pycharm-config \
+  -e PYCHARM_PROJECT_CONFIG_LOCATION=/claire-rcp-scratch/home/moalla/template-project-name/_pycharm-config \
   -- sleep infinity
 
 # Option 2 (preferred). PyCharm launched from the remote server.
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:dev \
-  --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
+  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
-  -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev \
-  -e DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_data \
-  -e OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
+  -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e EPFL_RUNAI_INTERACTIVE=1 \
   -e SSH_SERVER=1 \
-  -e PYCHARM_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/_pycharm-config \
-  -e PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm \
+  -e PYCHARM_PROJECT_CONFIG_LOCATION=/claire-rcp-scratch/home/moalla/template-project-name/_pycharm-config \
+  -e PYCHARM_IDE_LOCATION=/claire-rcp-scratch/home/moalla/remote-development/pycharm \
   -- sleep infinity
 
 ## The new bits here are:
@@ -36,7 +32,7 @@ runai submit \
 # which runs the EPFL Run:ai interactive startup.
 # -e SSH_SERVER=1
 # which starts an ssh server in the container.
-# -e PYCHARM_IDE_LOCATION=/mlodata1/moalla/remote-development/pycharm
+# -e PYCHARM_IDE_LOCATION=/claire-rcp-scratch/home/moalla/remote-development/pycharm
 # starts the PyCharm remote development server.
 # -e PYCHARM_PROJECT_CONFIG_LOCATION
 # specifies the location of the PyCharm project configuration.
@@ -45,27 +41,25 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:latest \
-  --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
+  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
-  -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev \
-  -e DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_data \
-  -e OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
+  -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
+  -e DATA_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev/_data \
+  -e OUTPUTS_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev/_outputs \
   -e EPFL_RUNAI_INTERACTIVE=1 \
   -e SSH_SERVER=1 \
-  -e VSCODE_PROJECT_CONFIG_LOCATION=/mlodata1/moalla/machrou3/_vscode-server \
+  -e VSCODE_PROJECT_CONFIG_LOCATION=/claire-rcp-scratch/home/moalla/template-project-name/_vscode-server \
   -- sleep infinity
 
 ## Jupyter Lab example:
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/mlo/machrou3/moalla:latest \
-  --pvc runai-mlo-moalla-mlodata1:/mlodata1 \
+  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
-  -e PROJECT_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev \
-  -e DATA_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_data \
-  -e OUTPUTS_DIR_IN_PVC=/mlodata1/moalla/machrou3/dev/_outputs \
+  -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e EPFL_RUNAI_INTERACTIVE=1 \
   -e JUPYTER_SERVER=1 \
   -- sleep infinity

@@ -4,7 +4,7 @@ runai submit \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
   -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/run \
-  -- python -m template_package_name.some_experiment some_number=2
+  -- python -m template_package_name.some_experiment some_arg=2
 
 # or -- python template-project-name/src/template_package_name/some_experiment.py some_number=2
 # or -- zsh template_package_name/reproducibility_scripts/some_experiment.sh

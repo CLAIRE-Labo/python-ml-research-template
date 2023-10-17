@@ -209,6 +209,7 @@ Host runai
 	Port 2222
 	ForwardAgent yes
 ```
+This would also allow you to simply `ssh runai` to your container.
 
 **Limitations**
 
@@ -241,7 +242,7 @@ The template supports both options.
 We suggest using option 1 when you don't have access to the PyCharm remote IDE binaries as a first time.
 Then settle with option 2 as it makes using Run:ai as your daily driver feel like just opening a local IDE.
 
-For both options your project directory will be the `${PROJECT_ROOT}=/opt/project` in the container.
+For both options you will set your project directory on PyCharm to be the `${PROJECT_ROOT}=/opt/project` in the container.
 
 **Preliminaries: saving the project IDE configuration**
 
@@ -256,7 +257,7 @@ which will look like this in the example we provide:
 (You can use the `minimal.sh` or the `first_steps.sh` examples to access your PVC.)
 
 ```
-/mlodata1/moalla/machrou3
+/claire-rcp-scrach/home/moalla/template-project-name
 ├── dev             # The copy of your repository for development.
 ├── run             # The frozen copy of your repository for unattended jobs.
 └── _pycharm-config
@@ -277,7 +278,7 @@ your IDE and project configurations.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
 
 You can then copy the directory containing the binaries `~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version>` to your PVC
-to use option 2. (E.g. to `/mlodata1/moalla/remote-development/pycharm` in the example.)
+to use option 2. (E.g. to `/claire-rcp-scrach/home/moalla/remote-development/pycharm` in the example.)
 
 **Option 2**:
 You can find an example in `submit-examples/remote_development.sh`.
@@ -295,8 +296,8 @@ You can find an example in `submit-examples/remote_development.sh`.
    The link looks like:
 
    ```bash
-   Gateway link: jetbrains-gateway://connect#idePath=%2Fmlodata1%2Fmoalla%2Fremote_development%2Fpycharm&projectPath=%2Fopt%2Fproject&host=127.0.0.1&port=2222&user=&type=ssh&deploy=false
-   ```
+    Gateway link: jetbrains-gateway://connect#idePath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Fremote-development%2Fpycharm&projectPath=%2Fopt%2Fproject&host=127.0.0.1&port=2222&user=moalla&type=ssh&deploy=false&newUi=false
+    ```
 2. Enable ssh forwarding.
 3. Use the Gateway link to connect to the remote IDE from a local JetBrains Gateway client as
    described [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#use_idea).
@@ -322,7 +323,7 @@ A good place to create this directory (as we treat it as project-dependant) is i
 which will look like this in the example we provide
 
 ```
-/mlodata1/moalla/machrou3
+/claire-rcp-scrach/home/moalla/template-project-name
 ├── dev             # The copy of your repository for development.
 ├── run             # The frozen copy of your repository for unattended jobs.
 └── _vscode-server  # To contain the IDE .vscode-server for the project.
