@@ -340,7 +340,7 @@ Edit your `~/.ssh/config` file to add the following if you didn't already.
 ```bash
 Host runai
 	HostName 127.0.0.1
-	User <USRID in .env>
+	User <USR in .env>
 	Port 2222
 	ForwardAgent yes
 ```
