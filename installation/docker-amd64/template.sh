@@ -167,13 +167,13 @@ run() {
 }
 
 list-env() {
-  # List the conda environment
+  # List the conda environment.
   check
-  docker run --rm --entrypoint zsh "${IMAGE_NAME}:latest-runtime" -c "mamba list"
+  docker run --rm --entrypoint zsh "${IMAGE_NAME}:latest-runtime" -c "mamba list -n ${PROJECT_NAME}"
 }
 
 empty-interactive() {
-  # List the conda environment
+  # Start an interactive shell in an empty container.
   check
   docker run --rm -it --entrypoint zsh "${IMAGE_NAME}:latest-runtime"
 }
