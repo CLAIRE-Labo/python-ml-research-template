@@ -21,12 +21,12 @@ It will be hard to debug your image on Run:ai if you can't even run it locally.
 The simple checks below will be enough.
 ```bash
 # Check all your dependencies are there.
-./template list-env
+./template.sh list-env
 
 # Get a shell and check manually other things.
 # This will only contain the environment and not the project code.
 # Project code can be debugged on the cluster directly.
-./template empty-interactive
+./template.sh empty-interactive
 ```
 
 **Run:ai**:
@@ -50,9 +50,9 @@ The following will push 2 images with 2 tags each:
 - `LAB_NAME/PROJECT_NAME/USR:<commit-sha>-dev`
 
 ```bash
-./template push IC
+./template.sh push IC
 # Or (both clusters can read from both registries)
-./template push RCP
+./template.sh push RCP
 ```
 
 ### Clone your repository in your PVCs
