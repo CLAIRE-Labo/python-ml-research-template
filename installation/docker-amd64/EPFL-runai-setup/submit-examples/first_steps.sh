@@ -1,7 +1,7 @@
 runai submit \
   --name example-first-steps \
   --interactive \
-  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --image ic-registry.epfl.ch/claire/moalla/template-project-name:latest-dev \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
   -e EPFL_RUNAI_INTERACTIVE=1 \

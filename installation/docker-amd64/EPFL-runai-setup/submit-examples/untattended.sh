@@ -1,6 +1,6 @@
 runai submit \
   --name example-unattended \
-  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-runtime \
+  --image ic-registry.epfl.ch/claire/moalla/template-project-name:latest-runtime \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
   -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/run \

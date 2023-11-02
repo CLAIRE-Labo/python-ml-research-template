@@ -25,9 +25,15 @@ fi
 # *_DIR are environment variables already defined in the Dockerfile.
 # *_DIR_IN_PVC are environment variables passed with the Run:ai submit command.
 
+if [ -n "${EPFL_RUNAI_SKIP_DIR_STRUCTURE}" ]; then
+  # For debugging.
+  echo "[TEMPLATE INFO] Skipping the sym-linking of directories for Run:ai."
+  exit 0
+fi
+
 if [ -z "${PROJECT_DIR_IN_PVC}" ]; then
-    echo "[TEMPLATE INFO] PROJECT_DIR_IN_PVC is not set. Exiting."
-    exit 1
+  echo "[TEMPLATE INFO] PROJECT_DIR_IN_PVC is not set. Exiting."
+  exit 1
 else
   if [ -z "${DATA_DIR_IN_PVC}" ]; then
     DATA_DIR_IN_PVC="${PROJECT_DIR_IN_PVC}/_data"

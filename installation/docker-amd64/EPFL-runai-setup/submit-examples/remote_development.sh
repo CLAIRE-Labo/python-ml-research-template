@@ -4,7 +4,7 @@
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --image ic-registry.epfl.ch/claire/moalla/template-project-name:latest-dev \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
   -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
@@ -17,7 +17,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --image ic-registry.epfl.ch/claire/moalla/template-project-name:latest-dev \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
   -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
@@ -41,7 +41,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --image ic-registry.epfl.ch/claire/moalla/template-project-name:latest-dev \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
   -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
@@ -56,7 +56,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image ic-registry.epfl.ch/claire/template-project-name/moalla:latest-dev \
+  --image ic-registry.epfl.ch/claire/moalla/template-project-name:latest-dev \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e EPFL_RUNAI=1 \
   -e PROJECT_DIR_IN_PVC=/claire-rcp-scratch/home/moalla/template-project-name/dev \
@@ -69,3 +69,4 @@ runai submit \
 # runai logs example-remote-development
 # ssh-keygen -R '[127.0.0.1]:2222'
 # kubectl port-forward example-remote-development-0-0  2222:22
+# kubectl port-forward example-remote-development-0-0  8888:8888

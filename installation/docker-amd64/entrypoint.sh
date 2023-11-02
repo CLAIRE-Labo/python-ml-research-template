@@ -12,15 +12,24 @@ fi
 # This does not need an internet connection.
 if [ -n "${WANDB_API_KEY}" ]; then
   echo "[TEMPLATE INFO] Logging in to W&B."
-  export WANDB_API_KEY="${WANDB_API_KEY}"
   wandb login "${WANDB_API_KEY}"
+fi
+
+if [ -n "${WANDB_API_KEY_FILE}" ]; then
+  echo "[TEMPLATE INFO] Logging in to W&B."
+  wandb login "$(cat "${WANDB_API_KEY_FILE}")"
 fi
 
 # Install the package in editable mode.
 # Also ensures the code is mounted correctly.
-echo "[TEMPLATE INFO] Installing the project."
-pip install -e "${PROJECT_DIR}"
-python -c "import ${PACKAGE_NAME}"
+if [ -n "${SKIP_INSTALL_PROJECT}" ]; then
+  # For debugging.
+  echo "[TEMPLATE INFO] Skipping the installation of the project."
+else
+  echo "[TEMPLATE INFO] Installing the project."
+  pip install -e "${PROJECT_DIR}"
+  python -c "import ${PACKAGE_NAME}"
+fi
 
 # Exec so that the child process receives the OS signals.
 # It will be PID 1.

@@ -151,6 +151,23 @@ By performing the above first steps you should have all the required setup to ru
 An example of an unattended job can be found in `submit-examples/unattended.sh`.
 Note the emphasis on having a frozen copy of the repository for running unattended jobs.
 
+### Weights&Biases
+
+Your W&B API key should be exposed as the `WANDB_API_KEY` environment variable.
+Run:ai doesn't support Kubernetes secrets yet, and you don't want to pass it as a clear environment variable,
+so an alternative is to have it in your PVC and pass it with the
+`-e WANDB_API_KEY_FILE` environment variable in your `runai submit` command and let the template handle it.
+
+E.g.,
+```bash
+
+# In my PVC. 
+cat >/claire-rcp-scratch/home/moalla/.wandb_api_key <<EOL
+<my-wandb-api-key>
+EOL
+```
+Then specify `-e WANDB_API_KEY_FILE=/claire-rcp-scratch/home/moalla/.wandb_api_key` in my `runai submit` command.
+
 ### Remote development
 
 This would be the typical use case for a researcher at CLAIRE using the Run:ai cluster as their daily driver to do
@@ -221,6 +238,25 @@ Note that an ssh connection to the container is not like executing a shell on th
   This is already done for some variable.
   (Impact: one more line to add at build time.)
 
+### Git config
+
+You can persist your Git config (username, email, etc) by having it in your PVC and passing its location 
+with the `GIT_CONFIG_IN_PVC` environment variable.
+
+E.g., create your config in your PVC with 
+```bash
+# In my PVC.
+cat >/claire-rcp-scratch/home/moalla/remote-development/gitconfig <<EOL
+[user]
+        email = your@email
+        name = Your Name
+[core]
+        filemode = false
+EOL
+```
+Then specify `-e GIT_CONFIG_IN_PVC=/claire-rcp-scratch/home/moalla/remote-development/gitconfig` in your `runai submit` command.
+
+
 ### PyCharm
 
 We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remote-development-overview.html) feature of
@@ -242,7 +278,7 @@ The template supports both options.
 We suggest using option 1 when you don't have access to the PyCharm remote IDE binaries as a first time.
 Then settle with option 2 as it makes using Run:ai as your daily driver feel like just opening a local IDE.
 
-For both options you will set your project directory on PyCharm to be the `${PROJECT_ROOT}=/opt/project` in the container.
+For both options you will set your project directory on PyCharm to be the `PROJECT_ROOT` `/opt/project` in the container.
 
 **Preliminaries: saving the project IDE configuration**
 
@@ -355,7 +391,7 @@ Host runai
    extension on your local VS Code.
 4. Follow the steps [here](https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host)
 
-Set the root directory of your VS Code workspace to the `${PROJECT_ROOT}=/opt/project` on the container.
+Set the root directory of your VS Code workspace to the `PROJECT_ROOT` `opt/project` on the container.
 
 **Limitations**
 
@@ -391,7 +427,7 @@ To do so,
 
 2. Forward the port `8888` on your local machine to the port `8888` on the container.
    ```bash
-   kubeclt port-forward <job-name> 8888:8888
+   kubectl port-forward <pod-name> 8888:8888
    ```
 
 3. Open the link in your browser.

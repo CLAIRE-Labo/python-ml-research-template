@@ -1,7 +1,5 @@
 # An example config file for a training scripts.
 
-
-
 defaults:
 
   # WandB and Hydra defaults.
