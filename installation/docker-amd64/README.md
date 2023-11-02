@@ -100,7 +100,7 @@ You can always interact directly with `docker compose` if you prefer and get exa
 
 **Prerequisites**
 
-* `docker` (`docker --version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
+* `docker` (`docker version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 
 **Build**
@@ -156,7 +156,7 @@ We provide the following guides for running the environment:
 
 Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 
-* `docker` (`docker --version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
+* `docker` (`docker version` >= v20.10). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 * [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc)
 * [CUDA] `nvidia-docker` (the NVIDIA Container
@@ -218,8 +218,8 @@ Only do so, if you need to debug the container, or you have a custom use case.
 System dependencies are managed by both `apt` and `conda`.
 Python dependencies are managed by both `conda` and `pip`.
 
-- Use `apt` for system programs (e.g. `sudo`, `zsh`, `gcc`).
-- Use `conda` for non-Python dependencies needed to run the project code (e.g. `mkl`, `swig`).
+- Use `apt` for system programs (e.g. `sudo`, `zsh`, `gcc`), leave the libraries to `conda` whenever possible.
+- Use `conda` for non-Python dependencies needed to run the project code (e.g. `mkl`, `swig`, `imageio`, etc).
 - Use `conda` for Python dependencies packaged with more than just Python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
 - Use `pip` for the rest of the Python dependencies.
@@ -250,7 +250,7 @@ We describe how to do so in the Freeze the Environment section.
   `apt` dependencies are separated into three files to help with multi-stage builds and keep final images small.
     - In `apt-build.txt` put the dependencies needed to build the environment, e.g. compilers, build tools, etc.
       We provide a set of minimal dependencies as an example.
-    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g. image processing libraries, etc.
+    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g. image processing libraries when not available in conda, etc.
     - In `apt-dev.txt` put the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
 
   If you're not familiar with which dependencies are needed for each stage, you can start with the minimal set we
@@ -259,7 +259,8 @@ We describe how to do so in the Freeze the Environment section.
 - To edit the `conda` and `pip` dependencies, edit the `dependencies/environment.yml` file.
 - To edit the more complex dependencies, edit the `Dockerfile`.
 
-When manually editing the dependencies files, you do not need to specify the specific version of the dependencies.
+When manually editing the dependencies files, you do not need to specify the version of the dependencies,
+unless you need specific ones.
 These will be written to the environment files when you freeze the environment.
 You can of course specify the major versions of specific dependencies you need.
 

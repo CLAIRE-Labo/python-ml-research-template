@@ -30,13 +30,13 @@ It features and encourages best practices for:
 Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
 With this template, sharing your work will be a breeze, and its adoption will be straightforward,
 [maximizing its impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501).
-The practices in this template [earned its authors](https://openreview.net/forum?id=E0qO5dI5aEn)
-an Outstanding Paper (Honorable Mention) at the
-[ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
+The practices in this template earned its authors 
+an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5dI5aEn)
+at the [ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
 
-The template can also be adapted to suit many other use cases, however, its maintained form will be tailored to the
+The template can be adapted to suit many other use cases, however, its maintained form will be tailored to the
 needs of CLAIRE.
-It also contains extra EPFL-specific instructions for deployment on the EPFL Run:ai clusters.
+It contains extra EPFL-specific instructions for deployment on the EPFL Run:ai clusters.
 For more information on the template and a discussion of its design choices see the `template/README.md` file.
 
 ## Getting started with the template
@@ -53,15 +53,15 @@ a `PROJECT_NAME` as well.
 It's useful to commit after some checkpoints to be able to go back if you make a mistake.
 
 1. Clone the repo with destination `PROJECT_NAME`.
-   ```
-   git clone <URL/SSH> PROJECT_NAME
-   ```
     - If you plan to develop on your local computer, clone it there.
     - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
     - If you plan to develop or deploy on a managed cluster (e.g. EPFL Run:ai clusters), clone on your local machine
       (ideally an AMD64 platform, or with access to a Docker engine on an AMD64 platform.
       It's much faster than emulation.
       For CLAIRE members we have the `claire-build-machine`.)
+    ```
+    git clone <URL/SSH> PROJECT_NAME
+    ```
 
 2. Fill the template variables in `template/template_variables.env` and run the script
    ```bash
