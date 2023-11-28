@@ -1,0 +1,79 @@
+# Additional Details about the Template
+
+## Reproducibility
+
+This template ensures the reproducibility of your results through 3 artifacts:
+
+1. The development environment
+    - Recorded in the Docker images and described in Dockerfile and environment files with the Docker installation.
+    - (Less reliably) described in the environment file for the conda installation.
+2. The project code.
+    - Recorded in the git repository.
+3. The data, outputs, model weights and other artifacts.
+    - Up to you to record them, but we provide placeholder directories abstracting away the user storage system.
+
+## Template FAQ
+
+### Why Docker? Why not just Conda? (At least for container-compatible hardware acceleration methods.)
+
+Conda environments are not so self-contained, some packages can just work on your machine because
+they use some of your system libraries not recorded in the conda environment.
+An exhaustive and precise list of the system libraries outside conda is hard to record,
+and the environment will not run on another machine missing those libraries.
+Reinforcement learning (RL) environments usually require system libraries
+not recorded by conda, and RL is a big part of our work.
+
+Moreover, the environment is specified as an `environment.yml` file description,
+and does not contain the dependencies themselves.
+Some dependencies may actually become unavailable when a user tries to download them later.
+
+Docker images are self-contained and do contain the dependencies themselves.
+
+### Why is the template so complex, e.g., include so many files?
+
+Some reasons for many files and extra code is to be able to provide a generic template
+that can be configured, extended, or shortened depending on the needs of the project.
+
+The other part of the apparent complexity probably comes from unfamiliarity with the tools and practices
+used in the template.
+These practices, however, (although usually not all combined in a research project, whence this template)
+are well established and have been proven to be very useful.
+
+For example, the `Dockerfile` seems complex because it leverages multi-staging to be very
+time and cache-efficient.
+Different build stages can run in parallel, so changing your build dependencies,
+or installing something in the Dockerfile will cause very few rebuilds.
+
+Using Docker Compose is also very convenient to define all the build arguments and multiple deployment options
+in a single file, avoiding long build and run commands.
+
+### Why does the template have so many tools by default (e.g. `hydra`, `wandb`, `black`, etc.)?
+
+This template is mainly addressed to students and researchers at CLAIRE.
+Frequently, students are not aware of the tools and practices that are available to them until they face the problems
+we've all faced at some point in our career
+(how do I manage my configs? How do conveniently log my metrics?, etc.).
+We chose to include these tools by default to help students and researchers avoid these problems from the start,
+and to encourage them to use them.
+
+### Can I fork a project that used the template and change its name? How do I do that?
+
+Yes, it seems like filling the `template/template-variables.env` file with your new project name and
+running `./template/change-project-name.sh` would work.
+
+### Can I use this template for an already existing project? How do I do that?
+
+The template is mainly designed to start new projects, as it's hard to make assumptions on
+the structure of an existing project.
+However, it is possible to use it to transfer from an existing project.
+
+It's likely that your project is a bunch of Python files and a `requirements.txt` or `environment.yml` file.
+You can copy those files and potentially refactor the package structures and put all of them under `src`.
+You will also have to transfer the dependencies to the `environment.yml` file and identify the system dependencies.
+
+If your project provides a Docker image, the Docker installation method allows extending it, assuming
+it has a well-configured Python environment.
+
+In the worst case, you can keep the `installation/` directory if that's useful to you and replace all the rest with
+your project and adapt the installation as needed.
+You could also just get some inspiration from the template and do your own thing.

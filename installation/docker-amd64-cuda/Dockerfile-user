@@ -1,0 +1,47 @@
+########################################################################
+# 3. Stages for setting up the user and the development environment.
+########################################################################
+
+ARG GENERIC_IMAGE
+
+########################################################################
+# Final runtime layer for the user.
+# Explicitly create a user for Docker Engine interfaces
+# which do no support selecting the user at runtime; this is the case for Run:ai.
+
+FROM ${GENERIC_IMAGE}:run-latest-root AS runtime-user
+
+ARG GRPID
+ARG USRID
+ARG GRP
+ARG USR
+ARG PASSWD
+ENV PASSWD=${PASSWD}
+
+# Add user to sudoer to be able to install apt packages.
+RUN groupadd -f -g ${GRPID} ${GRP} && \
+    useradd --shell /bin/zsh --create-home -u ${USRID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
+    usermod -aG sudo ${USR}
+
+USER ${USR}
+RUN touch /home/${USR}/.zshrc
+
+########################################################################
+# Final development layer for the user.
+
+FROM ${GENERIC_IMAGE}:dev-latest-root AS development-user
+
+ARG GRPID
+ARG USRID
+ARG GRP
+ARG USR
+ARG PASSWD
+ENV PASSWD=${PASSWD}
+
+# Add user to sudoer to be able to install apt packages.
+RUN groupadd -f -g ${GRPID} ${GRP} && \
+    useradd --shell /bin/zsh --create-home -u ${USRID} -g ${GRP} -p  $(openssl passwd -1 ${PASSWD}) ${USR} && \
+    usermod -aG sudo ${USR}
+
+USER ${USR}
+RUN touch /home/${USR}/.zshrc

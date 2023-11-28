@@ -1,0 +1,15 @@
+services:
+  args-run-root:
+    build:
+      args:
+        BASE_IMAGE: nvcr.io/nvidia/pytorch:23.10-py3
+        # Pytorch '2.1.0a0+32f93b1',  Python 3.10.
+        # https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel-23-10.html
+        # https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch
+        GIT_IMAGE: alpine/git:2.40.1            # https://hub.docker.com/r/alpine/git/tags
+        ORIGINAL_ENTRYPOINT: /opt/nvidia/nvidia_entrypoint.sh
+        # You can find it by running `docker inspect BASE_IMAGE | grep -A 3 Entrypoint`
+        # If there is no entrypoint, you can set it to a dummy one "/opt/template-entrypoints/dummy.sh"
+        # The original entrypoint should exec the command it receives otherwise this will break
+        # the signal handling.
+        # If it doesn't, edit pre-entrypoint.sh to just run it as a command instead of exec-ing it.

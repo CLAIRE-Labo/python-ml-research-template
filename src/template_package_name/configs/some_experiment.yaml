@@ -1,0 +1,16 @@
+# An example config file for an experiment scripts.
+
+defaults:
+  # Common setup.
+  - setup
+  # This file.
+  - _self_
+  # Optional override when you're developing.
+  # Remember to unset then for production.
+  - optional override: some_experiment
+
+######################################################################
+
+some_arg: "some_default_value"
+some_number: 10
+is_this_overridden: no

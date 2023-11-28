@@ -1,0 +1,91 @@
+services:
+  image-run-root:
+    extends:
+      file: compose-base.yaml
+      service: args-run-root
+    image: ${IMAGE_NAME}:run-latest-root
+    build:
+      platforms:
+        - "linux/amd64"
+      context: .
+      dockerfile: Dockerfile
+      target: runtime-generic
+      args:
+        PROJECT_NAME: ${PROJECT_NAME}
+        PACKAGE_NAME: ${PACKAGE_NAME}
+
+  image-dev-root:
+    extends:
+      service: image-run-root
+    image: ${IMAGE_NAME}:dev-latest-root
+    build:
+      dockerfile: Dockerfile
+      target: development-generic
+
+  image-run-user:
+    extends:
+      service: image-run-root
+    image: ${IMAGE_NAME}:run-latest-${USR}
+    build:
+      dockerfile: Dockerfile-user
+      target: runtime-user
+      args:
+        GENERIC_IMAGE: ${IMAGE_NAME}
+        GRPID: ${GRPID}
+        USRID: ${USRID}
+        GRP: ${GRP}
+        USR: ${USR}
+        PASSWD: ${PASSWD}
+
+  image-dev-user: # Service to build the development image.
+    extends:
+      service: image-run-user
+    image: ${IMAGE_NAME}:dev-latest-${USR}
+    build:
+      target: development-user
+
+  run-local-cpu: # Service to run the image locally with CPU only.
+    extends:
+      service: image-run-user
+    tty: true
+    stdin_open: true
+    volumes:
+      - ../..:${PROJECT_ROOT_AT}
+    environment:
+      PROJECT_ROOT_AT: ${PROJECT_ROOT_AT}
+      WANDB_API_KEY: ${WANDB_API_KEY}
+
+  dev-local-cpu: # Service to develop locally with CPU only.
+    extends:
+      service: image-dev-user
+    tty: true
+    stdin_open: true
+    volumes:
+      - ../..:${PROJECT_ROOT_AT}
+    environment:
+      PROJECT_ROOT_AT: ${PROJECT_ROOT_AT}
+      WANDB_API_KEY: ${WANDB_API_KEY}
+
+  run-local-cuda: # Service to run the image locally with NVIDIA GPU.
+    extends:
+      service: run-local-cpu
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all # Can be overridden by the user.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [ gpu ]
+
+  dev-local-cuda: # Service to develop locally with NVIDIA GPU.
+    extends:
+      service: dev-local-cpu
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all # Can be overridden by the user.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [ gpu ]

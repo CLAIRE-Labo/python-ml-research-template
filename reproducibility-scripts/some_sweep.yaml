@@ -1,0 +1,22 @@
+# Run with wandb sweep reproducibility-scripts/some_sweep.yaml to generate a sweep.
+# Run with wandb agent some-sweep-id to run the sweep.
+
+project: template-project-name
+name: some-sweep
+method: grid
+metric:
+  goal: maximize
+  name: some_metric
+parameters:
+  wandb.mode:
+    value: online
+  job_subdir:
+    value: my-tagged-experiment
+  some_number:
+    values: [1, 2, 3]
+
+command:
+  - python
+  - "-m"
+  - "template_package_name.some_experiment"
+  - ${args_no_hyphens}
