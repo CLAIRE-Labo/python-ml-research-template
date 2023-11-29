@@ -74,7 +74,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
 3. Initialize the pre-commit hooks as described in the [contributing](#contributing) section.
    Update them to their latest version with `pre-commit autoupdate`.
    Commit.
-4. Edit the `LICENCE` file.
+4. Edit the `LICENSE` file.
    Or delete it and remember to add one when open-sourcing your code.
    [(Some help here).](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
    A simple change if you're fine with the MIT license is to replace the `2022 Skander Moalla` with your year and name.
@@ -198,7 +198,7 @@ Refer to `data/README.md`.
 
 We use [Weights & Biases](https://wandb.ai/site) to log and track our experiments.
 If you're logged in, your default entity will be used (A fixed entity is not set in the config),
-and you can set another entity with the `EANDB_ENTITY` environment variable.
+and you can set another entity with the `WANDB_ENTITY` environment variable.
 Otherwise, the runs will be anonymous (you don't need to be logged in).
 
 ## Reproduction and Experimentation
