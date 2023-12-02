@@ -14,6 +14,24 @@ This template ensures the reproducibility of your results through 3 artifacts:
 
 ## Template FAQ
 
+### I started my project from an older version of the template, how do I get updates?
+
+A project started from a template is different from a fork in that it is not (necessarily) meant to be updated.
+The template is free to change and evolve, and it is not guaranteed that it will be compatible with your project.
+
+Nevertheless, many changes are likely to be compatible with your project.
+In that case, there are two ways to incorporate them:
+
+1. Manually copy the changes from the template to your project, adapting them when needed (different variable names especially).
+2. Use git to merge the changes from the template to your project.
+```bash
+git remote add template https://github.com/CLAIRE-Labo/python-ml-research-template.git
+git fetch template
+# Cherry pick the commits you want to merge, making sure they are compatible.
+# Add the option -n if you want to have the changes staged but not committed so you can edit them.
+git cherry-pick -x <commit-hash>
+```
+
 ### Why Docker? Why not just Conda? (At least for container-compatible hardware acceleration methods.)
 
 Conda environments are not so self-contained, some packages can just work on your machine because
