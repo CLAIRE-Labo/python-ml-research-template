@@ -111,7 +111,7 @@ RUN pip install -r ${PIP_REQS_FILE}
 # Record all the dependency files in the image to know what was installed.
 ARG DEPENDENCIES_DIR=/opt/template-dependencies
 COPY --link --chmod=777 dependencies ${DEPENDENCIES_DIR}
-RUN pip freeze > ${DEPENDENCIES_DIR}/requirements_after_build.txt
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-after-build.txt
 
 # Optional optimizations.
 # Enable Intel MKL optimizations on AMD CPUs.

@@ -155,7 +155,7 @@ COPY --link --from=build-conda-env --chmod=777 ${CONDA_INSTALL_PATH} ${CONDA_INS
 # Record all the dependency files in the image to know what was installed.
 ARG DEPENDENCIES_DIR=/opt/template-dependencies
 COPY --link --chmod=777 dependencies ${DEPENDENCIES_DIR}
-RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment_after_build.yml
+RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-after-build.yml
 
 # Optional optimizations.
 # Enable Intel MKL optimizations on AMD CPUs.
