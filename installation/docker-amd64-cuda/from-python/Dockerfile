@@ -168,8 +168,8 @@ RUN mkdir -m 777 /project
 # and testing that you correctly mounted the project code.
 # It also performs some other important setup depending on the deployment platform.
 
-ARG ORIGINAL_ENTRYPOINT
-ENV ORIGINAL_ENTRYPOINT=${ORIGINAL_ENTRYPOINT}
+ARG BASE_ENTRYPOINT
+ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
 ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh" ]

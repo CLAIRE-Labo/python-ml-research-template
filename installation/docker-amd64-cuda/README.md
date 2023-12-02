@@ -64,8 +64,9 @@ Follow the steps below to get started.
    # from-base can be from-scratch or from-python
    ./template.sh edit_from_base <from-base>
    ```
-4. Edit `compose-base.yaml` to specify your base images. E.g., the NGC image you use as a base image (`BASE_IMAGE`)
-   in the `from-python` option or the Ubuntu version, conda version (`CONDA_URL`) in the `from-scratch` option.
+4. Edit `compose-base.yaml` to specify your base image (`BASE_IMAGE`) and its eventual options.
+   E.g., the NGC image you use as a base image and its entrypoint (`BASE_ENTRYPOINT`) in the `from-python` option
+   or the Ubuntu and conda version (`CONDA_URL`) in the `from-scratch` option.
 5. Specify your initial dependencies.
    Follow the [instructions to maintain the environment](#from-python-instructions-to-maintain-the-environment)
    up to (including) the manual editing section.
