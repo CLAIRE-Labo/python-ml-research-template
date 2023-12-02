@@ -271,7 +271,7 @@ cd installation/docker-amd64-cuda
    ```bash
    # Check all your dependencies are there.
    ./template.sh list_env
-    
+
     # Get a shell and check manually other things.
     # This will only contain the environment and not the project code.
     # Project code can be debugged on the cluster directly.
@@ -455,21 +455,34 @@ To do so, run the following from a login shell in the container.
 The script overwrites the `dependencies/requirements.txt` file with the current environment specification,
 so it's a good idea to commit the changes to the environment file before/after running it.
 
+The script isn't just a `pip freeze` and the file it generates isn't made to recreate the environment from scratch,
+it is tightly coupled to the Dockerfile and the base image it uses.
+In this sense, packages that are already installed in the base image or installed by the Dockerfile
+may not be listed in the file or may be listed without a version 
+(this is because that may have been installed from wheels not present anymore in the final image).
+
+The purpose of the generated `requirements.txt` is to be used always at the same stage of the Dockerfile
+to install the same set of missing dependencies between its previous stage and its next stage.
+(so not reinstall the dependencies already installed in the base image, for example).
+In any case,
+the Dockerfile also records the snapshots of the dependency files used to generate each stage for debugging that can be
+found in the `/opt/template-dependencies/` directory. 
+
 ```bash
 update-env-file
 ```
 
-There are some caveats (e.g., packages installed from GitHub with pip), so have a look at
-the output file to make sure it does what you want.
+The script isn't perfect, and there are some caveats (e.g., packages installed from GitHub with pip),
+so have a look at the output file to make sure it does what you want.
 The `dependencies/update-env-file.sh` gives some hints for what to do,
 and in any case you can always patch the file manually.
-
-For `apt` dependencies add them manually to the `apt-*.txt` files.
 
 For dependencies that require a custom installation or build, edit the `Dockerfile`.
 If one of these complex dependencies shows in the `requirements.txt` after the freeze,
 you have to remove it, so that pip does not pick it up, and it is installed independently in the `Dockerfile`.
 (Something similar is done in the `update-env-file`.)
+
+For `apt` dependencies add them manually to the `apt-*.txt` files.
 
 ## [FROM-SCRATCH] Instructions to maintain the environment
 
@@ -547,20 +560,35 @@ To do so, run the following from a login shell in the container.
 The script overwrites the `dependencies/environment.yml` file with the current environment specification,
 so it's a good idea to commit the changes to the environment file before/after running it.
 
+The script isn't just a `mamba env export`
+and the file it generates isn't made to recreate the complete environment from scratch,
+it is tightly coupled to the Dockerfile.
+In this sense, packages it installs may depend on system dependencies installed by the Dockerfile
+and dependencies installed at later stages will not be listed.
+
+**Note:** A strict `mamba env export` is recorded 
+
+The purpose of the generated `environment.yml` is to be used always at the same stage of the Dockerfile
+to install the initial set of dependencies.
+(and not install dependencies that the Dockerfile will build and install later).
+In any case,
+the Dockerfile also records the snapshots of the dependency files used to generate each stage for debugging that can be
+found in the `/opt/template-dependencies/` directory. 
+
 ```bash
 update-env-file
 ```
 
-There are some caveats (e.g., packages installed from GitHub with pip), so have a look at
-the output file to make sure it does what you want.
-The `dependencies/update-env-file.sh` gives some hints for what to do, and in any case you can always patch the file
-manually.
-
-For `apt` dependencies add them manually to the `apt-*.txt` files.
+The script isn't perfect, and there are some caveats (e.g., packages installed from GitHub with pip),
+so have a look at the output file to make sure it does what you want.
+The `dependencies/update-env-file.sh` gives some hints for what to do,
+and in any case you can always patch the file manually.
 
 For dependencies that require a custom installation or build, edit the `Dockerfile`.
 If one of these complex dependencies shows in the `environment.yml` after the freeze,
 you have to remove it, so that conda does not pick it up, and it is installed independently in the `Dockerfile`.
+
+For `apt` dependencies add them manually to the `apt-*.txt` files.
 
 ## Troubleshooting
 

@@ -17,7 +17,7 @@ ARG GIT_IMAGE
 FROM ${GIT_IMAGE} AS get-pure
 
 ARG PURE_URL=https://github.com/sindresorhus/pure.git
-ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions
+ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions.git
 ARG ZSHS_URL=https://github.com/zsh-users/zsh-syntax-highlighting.git
 
 RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
@@ -31,14 +31,13 @@ RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
 
 FROM ${BASE_IMAGE} AS build-apt-packages
 
-ARG DEBIAN_FRONTEND=noninteractive
-
 # Enable caching for `apt` packages in Docker.
 # https://docs.docker.com/engine/reference/builder/#run---mounttypecache
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
     /etc/apt/apt.conf.d/keep-cache
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_DEPENDENCIES_FILE=/tmp/dependencies/apt-build.txt
 COPY --link dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
 
@@ -63,8 +62,9 @@ RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
 
 ########################################################################
 # Here you can install other software starting from build-apt-packages,
-# then copy the installation artifacts to runtime-base.
+# then copy the installation artifacts to runtime-deps.
 # Think multi-stage and cache-efficient.
+# E.g. you can build wheels and then install them with pip in runtime-deps.
 # The MKL hack for AMD can be seen as an example.
 
 
@@ -79,15 +79,15 @@ RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
 
 FROM ${BASE_IMAGE} AS runtime-apt-pkgs
 
-ARG DEBIAN_FRONTEND=noninteractive
-ARG RUNTIME_DEPENDENCIES_FILE=/tmp/dependencies/apt-runtime.txt
-COPY --link dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
-
 # Enable caching for `apt` packages in Docker.
 # https://docs.docker.com/engine/reference/builder/#run---mounttypecache
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
     /etc/apt/apt.conf.d/keep-cache
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG RUNTIME_DEPENDENCIES_FILE=/tmp/dependencies/apt-runtime.txt
+COPY --link dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-runtime.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
@@ -103,15 +103,19 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
 
 FROM runtime-apt-pkgs AS runtime-deps
 
+# A directory to record all the dependency files used at multiple stages.
+# This is useful for a later inspection or debugging.
+ENV DEPENDENCIES_DIR=/opt/template-dependencies
+RUN mkdir -m 777 ${DEPENDENCIES_DIR}
+COPY --chmod=777 dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
+COPY --chmod=777 dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
+
 # Install pip packages.
 ARG PIP_REQS_FILE=/tmp/dependencies/requirements.txt
 COPY --link dependencies/requirements.txt ${PIP_REQS_FILE}
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-before-pip-install-r.txt
 RUN pip install -r ${PIP_REQS_FILE}
-
-# Record all the dependency files in the image to know what was installed.
-ARG DEPENDENCIES_DIR=/opt/template-dependencies
-COPY --link --chmod=777 dependencies ${DEPENDENCIES_DIR}
-RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-after-build.txt
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install-r.txt
 
 # Optional optimizations.
 # Enable Intel MKL optimizations on AMD CPUs.
@@ -136,6 +140,9 @@ ARG PACKAGE_NAME
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PACKAGE_NAME=${PACKAGE_NAME}
 ENV HYDRA_FULL_ERROR=1
+
+# A final record of the dependencies from pip freeze.
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-final.txt
 
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
@@ -187,15 +194,15 @@ FROM runtime-generic AS development-generic
 
 # Install development packages.
 
-ARG DEBIAN_FRONTEND=noninteractive
-ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
-COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
-
 # Enable caching for `apt` packages in Docker.
 # https://docs.docker.com/engine/reference/builder/#run---mounttypecache
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
     /etc/apt/apt.conf.d/keep-cache
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
+COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-dev.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
@@ -204,3 +211,5 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     sed -e 's/#.*//g' -e 's/\r//g' ${DEV_DEPENDENCIES_FILE} | \
     xargs -t apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
+
+COPY --chmod=777 dependencies/apt-dev.txt ${DEPENDENCIES_DIR}/apt-dev.txt

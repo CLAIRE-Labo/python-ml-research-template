@@ -18,7 +18,7 @@ ARG BASE_IMAGE
 FROM ${GIT_IMAGE} AS get-pure
 
 ARG PURE_URL=https://github.com/sindresorhus/pure.git
-ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions
+ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions.git
 ARG ZSHS_URL=https://github.com/zsh-users/zsh-syntax-highlighting.git
 
 RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
@@ -49,14 +49,13 @@ RUN --mount=type=bind,from=get-conda,source=/tmp/conda,target=/tmp/conda \
 
 FROM ${BASE_IMAGE} AS build-apt-packages
 
-ARG DEBIAN_FRONTEND=noninteractive
-
 # Enable caching for `apt` packages in Docker.
 # https://docs.docker.com/engine/reference/builder/#run---mounttypecache
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
     /etc/apt/apt.conf.d/keep-cache
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_DEPENDENCIES_FILE=/tmp/dependencies/apt-build.txt
 COPY --link dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
 
@@ -82,7 +81,7 @@ ENV PIP_CACHE_DIR=/root/.cache/pip
 ARG CONDA_INSTALL_PATH
 ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
 ENV CONDA_CACHE_PKGS_DIRS=${CONDA_INSTALL_PATH}/pkgs
-ENV CONDA_ENV_FILE=/tmp/dependencies/environment.yml
+ARG CONDA_ENV_FILE=/tmp/dependencies/environment.yml
 ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 
 COPY --link --from=install-conda ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
@@ -90,6 +89,9 @@ COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
     --mount=type=cache,target=${CONDA_CACHE_PKGS_DIRS},sharing=private \
     mamba env create --file ${CONDA_ENV_FILE}
+
+# Record the dependency file after conda install which may be useful.
+RUN mamba env export -n ${PROJECT_NAME} > ${CONDA_INSTALL_PATH}/environment-raw-after-env-create.yml
 
 # Cleaning must be in a separate `RUN` command to preserve the Docker cache.
 RUN mamba clean -fya && \
@@ -120,15 +122,15 @@ RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > ${CONDA_INSTALL_PATH}/fak
 
 FROM ${BASE_IMAGE} AS runtime-apt-pkgs
 
-ARG DEBIAN_FRONTEND=noninteractive
-ARG RUNTIME_DEPENDENCIES_FILE=/tmp/dependencies/apt-runtime.txt
-COPY --link dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
-
 # Enable caching for `apt` packages in Docker.
 # https://docs.docker.com/engine/reference/builder/#run---mounttypecache
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
     /etc/apt/apt.conf.d/keep-cache
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG RUNTIME_DEPENDENCIES_FILE=/tmp/dependencies/apt-runtime.txt
+COPY --link dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-runtime.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
@@ -144,6 +146,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
 
 FROM runtime-apt-pkgs AS runtime-deps
 
+# A directory to record all the dependency files used at multiple stages.
+# This is useful for a later inspection or debugging.
+ENV DEPENDENCIES_DIR=/opt/template-dependencies
+RUN mkdir -m 777 ${DEPENDENCIES_DIR}
+COPY --chmod=777 dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
+COPY --chmod=777 dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
+COPY --chmod=777 dependencies/environment.yml ${DEPENDENCIES_DIR}/environment.yml
+
 # Copy the conda env.
 # Make it writeable by anyone so that it can be updated by the user created in the last layer.
 ARG CONDA_INSTALL_PATH
@@ -151,11 +161,8 @@ ARG PROJECT_NAME
 ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
 ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 COPY --link --from=build-conda-env --chmod=777 ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
-
-# Record all the dependency files in the image to know what was installed.
-ARG DEPENDENCIES_DIR=/opt/template-dependencies
-COPY --link --chmod=777 dependencies ${DEPENDENCIES_DIR}
-RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-after-build.yml
+COPY --link --from=build-conda-env --chmod=777 ${CONDA_INSTALL_PATH}/environment-raw-after-env-create.yml \
+    ${DEPENDENCIES_DIR}/environment-raw-after-env-create.yml
 
 # Optional optimizations.
 # Enable Intel MKL optimizations on AMD CPUs.
@@ -178,6 +185,9 @@ ARG PACKAGE_NAME
 ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PACKAGE_NAME=${PACKAGE_NAME}
 ENV HYDRA_FULL_ERROR=1
+
+# A final record of the depedenencies from mamba.
+RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-final.yml
 
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
@@ -235,15 +245,15 @@ FROM runtime-generic AS development-generic
 
 # Install development packages.
 
-ARG DEBIAN_FRONTEND=noninteractive
-ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
-COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
-
 # Enable caching for `apt` packages in Docker.
 # https://docs.docker.com/engine/reference/builder/#run---mounttypecache
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
     /etc/apt/apt.conf.d/keep-cache
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
+COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-dev.txt.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
@@ -252,3 +262,5 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     sed -e 's/#.*//g' -e 's/\r//g' ${DEV_DEPENDENCIES_FILE} | \
     xargs -t apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
+
+COPY --chmod=777 dependencies/apt-dev.txt ${DEPENDENCIES_DIR}/apt-dev.txt
