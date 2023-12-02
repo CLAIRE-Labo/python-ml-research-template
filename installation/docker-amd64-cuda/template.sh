@@ -243,14 +243,14 @@ run() {
 list_env() {
   # List the conda environment.
   check
-  docker run --rm --entrypoint zsh "${IMAGE_NAME}:run-latest-root" -i -c "pip list"
-  docker run --rm --entrypoint zsh "${IMAGE_NAME}:run-latest-root" -i -c "mamba list"
+  docker run --rm "${IMAGE_NAME}:run-latest-root" pip list
+  docker run --rm "${IMAGE_NAME}:run-latest-root" mamba list
 }
 
 empty_interactive() {
   # Start an interactive shell in an empty container.
   check
-  docker run --rm -it --entrypoint zsh "${IMAGE_NAME}:dev-latest-root"
+  docker run --rm -it "${IMAGE_NAME}:dev-latest-root"
 }
 
 get_runai_scripts() {
