@@ -265,8 +265,18 @@ cd installation/docker-amd64-cuda
       ```bash
       ./template.sh build_generic
       ```
+3. You can run quick checks on the image to check it that it has what you expect it to have:
+   ```bash
+   # Check all your dependencies are there.
+   ./template.sh list_env
+    
+    # Get a shell and check manually other things.
+    # This will only contain the environment and not the project code.
+    # Project code can be debugged on the cluster directly.
+    ./template.sh empty_interactive
+   ```
 
-3. Build the images configured for your user.
+4. Build the images configured for your user.
    ```bash
    ./template.sh build_user
    ```
@@ -306,8 +316,9 @@ Then you can:
     ./template.sh up
     ```
   This will start a container running the development image in the background.
-  It has an entrypoint that installs the project,
-  checking that the code directory has correctly been mounted.
+  It has an entrypoint that installs the project, checking that the code directory has correctly been mounted.
+  The Docker Compose run and dev services are already setup to mount the project code and specify its location
+  to the entrypoint.
 
   You can check its logs with
     ```bash
@@ -337,17 +348,22 @@ Then you can:
   These containers start with the entrypoint and then run the command you specified.
   By default, they are automatically removed after they exit.
 
-  You should not need to override the entrypoint of the service container.
-  It is necessary to install the project from its mounted location.
-  Only do so if you need to debug the container (you can use `./template.sh empty_interactive`)
-  or you have a custom use case.
+  You should not need to override the entrypoint of the container, it performs important setups.
+  It installs the project from its mounted location when specified to avoid hacky imports,
+  runs the original entrypoint of your base image if it exists,
+  and execs your command with PID 1.
+  Only do so if you need to debug the entrypoint itself or if you have a custom use case.
 
 ### Development
 
-You can plug the remote development features of popular IDEs such as VSCode or PyCharm
-with the Docker Compose service running the environment.
-This would be the `dev-local-${ACCELERATION}` service which has the mount set up to the code directory
-or the `image-dev-${USR}`service where you'll have to add the mount yourself
+For remote development with this Docker Compose setup, you should have your IDE
+running on the machine where you run the Docker Compose services (not inside the container),
+E.g. Pycharm Remote Development or VSCode Remote Development.
+
+Then you would use the remote development features of this IDE to connect to the container
+through Docker Compose with `dev-local-${ACCELERATION}` service, if the IDE allows,
+which has the mount set up to the code directory.
+Otherwise, through the image directly and you'll have to add the mount yourself
 (look at how this is done in `compose.yaml`).
 
 ## Running with your favorite container runtime
