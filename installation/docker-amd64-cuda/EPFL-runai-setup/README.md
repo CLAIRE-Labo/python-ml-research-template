@@ -52,7 +52,11 @@ We also have a guide at CLAIRE which you can get inspiration from
 
 The examples in this README were made with username `moalla` and lab-name `claire`.
 Adapt them accordingly to your username and lab name.
-Run `./template.sh get_runai_scripts` to get a copy of the examples in this guide with your username, lab name, etc.
+Run 
+```bash
+./template.sh get_runai_scripts
+```
+to get a copy of the examples in this guide with your username, lab name, etc.
 They will be in `.EPFL-runai-setup/submit-scripts`.
 
 ### Push your image to the RCP or IC Docker registry
