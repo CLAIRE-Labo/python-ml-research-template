@@ -150,9 +150,9 @@ FROM runtime-apt-pkgs AS runtime-deps
 # This is useful for a later inspection or debugging.
 ENV DEPENDENCIES_DIR=/opt/template-dependencies
 RUN mkdir -m 777 ${DEPENDENCIES_DIR}
-COPY --chmod=777 dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
-COPY --chmod=777 dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
-COPY --chmod=777 dependencies/environment.yml ${DEPENDENCIES_DIR}/environment.yml
+COPY dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
+COPY dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
+COPY dependencies/environment.yml ${DEPENDENCIES_DIR}/environment.yml
 
 # Copy the conda env.
 # Make it writeable by anyone so that it can be updated by the user created in the last layer.
@@ -161,7 +161,7 @@ ARG PROJECT_NAME
 ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
 ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 COPY --link --from=build-conda-env --chmod=777 ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
-COPY --link --from=build-conda-env --chmod=777 ${CONDA_INSTALL_PATH}/environment-raw-after-env-create.yml \
+COPY --link --from=build-conda-env ${CONDA_INSTALL_PATH}/environment-raw-after-env-create.yml \
     ${DEPENDENCIES_DIR}/environment-raw-after-env-create.yml
 
 # Optional optimizations.
@@ -196,9 +196,9 @@ ENV GLOBAL_ZSHRC=/etc/zsh/zshrc
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
 ARG ZSHS_PATH=${ZSH_ENHANCE_DIR}/zsh-syntax-highlighting
-COPY --link --from=get-pure --chmod=777 /opt/zsh/pure ${PURE_PATH}
-COPY --link --from=get-pure --chown=777 /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
-COPY --link --from=get-pure --chown=777 /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
+COPY --link --from=get-pure /opt/zsh/pure ${PURE_PATH}
+COPY --link --from=get-pure /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
+COPY --link --from=get-pure /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
 # Utilities for interactive shells.
 RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "autoload -Uz promptinit; promptinit"; \
@@ -263,4 +263,4 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     xargs -t apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --chmod=777 dependencies/apt-dev.txt ${DEPENDENCIES_DIR}/apt-dev.txt
+COPY dependencies/apt-dev.txt ${DEPENDENCIES_DIR}/apt-dev.txt

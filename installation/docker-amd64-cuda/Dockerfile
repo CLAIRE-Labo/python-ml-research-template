@@ -107,8 +107,9 @@ FROM runtime-apt-pkgs AS runtime-deps
 # This is useful for a later inspection or debugging.
 ENV DEPENDENCIES_DIR=/opt/template-dependencies
 RUN mkdir -m 777 ${DEPENDENCIES_DIR}
-COPY --chmod=777 dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
-COPY --chmod=777 dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
+COPY dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
+COPY dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
+COPY dependencies/requirements.txt ${DEPENDENCIES_DIR}/requirements.txt
 
 # Install pip packages.
 ARG PIP_REQS_FILE=/tmp/dependencies/requirements.txt
@@ -151,9 +152,9 @@ ENV GLOBAL_ZSHRC=/etc/zsh/zshrc
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
 ARG ZSHS_PATH=${ZSH_ENHANCE_DIR}/zsh-syntax-highlighting
-COPY --link --from=get-pure --chmod=777 /opt/zsh/pure ${PURE_PATH}
-COPY --link --from=get-pure --chown=777 /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
-COPY --link --from=get-pure --chown=777 /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
+COPY --link --from=get-pure /opt/zsh/pure ${PURE_PATH}
+COPY --link --from=get-pure /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
+COPY --link --from=get-pure /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
 RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "autoload -Uz promptinit; promptinit"; \
         echo "prompt pure"; \
@@ -212,4 +213,4 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     xargs -t apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --chmod=777 dependencies/apt-dev.txt ${DEPENDENCIES_DIR}/apt-dev.txt
+COPY dependencies/apt-dev.txt ${DEPENDENCIES_DIR}/apt-dev.txt
