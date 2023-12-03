@@ -458,7 +458,7 @@ so it's a good idea to commit the changes to the environment file before/after r
 The script isn't just a `pip freeze` and the file it generates isn't made to recreate the environment from scratch,
 it is tightly coupled to the Dockerfile and the base image it uses.
 In this sense, packages that are already installed in the base image or installed by the Dockerfile
-may not be listed in the file or may be listed without a version 
+may not be listed in the file or may be listed without a version
 (this is because that may have been installed from wheels not present anymore in the final image).
 
 The purpose of the generated `requirements.txt` is to be used always at the same stage of the Dockerfile
@@ -466,7 +466,7 @@ to install the same set of missing dependencies between its previous stage and i
 (so not reinstall the dependencies already installed in the base image, for example).
 In any case,
 the Dockerfile also records the snapshots of the dependency files used to generate each stage for debugging that can be
-found in the `/opt/template-dependencies/` directory. 
+found in the `/opt/template-dependencies/` directory.
 
 ```bash
 update-env-file
@@ -566,14 +566,14 @@ it is tightly coupled to the Dockerfile.
 In this sense, packages it installs may depend on system dependencies installed by the Dockerfile
 and dependencies installed at later stages will not be listed.
 
-**Note:** A strict `mamba env export` is recorded 
+**Note:** A strict `mamba env export` is recorded
 
 The purpose of the generated `environment.yml` is to be used always at the same stage of the Dockerfile
 to install the initial set of dependencies.
 (and not install dependencies that the Dockerfile will build and install later).
 In any case,
 the Dockerfile also records the snapshots of the dependency files used to generate each stage for debugging that can be
-found in the `/opt/template-dependencies/` directory. 
+found in the `/opt/template-dependencies/` directory.
 
 ```bash
 update-env-file

@@ -52,7 +52,7 @@ We also have a guide at CLAIRE which you can get inspiration from
 
 The examples in this README were made with username `moalla` and lab-name `claire`.
 Adapt them accordingly to your username and lab name.
-Run 
+Run
 ```bash
 ./template.sh get_runai_scripts
 ```
