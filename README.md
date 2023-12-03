@@ -131,7 +131,8 @@ It's useful to commit after some checkpoints to be able to go back if you make a
     3. Have a look at the last paragraph below describing how to keep your project in good shape,
        then delete this getting started, to only keep the project [Getting Started](#getting-started) section.
 
-You're off to a good start! Here are a few tips for keeping your project in good shape.
+You're off to a good start! If you made it here, give the template a star!
+Here are a few tips for keeping your project in good shape.
 
 - Keep this README up to date.
   Fill in the rest of the sections after the Getting Started section when releasing your project.
