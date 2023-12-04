@@ -107,7 +107,7 @@ Here are some examples.
 ```bash
 # When in the PROJECT_ROOT directory.
 python -m template_package_name.some_experiment some_arg=some_value
-source reproducibility-scripts/some-experiment.sh
+zsh reproducibility-scripts/some-experiment.sh
 ```
 
 ## Maintaining the environment
@@ -187,7 +187,7 @@ so it's a good idea to commit the changes to the environment file before and aft
 
 ```bash
 # When in the PROJECT_ROOT directory.
-source installation/conda-osx-arm64-mps/update-env-file.sh
+zsh installation/conda-osx-arm64-mps/update-env-file.sh
 ```
 
 There are some caveats (e.g., packages installed from GitHub with pip), so have a look at
