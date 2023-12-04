@@ -5,8 +5,7 @@ defaults:
   - setup
   # This file.
   - _self_
-  # Optional override when you're developing.
-  # Remember to unset then for production.
+  # Optional override (untracked by git, must not impact reproducibility).
   - optional override: some_experiment
 
 ######################################################################
