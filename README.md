@@ -198,7 +198,7 @@ Refer to `data/README.md`.
 ### Logging and tracking experiments
 
 We use [Weights & Biases](https://wandb.ai/site) to log and track our experiments.
-If you're logged in, your default entity will be used (A fixed entity is not set in the config),
+If you're logged in, your default entity will be used (a fixed entity is not set in the config),
 and you can set another entity with the `WANDB_ENTITY` environment variable.
 Otherwise, the runs will be anonymous (you don't need to be logged in).
 
@@ -242,7 +242,7 @@ Below, we give a description of the main files and directories in this repositor
 
 ```
  └─── src/                         # Source code.
-    └── template-package-name      # Our package.
+    └── template_package_name      # Our package.
         ├── configs/               # Hydra configuration files.
         └── some_experiment.py     # Some experiment.
 ```
