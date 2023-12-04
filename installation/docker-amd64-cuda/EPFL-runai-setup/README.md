@@ -213,7 +213,7 @@ Your W&B API key should be exposed as the `WANDB_API_KEY` environment variable.
 Run:ai doesn't support Kubernetes secrets yet, and you don't want to pass it as a clear environment variable
 (visible in the Run:ai dashboard),
 so an alternative is to have it in your PVC and pass it with the
-`-e WANDB_API_KEY_FILE` environment variable in your `runai submit` command and let the template handle it.
+`-e WANDB_API_KEY_FILE_AT` environment variable in your `runai submit` command and let the template handle it.
 
 E.g.,
 
@@ -223,7 +223,7 @@ E.g.,
 echo <my-wandb-api-key> > /claire-rcp-scratch/home/moalla/.wandb_api_key
 ```
 
-Then specify `-e WANDB_API_KEY_FILE=/claire-rcp-scratch/home/moalla/.wandb_api_key` in my `runai submit` command.
+Then specify `-e WANDB_API_KEY_FILE_AT=/claire-rcp-scratch/home/moalla/.wandb_api_key` in my `runai submit` command.
 
 ### Remote development
 
