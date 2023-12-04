@@ -47,8 +47,8 @@ You can link back to this file for common instructions and information about dow
   ln -s /absolute_path/to/dataset data/dataset
   ```
 
+## Description of the data
+
 ## Instructions to obtain the data
 
 ## Instructions to process the data
-
-## Description of the data
