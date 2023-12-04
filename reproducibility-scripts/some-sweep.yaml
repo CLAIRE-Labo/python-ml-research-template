@@ -1,4 +1,4 @@
-# Run with wandb sweep reproducibility-scripts/some_sweep.yaml to generate a sweep.
+# Run with wandb sweep reproducibility-scripts/some-sweep.yaml to generate a sweep.
 # Run with wandb agent some-sweep-id to run the sweep.
 
 project: template-project-name
