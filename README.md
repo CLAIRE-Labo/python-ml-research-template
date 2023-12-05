@@ -67,7 +67,8 @@ It's useful to commit after some checkpoints to be able to go back if you make a
     ```
    We will refer to the absolute path to the root of the repository as `PROJECT_ROOT`.
 
-2. Fill the template variables in `template/template-variables.env` and run the script
+2. Fill the template variables in `template/template-variables.env` by
+   editing the ones with the `$NEW_` prefix, then run the script
    ```bash
    ./template/change-project-name.sh
    ```
