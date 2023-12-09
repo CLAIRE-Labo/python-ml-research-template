@@ -72,7 +72,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
    ```bash
    ./template/change-project-name.sh
    ```
-   Then delete the `template` directory and commit.
+   Commit.
 3. Initialize the pre-commit hooks as described in the [contributing](#contributing) section.
    Update them to their latest version with `pre-commit autoupdate`.
    Commit.
