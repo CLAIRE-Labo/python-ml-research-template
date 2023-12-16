@@ -245,10 +245,10 @@ You can follow the instructions in `outputs/README.md` to download and use them.
 Below, we give a description of the main files and directories in this repository.
 
 ```
- └─── src/                         # Source code.
-    └── template_package_name      # Our package.
-        ├── configs/               # Hydra configuration files.
-        └── template_experiment.py     # Some experiment.
+ └─── src/                              # Source code.
+    └── template_package_name           # Our package.
+        ├── configs/                    # Hydra configuration files.
+        └── template_experiment.py      # A template experiment.
 ```
 
 ## Contributing
