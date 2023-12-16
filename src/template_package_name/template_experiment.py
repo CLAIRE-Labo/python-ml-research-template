@@ -1,4 +1,5 @@
 # An example file to run an experiment.
+# Keep this, it's used as an example to run the code after a user installs the project.
 
 import logging
 from pathlib import Path
@@ -28,7 +29,7 @@ OmegaConf.register_new_resolver(
 )
 
 
-@hydra.main(version_base=None, config_path="configs", config_name="some_experiment")
+@hydra.main(version_base=None, config_path="configs", config_name="template_experiment")
 def main(config: DictConfig) -> None:
     # Here you can make some computations with the config to add new keys, correct some values, etc.
     # E.g., read-only variables that can be useful when navigating the experiments on wandb (filtering, sorting, etc.).

@@ -1,4 +1,5 @@
-# An example config file for an experiment scripts.
+# An example config file for an experiment.
+# Keep this, it's used as an example to run the code after a user installs the project.
 
 defaults:
   # Common setup.
@@ -6,7 +7,7 @@ defaults:
   # This file.
   - _self_
   # Optional override (untracked by git, must not impact reproducibility).
-  - optional override: some_experiment
+  - optional override: template_experiment
 
 ######################################################################
 

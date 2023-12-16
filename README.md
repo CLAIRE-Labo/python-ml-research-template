@@ -50,6 +50,8 @@ then follow the instructions below to set up your project.
 You can also give your GitHub repo another name format if you prefer, but for the template, you will have to pick
 a `PROJECT_NAME` as well.
 It's useful to commit after some checkpoints to be able to go back if you make a mistake.
+Some instructions will send you to different READMEs in the template that will compile nicely together in the end.
+Remember to get back to this root one after finishing each step.
 
 1. Clone the repo with destination `PROJECT_NAME`.
     - If you plan to develop on your local computer, clone it there.
@@ -96,6 +98,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
       It's up to you to extend it.
 
       Go to `installation/docker-amd64-cuda/README.md` for the setup.
+      Come back here after following the instructions there.
 
     - **Conda**.
       The environment is shipped as a conda environment file.
@@ -113,6 +116,7 @@ It's useful to commit after some checkpoints to be able to go back if you make a
       It's up to you to extend it.
 
       Go to `installation/conda-osx-arm64-mps/README.md` for the setup.
+      Come back here after following the instructions there.
 
    Delete the installation directory for the installation method you don't use.
 
@@ -172,7 +176,8 @@ We support the following methods and platforms for installing the project depend
   Windows machines with WSL, and clusters running OCI-compliant containers,
   like the EPFL Run:ai (Kubernetes) clusters.
 
-  To get started, follow the instructions in `installation/docker-amd64-cuda/README.md`.
+  Follow the instructions in `installation/docker-amd64-cuda/README.md` to install the environment
+  then get back here for the rest of the instructions to run the experiments.
 
   We ran our experiments on TODO: FILL IN THE HARDWARE YOU USED.
   To run them, you should have at least TODO: FILL IN THE MINIMUM HARDWARE REQS IF APPLICABLE.
@@ -180,7 +185,8 @@ We support the following methods and platforms for installing the project depend
 - **Conda for osx-arm64**
   This option works for macOS machines with Apple Silicon and can leverage MPS acceleration.
 
-  To get started, follow the instructions in `installation/conda-osx-arm64-mps/README.md`.
+  Follow the instructions in `installation/conda-osx-arm64-mps/README.md` to install the environment
+  then get back here for the rest of the instructions to run the experiments.
 
   We ran our experiments on TODO: FILL IN THE HARDWARE YOU USED.
   To run them, you should have at least TODO: FILL IN THE MINIMUM HARDWARE REQS IF APPLICABLE.
@@ -242,7 +248,7 @@ Below, we give a description of the main files and directories in this repositor
  └─── src/                         # Source code.
     └── template_package_name      # Our package.
         ├── configs/               # Hydra configuration files.
-        └── some_experiment.py     # Some experiment.
+        └── template_experiment.py     # Some experiment.
 ```
 
 ## Contributing

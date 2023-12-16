@@ -10,6 +10,9 @@ This template provides a Docker setup to define your environment.
 For detailed information on the setup, refer to the next section [(_More details on the
 setup_)](#more-details-on-the-setup).
 Follow the steps below to get started.
+Some steps will send you to different sections of the document.
+It may feel like jumping back and forth, but everything should read nicely after the setup
+for your future users (and yourself).
 
 1. Choose the platform and hardware acceleration that you will build the image for.
    You have to pick one as fully specified environment files are not trivially portable across platforms
@@ -96,6 +99,7 @@ Follow the steps below to get started.
 
 9. Remove the template sections that you've completed from this file (indicated with **TEMPLATE TODO**)
    to only leave the instructions relevant to the next users.
+10. Go back to the root README for the rest of the instructions to set the template up.
 
 ## More details on the setup
 
@@ -190,6 +194,7 @@ We provide the following guides for obtaining/building and running the environme
   the instructions [run locally with Docker Compose](#running-locally-with-docker-compose).
 - To run on the EPFL Run:ai clusters, follow the instructions
   to [obtain/build the environment](#obtainingbuilding-the-environment)
+  (perform them on your local machine)
   then refer to the `./EPFL-runai-setup/README.md`.
 
   The guide also provides instructions to do remote development on the Run:ai cluster.
@@ -286,6 +291,9 @@ cd installation/docker-amd64-cuda
    and tag them `*-*-${USR}` instead of `*-*-root`.
    These will be the images that you actually run and deploy to match the permissions on your mounted storage.
 
+For the local deployment option with Docker Compose, follow the instructions below,
+otherwise get back to the instructions for your deployment option you're following.
+
 ## Running locally with Docker Compose
 
 > [!IMPORTANT]
@@ -343,9 +351,10 @@ Then you can:
 - Run jobs in independent containers running the runtime image with
     ```bash
     # You can for example open tmux shells and run your experiments in them.
+    # template_experiment is an actual script that you can run.
     ./template.sh run your_command
     ./template.sh run python --version
-    ./template.sh run python -m template_package_name.some_experiment some_arg=some_value
+    ./template.sh run python -m template_package_name.template_experiment some_arg=some_value
     ```
   These containers start with the entrypoint and then run the command you specified.
   By default, they are automatically removed after they exit.
@@ -355,6 +364,10 @@ Then you can:
   runs the original entrypoint of your base image if it exists,
   and execs your command with PID 1.
   Only do so if you need to debug the entrypoint itself or if you have a custom use case.
+
+  You can read the following section for quick tips on development with containers,
+  then return to the root README for the rest of the instructions to run our experiments.
+
 
 ### Development
 
@@ -390,6 +403,8 @@ The entrypoint can then take any command to run in the container and will run it
 
 You can refer to the `EPFL-runai-setup/README.md` for an idea of how this would work on a Kubernetes cluster
 interfaced with Run:ai.
+
+Return to the root README for the rest of the instructions to run our experiments.
 
 > [!IMPORTANT]
 > **TEMPLATE TODO:**

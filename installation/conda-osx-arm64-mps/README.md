@@ -8,6 +8,9 @@
 
 This template provides a minimal `environment.yml` file for setting a conda environment.
 Follow the steps below to get started.
+Some steps will send you to different sections of the document.
+It may feel like jumping back and forth, but everything should read nicely after the setup
+for your future users (and yourself).
 
 1. Choose the platform and hardware acceleration that you will build the environment for.
    You have to pick one as fully specified conda environment files are not trivially
@@ -48,6 +51,7 @@ Follow the steps below to get started.
    You can then add more dependencies as your project grows following
    the [instructions to maintain the environment](#maintaining-the-environment).
    Commit.
+6. Go back to the root README for the rest of the instructions to set the template up.
 
 ## Cloning the repository
 
@@ -95,20 +99,24 @@ mamba activate template-project-name
 pip install -e .
 ```
 
-## Running the code in the environment
+## Running code in the environment
 
 ```bash
 mamba activate template-project-name
 ```
 
-Run the scripts from the `PROJECT_ROOT` directory.
+Run scripts from the `PROJECT_ROOT` directory.
 Here are some examples.
 
 ```bash
 # When in the PROJECT_ROOT directory.
-python -m template_package_name.some_experiment some_arg=some_value
-zsh reproducibility-scripts/some-experiment.sh
+# template_experiment is an actual script that you can run.
+python -m template_package_name.template_experiment some_arg=some_value
+zsh reproducibility-scripts/template-experiment.sh
 ```
+
+The environment is set up.
+Return to the root README for the rest of the instructions to run our experiments.
 
 ## Maintaining the environment
 

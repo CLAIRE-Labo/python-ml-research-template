@@ -12,7 +12,7 @@ optim:
   num_epochs: 1
 ```
 
-As done for `.../override/some_experiment.yaml` in `config/some_experiment.yaml`
+As done for `.../override/template_experiment.yaml` in `config/template_experiment.yaml`
 put the override config as the last one to be read by the experiment config (the last one it its defaults).
 It will override any variable set there.
 Remember to remove everything that's not hardware dependent for your reproducible runs,

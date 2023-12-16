@@ -201,6 +201,11 @@ which will skip the installation step then you can replay the installation manua
 
 ## Use cases
 
+The basic configuration for the project's environment is now set up.
+You can follow the remaining sections below to see how to run unattended jobs and set up remote development.
+After that, return to the root README for the rest of the instructions to run our experiments.
+
+
 ### Running unattended jobs
 
 By performing the above first steps, you should have all the required setup to run unattended jobs.

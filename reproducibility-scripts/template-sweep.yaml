@@ -1,8 +1,8 @@
-# Run `wandb sweep reproducibility-scripts/some-sweep.yaml` to generate a sweep.
-# Run `wandb agent some-sweep-id` to run the sweep.
+# Run `wandb sweep reproducibility-scripts/template-sweep.yaml` to generate a sweep.
+# Run `wandb agent template-sweep-id` to run the sweep.
 
 project: template-project-name
-name: some-sweep
+name: template-sweep
 method: grid
 metric:
   goal: maximize
@@ -18,5 +18,5 @@ parameters:
 command:
   - python
   - "-m"
-  - "template_package_name.some_experiment"
+  - "template_package_name.template_experiment"
   - ${args_no_hyphens}
