@@ -378,7 +378,7 @@ You can put this directory in a place where you keep the remote development tool
 You should then specify the `JETBRAINS_CONFIG_AT` env variable with your submit command to maintain
 your IDE and project configurations.
 
-**Option 1**:
+**Option 1:**
 
 1. Submit your job as in the example `submit-scripts/remote_development.sh` and in particular edit the environment
    variables
@@ -395,7 +395,7 @@ to your PVC to use option 2.
 cp -r ~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version> /claire-rcp-scrach/home/moalla/remote-development/pycharm
 ```
 
-**Option 2**:
+**Option 2:**
 You can find an example in `submit-scripts/remote_development.sh`.
 
 1. Same as option 1, but set the environment variable `PYCHARM_IDE_AT` to the directory containing the IDE binaries.
@@ -413,7 +413,15 @@ You can find an example in `submit-scripts/remote_development.sh`.
    described [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#use_idea).
    Alternatively, you will also directly find the host on your list of Gateway connections.
 
-**Limitations**
+**Configuration**:
+
+* PyCharm's default terminal is bash. Change it to zsh in the Settings -> Tools -> Terminal.
+* When running Run/Debug configurations, set your working directory the `PROJECT_ROOT_AT`, not the script's directory.
+* Your interpreter will be
+  * the system Python `/usr/bin/python` with the `from-python` option.
+  * the Python in your conda environment with the `from-scratch` option, with the conda binary found at `/opt/conda/condabin/conda`.
+
+**Limitations:**
 
 - The terminal in PyCharm opens ssh connections to the container,
   so the workaround (and its limitations) in the ssh section apply.

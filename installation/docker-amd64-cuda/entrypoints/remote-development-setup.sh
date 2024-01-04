@@ -52,9 +52,6 @@ if [ -n "${JETBRAINS_CONFIG_AT}" ]; then
   # IDE project-config.
   mkdir -p "${HOME}/.config/"
   ln -s "${JETBRAINS_CONFIG_AT}" "${HOME}/.config/JetBrains"
-  # Workaround to force zsh in the remote IDE terminal.
-  # There's a bug and it keeps opening bash.
-  echo "zsh" >> "${HOME}/.bashrc"
 fi
 
 if [ -n "${PYCHARM_IDE_AT}" ]; then
