@@ -28,9 +28,9 @@ if [ -n "${SSH_SERVER}" ]; then
   # SSH connections don't have the environment variables, so we need to set them.
   # Export all the env variables except the ones specific to the current shell.
   # Not sure if this is the best way to do it.
-  env | grep -v -E '^(BASH|SHLVL|PWD|OLDPWD|_)' |\
-   sed -E 's/=(.*)/="\1"/' | sed 's/^/export /' > "${HOME}"/docker-env-vars
-  echo "source ${HOME}/docker-env-vars" >> "${HOME}"/.zshenv
+  env | grep -v -E '^(BASH|SHLVL|PWD|OLDPWD|SHELL|LOGNAME|_)' |\
+   sed -E 's/=(.*)/="\1"/' | sed 's/^/export /' > "${HOME}"/.docker-env-vars
+  echo "source ${HOME}/.docker-env-vars" >> "${HOME}"/.zshenv
 
   echo "[TEMPLATE INFO] Starting ssh server."
   # This runs in background, so the script will continue.
