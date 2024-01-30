@@ -10,8 +10,8 @@
 > **TEMPLATE TODO:**
 > Replace the description below with a description of your project, then delete this note.
 
-This is the CLAIRE lab's template for starting Python machine-learning research
-projects with hardware acceleration.
+This is a template for starting Python machine-learning research
+projects with hardware acceleration at the EPFL CLAIRE lab.
 It features and encourages best practices for:
 
 - Reproducible environments on major platforms with hardware acceleration with a great development experience
@@ -27,7 +27,7 @@ It features and encourages best practices for:
 - Code quality with [pre-commit](https://pre-commit.com) hooks.
 
 Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
-It makes collaboration very easy with no setup delays, and open sourcing your work straightforward,
+It makes collaboration and open-sourcing your work straightforward, avoiding setup issues and
 [maximizing its impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501#a826).
 The practices in this template earned its authors
 an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5dI5aEn)
@@ -35,8 +35,9 @@ at the [ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
 
 A project made with the template would look like [this](https://github.com/skandermoalla/pytoych-benchmark).
 
-For more information on the template and a discussion of its design choices check the rest of this README
-and the `template/README.md` file.
+Follow this README to get started with the template.
+
+For a brief discussion of the template's design choices and a Q&A check `template/README.md` file.
 
 ## Getting started with the template
 

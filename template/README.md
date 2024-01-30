@@ -5,14 +5,18 @@
 This template ensures the reproducibility of your results through 3 artifacts:
 
 1. The development environment
-    - Recorded in the Docker images and described in Dockerfile and environment files with the Docker installation.
-    - (Less reliably) described in the environment file for the conda installation.
+    - Recorded in the Docker images that you upload and described in Dockerfile and environment files
+      that you keep up to date with the Docker installation.
+    - (Less reliably) described in the environment file that you keep up to date for the conda installation.
 2. The project code.
-    - Recorded in the git repository.
+    - Recorded in the git repository that you keep up to date.
+    - Made reproducible (to a desired degree) by you correctly seeding the random number generators and
+      optionally removing non-deterministic operations or replicable by running enough seeds.
 3. The data, outputs, model weights and other artifacts.
-    - Up to you to record them, but we provide placeholder directories abstracting away the user storage system.
+    - Recorded and uploaded by you.
+    - (Virtually) placed in the placeholder directories abstracting away the user storage system.
 
-## Template FAQ
+## Template Q&A
 
 ### I started my project from an older version of the template, how do I get updates?
 
