@@ -259,9 +259,9 @@ get_runai_scripts() {
   check
   cp -r "./EPFL-runai-setup/template-submit-examples/" "./EPFL-runai-setup/submit-scripts"
   for file in \
-    "./EPFL-runai-setup/submit-scripts/first_steps.sh" \
+    "./EPFL-runai-setup/submit-scripts/first-steps.sh" \
     "./EPFL-runai-setup/submit-scripts/minimal.sh" \
-    "./EPFL-runai-setup/submit-scripts/remote_development.sh" \
+    "./EPFL-runai-setup/submit-scripts/remote-development.sh" \
     "./EPFL-runai-setup/submit-scripts/unattended.sh" ; do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire-compute/${GRP}/g" "$file" && rm "${file}.deleteme"

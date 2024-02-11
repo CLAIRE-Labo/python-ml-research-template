@@ -1,3 +1,7 @@
+## See README for additional features like
+# -e GIT_CONFIG_AT=<>
+# -e WANDB_API_KEY_FILE_AT=<>
+
 ## PyCharm example:
 
 # Option 1. No PyCharm on the remote server. Launch PyCharm from your local machine.
@@ -8,7 +12,7 @@ runai submit \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e JETBRAINS_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-config \
+  -e PYCHARM_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm-config \
   -- sleep infinity
 
 # Option 2 (preferred). PyCharm launched from the remote server.
@@ -19,12 +23,11 @@ runai submit \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e JETBRAINS_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-config \
   -e PYCHARM_IDE_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm \
+  -e PYCHARM_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm-config \
   -- sleep infinity
 
 ## The new bits here are:
-# -e JETBRAINS_CONFIG_AT=<> will be mapped to ~/.config/JetBrains in the container
 # -e PYCHARM_IDE_AT=<> starts the IDE from the container directly.
 
 ## VS Code example:

@@ -104,7 +104,7 @@ Otherwise, the template covers a deployment option that simply opens an ssh serv
 on your container without setting up the project,
 forwards your ssh keys, and allows you to clone your repository on the container.
 
-1. Submit your job in the same fashion as `submit-scripts/first_steps.sh`,
+1. Submit your job in the same fashion as `submit-scripts/first-steps.sh`,
    specifying your image name, and the PVC where you'll put your code (typically the scratch one).
    Checking its logs will give:
    ```text
@@ -239,7 +239,7 @@ running on your laptop.
 
 The entrypoint will start an ssh server and a remote development server for your preferred IDE/code editor
 when you set some environment variables.
-An example of an interactive job submission can be found in `submit-scripts/remote_development.sh`.
+An example of an interactive job submission can be found in `submit-scripts/remote-development.sh`.
 
 Below, we list and describe in more detail the tools and IDEs supported for remote development.
 
@@ -361,8 +361,8 @@ to be the same as the one specified in the `PROJECT_ROOT_AT`.
 **Preliminaries: saving the project IDE configuration**
 
 The remote IDE stores its configuration (e.g., the interpreters you set up, memory requirements, etc.)
-in `~/.config/JetBrains/...`
-Every project location will have its own configuration there.
+in `~/.config/JetBrains/RemoteDev-PY/...` and its cache in `~/.cache/JetBrains/RemoteDev-PY/...`.
+Every project location will have its own configuration and cache there.
 
 To have it preserved between different dev containers, you should create a placeholder
 directory in your PVC and the template will handle sym-linking it when the container starts.
@@ -372,17 +372,17 @@ You can put this directory in a place where you keep the remote development tool
 ```
 /claire-rcp-scrach/home/moalla/template-project-name
 ├── ...               # Other remote development tools.
-└── jetbrains-config  # To contain the IDE .vscode-server for the project.
+└── pycharm-config    # To contain the config and cache of the IDE.
 ```
 
-You should then specify the `JETBRAINS_CONFIG_AT` env variable with your submit command to maintain
+You should then specify the `PYCHARM_CONFIG_AT` env variable with your submit command to maintain
 your IDE and project configurations.
 
 **Option 1:**
 
-1. Submit your job as in the example `submit-scripts/remote_development.sh` and in particular edit the environment
+1. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
    variables
-    - `JETBRAINS_CONFIG_AT` by setting to the `_pycharm-config` described above.
+    - `PYCHARM_CONFIG_AT` by setting to the `pycharm-config` described above.
     - `PYCHARM_IDE_AT` by deleting it as the IDE will be installed after the container is run.
 2. Enable port forwarding for the SSH port.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
@@ -396,7 +396,7 @@ cp -r ~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version> /claire-rcp-s
 ```
 
 **Option 2:**
-You can find an example in `submit-scripts/remote_development.sh`.
+You can find an example in `submit-scripts/remote-development.sh`.
 
 1. Same as option 1, but set the environment variable `PYCHARM_IDE_AT` to the directory containing the IDE binaries.
    Your IDE will start running with your container.
@@ -488,7 +488,7 @@ the container starts.
 To do so, you need to:
 
 1. Set the `JUPYTER_SERVER=1` environment variable in your `runai submit` command.
-   You can find an example in `submit-scripts/remote_development.sh`.
+   You can find an example in `submit-scripts/remote-development.sh`.
 
    A Jupyter server will start running with your container. It will print a link to the container logs.
 
