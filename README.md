@@ -154,7 +154,7 @@ Here are a few tips for keeping your project in good shape.
   This template facilitates meeting all the checklist items, with a different design.
   Have a look at the checklist when you ship your project.
 
-## Getting Started
+## Getting started
 
 ### Code and development environment
 
@@ -207,7 +207,7 @@ If you're logged in, your default entity will be used (a fixed entity is not set
 and you can set another entity with the `WANDB_ENTITY` environment variable.
 Otherwise, the runs will be anonymous (you don't need to be logged in).
 
-## Reproduction and Experimentation
+## Reproduction and experimentation
 
 ### Reproducing our results
 
