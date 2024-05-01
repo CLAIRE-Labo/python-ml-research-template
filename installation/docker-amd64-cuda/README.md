@@ -292,7 +292,7 @@ cd installation/docker-amd64-cuda
    These will be the images that you actually run and deploy to match the permissions on your mounted storage.
 
 For the local deployment option with Docker Compose, follow the instructions below,
-otherwise get back to the instructions for your deployment option you're following.
+otherwise get back to the instructions of deployment option you're following.
 
 ## Running locally with Docker Compose
 
