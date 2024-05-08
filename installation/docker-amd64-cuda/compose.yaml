@@ -70,7 +70,7 @@ services:
     extends:
       service: run-local-cpu
     environment:
-      NVIDIA_VISIBLE_DEVICES: all # Can be overridden by the user.
+      CUDA_VISIBLE_DEVICES: all # Can be overridden by the user.
     deploy:
       resources:
         reservations:
@@ -82,7 +82,7 @@ services:
     extends:
       service: dev-local-cpu
     environment:
-      NVIDIA_VISIBLE_DEVICES: all # Can be overridden by the user.
+      CUDA_VISIBLE_DEVICES: all # Can be overridden by the user.
     deploy:
       resources:
         reservations:
