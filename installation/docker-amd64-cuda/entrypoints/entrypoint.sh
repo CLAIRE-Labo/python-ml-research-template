@@ -19,7 +19,8 @@ fi
 # This is set in the entrypoint and not in the Dockerfile as a Workdir
 # to accommodate deployment options which can't mount subdirectories to specific locations.
 # (so we cannot assume a predefined location for the project).
-echo "[TEMPLATE INFO] The next commands (and all interactive shells) will be run from ${PROJECT_ROOT_AT}."
+echo "[TEMPLATE INFO] The next commands will be run from ${PROJECT_ROOT_AT}."
+echo "[TEMPLATE INFO] Interactive zsh shells will also be started in ${PROJECT_ROOT_AT}."
 cd "${PROJECT_ROOT_AT}"
 
 # Install the package in editable mode.
