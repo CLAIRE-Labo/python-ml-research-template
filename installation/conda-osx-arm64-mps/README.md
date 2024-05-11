@@ -26,15 +26,16 @@ for your future users (and yourself).
    # For examples run:
    ./installation/edit-platform-and-acceleration.sh
    # To do the change run:
-   ./installation/edit-platform-and-acceleration.sh conda CURR_PLATFORM CURR_ACCELERATION NEW_PLATFORM NEW_ACCELERATION
+   ./installation/edit-platform-and-acceleration.sh change conda CURR_PLATFORM CURR_ACCELERATION NEW_PLATFORM NEW_ACCELERATION
    # For a list of available platforms you can see the installers below
    # https://anaconda.org/pytorch/pytorch
    # The hardware acceleration will be determined by the packages you install.
    # E.g. if you install PyTorch with CUDA, set the acceleration to cuda.
    ```
-   The template currently supports setting only a single platform & hardware acceleration combination.
-   You can always adapt it to have multiple platforms (you will need separate environment files,
-   ideally test them, and ensure your results/conclusions hold across platforms.)
+   If you plan to support multiple platforms or hardware accelerations,
+   you can duplicate this installation method directory
+   with `./installation/edit-platform-and-acceleration.sh copy ...`
+   then perform the setup again.
 2. Specify your initial dependencies.
    The Python version and package name have already been filled by the `fill-template.sh` script.
    Follow the [instructions to maintain the environment](#maintaining-the-environment)
@@ -45,7 +46,7 @@ for your future users (and yourself).
 4. Get familiar with running the environment following the user [instructions to
    run the environment](#running-the-code-in-the-environment).
 5. If everything works fine,
-   (we suggest checking that all of your dependencies are there with `conda list`,
+   (we suggest checking that all of your dependencies are there with `mamba list`,
    and trying to import the important ones),
    then pin the dependencies you got following the [freeze the environment](#freeze-the-environment) section.
    You can then add more dependencies as your project grows following
@@ -58,7 +59,7 @@ for your future users (and yourself).
 Clone the git repository.
 
 ```bash
-git clone <URL/SSH> template-project-name
+git clone <HTTPS/SSH> template-project-name
 cd template-project-name
 ```
 
@@ -69,7 +70,7 @@ We will refer the absolute path to the root of the repository as `PROJECT_ROOT`.
 **Prerequisites**
 
 - `brew`: [Homebrew](https://brew.sh/).
-- `mamba` (or equivalently `conda`): we recommend [Mambaforge](https://github.com/conda-forge/miniforge).
+- `mamba` (or equivalently `conda`): we recommend [Miniforge](https://github.com/conda-forge/miniforge).
 
 **Installation**
 

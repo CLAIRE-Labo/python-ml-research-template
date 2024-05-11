@@ -19,7 +19,8 @@ fi
 # This is set in the entrypoint and not in the Dockerfile as a Workdir
 # to accommodate deployment options which can't mount subdirectories to specific locations.
 # (so we cannot assume a predefined location for the project).
-echo "[TEMPLATE INFO] The next commands (and all interactive shells) will be run from ${PROJECT_ROOT_AT}."
+echo "[TEMPLATE INFO] The next commands will be run from ${PROJECT_ROOT_AT}."
+echo "[TEMPLATE INFO] Interactive zsh shells will also be started in ${PROJECT_ROOT_AT}."
 cd "${PROJECT_ROOT_AT}"
 
 # Install the package in editable mode.
@@ -33,7 +34,7 @@ else
   echo "[TEMPLATE INFO] Expecting ${PROJECT_ROOT_AT} to be a Python project."
   echo "[TEMPLATE INFO] To skip this installation use the env variable SKIP_INSTALL_PROJECT=1."
   # The path is relative on purpose.
-  pip install -e .
+  pip install --user -e .
   # Test that the package can be imported.
   echo "[TEMPLATE INFO] Testing that the package can be imported."
   python -c "import ${PACKAGE_NAME}"

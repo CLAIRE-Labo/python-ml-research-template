@@ -1,7 +1,7 @@
 runai submit \
   --name example-minimal \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:run-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-run-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -- sleep infinity

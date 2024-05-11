@@ -31,6 +31,9 @@ if [ -n "${SSH_SERVER}" ]; then
   env | grep -v -E '^(BASH|SHLVL|PWD|OLDPWD|SHELL|LOGNAME|_)' |\
    sed -E 's/=(.*)/="\1"/' | sed 's/^/export /' > "${HOME}"/.docker-env-vars
   echo "source ${HOME}/.docker-env-vars" >> "${HOME}"/.zshenv
+  echo "[TEMPLATE INFO] Environment variables have been written to ${HOME}/.docker-env-vars."
+  echo "[TEMPLATE_INFO] And will be sourced at every zsh invocation to preserve environment variables in ssh connections."
+  echo "[TEMPLATE INFO] If you change one at runtime and want it to be preserved in subsequence zsh invocations, you need to write it to ${HOME}/.docker-env-vars as well."
 
   echo "[TEMPLATE INFO] Starting ssh server."
   # This runs in background, so the script will continue.

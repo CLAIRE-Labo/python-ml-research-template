@@ -63,10 +63,10 @@ They will be in `.EPFL-runai-setup/submit-scripts`.
 
 The following will push the generic and user-configured runtime and development images.
 
-- `LAB_NAME/USR/PROJECT_NAME:run-latest-root`
-- `LAB_NAME/USR/PROJECT_NAME:dev-latest-root`
-- `LAB_NAME/USR/PROJECT_NAME:run-latest-USR`
-- `LAB_NAME/USR/PROJECT_NAME:dev-latest-USR`
+- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-run-latest-root`
+- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-dev-latest-root`
+- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-run-latest-USR`
+- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-dev-latest-USR`
 
 It will also push them with the git commit hash as a tag if no new commit was made since the last build.
 You can rebuild the images with `./template.sh build` to tag them with the latest commit hash.
@@ -130,8 +130,8 @@ forwards your ssh keys, and allows you to clone your repository on the container
    ```bash
    # Somewhere in your PVC, say your personal directory there.
    mkdir template-project-name
-   git clone <repo-url> template-project-name/dev
-   git clone <repo-url> template-project-name/run
+   git clone <HTTPS/SSH> template-project-name/dev
+   git clone <HTTPS/SSH> template-project-name/run
    ```
 
    We also recommend that you make Git ignore the executable bit as the repo is moved across filesystems.

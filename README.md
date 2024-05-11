@@ -10,9 +10,8 @@
 > **TEMPLATE TODO:**
 > Replace the description below with a description of your project, then delete this note.
 
-This is a template for starting Python machine-learning research
-projects with hardware acceleration at the EPFL CLAIRE lab.
-It features and encourages best practices for:
+A template for starting Python machine-learning research
+projects with hardware acceleration featuring:
 
 - Reproducible environments on major platforms with hardware acceleration with a great development experience
   covering multiple use cases:
@@ -26,14 +25,16 @@ It features and encourages best practices for:
   and [Weights & Biases](https://wandb.ai/site).
 - Code quality with [pre-commit](https://pre-commit.com) hooks.
 
-Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
-It makes collaboration and open-sourcing your work straightforward, avoiding setup issues and
-[maximizing its impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501#a826).
+The template makes collaboration and open-sourcing straightforward, avoiding setup issues and
+[maximizing impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501#a826).
 The practices in this template earned its authors
 an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5dI5aEn)
 at the [ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
 
-A project made with the template would look like [this](https://github.com/skandermoalla/pytoych-benchmark).
+Projects made with the template would look like
+[this toy project](https://github.com/skandermoalla/pytoych-benchmark)
+or [this paper](https://github.com/CLAIRE-Labo/no-representation-no-trust) whose curves have been exactly reproduced
+(exact same numbers) on multiple different platforms (EPFL Kubernetes cluster, VM on GCP, HPC cluster with Apptainer),
 
 Follow this README to get started with the template.
 
@@ -50,6 +51,7 @@ Give it a lowercase hyphen-separated name (we will refer to this name as `PROJEC
 then follow the instructions below to set up your project.
 You can also give your GitHub repo another name format if you prefer, but for the template, you will have to pick
 a `PROJECT_NAME` as well.
+
 It's useful to commit after some checkpoints to be able to go back if you make a mistake.
 Some instructions will send you to different READMEs in the template that will compile nicely together in the end.
 Remember to get back to this root one after finishing each step.
@@ -60,23 +62,25 @@ Remember to get back to this root one after finishing each step.
     - If you plan to develop or deploy on a managed cluster (e.g., EPFL Run:ai clusters), clone on your local machine.
       (Docker allows cross-platform builds with emulation, but it can be slow.
       We would recommend that your local machine is of the same platform as the cluster (e.g. `amd64`, `arm64`),
-      or that you have access to a remote Docker engine running on the same platform of the cluster.)
+      or that you have access to a remote Docker engine running on the same platform as the cluster.)
     ```
-    git clone <URL/SSH> PROJECT_NAME
+    git clone <HTTPS/SSH> PROJECT_NAME
+    cd PROJECT_NAME
+    # The current directory is referred to as PROJECT_ROOT
     ```
    We will refer to the absolute path to the root of the repository as `PROJECT_ROOT`.
 
 2. Fill the template variables in `template/template-variables.env` by
    editing the ones with the `$NEW_` prefix, then run the script
    ```bash
+   # After filling the template variables in template/template-variables.env.
    ./template/change-project-name.sh
    ```
    Commit.
 3. Initialize the pre-commit hooks as described in the [contributing](#contributing) section.
    Update them to their latest version with `pre-commit autoupdate`.
    Commit.
-4. Edit the `LICENSE` file.
-   Or delete it and remember to add one when open-sourcing your code.
+4. Edit the `LICENSE` file, or delete it and remember to add one when open-sourcing your code.
    [(Some help here).](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
    A simple change if you're fine with the MIT license is to replace the `2022 Skander Moalla` with your year and name.
    Commit.
@@ -95,36 +99,41 @@ Remember to get back to this root one after finishing each step.
       You are also free to choose the hardware acceleration you want to support.
       By default, this template allows local deployment with NVIDIA GPUs and can extend
       [NGC images](https://catalog.ngc.nvidia.com/containers).
-      The template currently supports only one architecture and hardware acceleration combo at a time.
-      It's up to you to extend it.
+
+      If you plan to support multiple platforms or hardware accelerations,
+      you can duplicate this installation method
+      or adapt it to support multiple platforms at the same time.
 
       Go to `installation/docker-amd64-cuda/README.md` for the setup.
       Come back here after following the instructions there.
 
-    - **Conda**.
-      The environment is shipped as a conda environment file.
-      The level of reproducibility is lower than with Docker, as system dependencies will not be strictly recorded.
-      The only reason this option is available is to leverage hardware acceleration of platforms not compatible with
-      OCI containers, in particular, [MPS](https://developer.apple.com/metal/pytorch/)
-      which is [not supported](https://github.com/pytorch/pytorch/issues/81224)
-      on Docker for macOS with Apple Silicon.
+      - **Conda**.
+        The environment is shipped as a conda environment file.
+        The level of reproducibility is lower than with Docker, as system dependencies will not be strictly recorded.
+        The only reason this option is available is to leverage hardware acceleration of platforms not compatible with
+        OCI containers, in particular, [MPS](https://developer.apple.com/metal/pytorch/)
+        which is [not supported](https://github.com/pytorch/pytorch/issues/81224)
+        on Docker for macOS with Apple Silicon.
 
-      By default, this option is set up for `osx-arm64` to run on macOS with Apple Silicon.
-      This installation method could also be used if you want to settle for a lower level of reproducibility
-      and do not need to run on container clusters.
-      In that case, you might support another platform, e.g. `amd64`, and hardware acceleration, e.g., NVIDIA GPUs.
-      The template currently supports only one architecture and hardware acceleration combo at a time.
-      It's up to you to extend it.
+        By default, this option is set up for `osx-arm64` to run on macOS with Apple Silicon.
+        This installation method could also be used if you want to settle for a lower level of reproducibility
+        and do not need to run on container clusters.
+        In that case, you might support another platform, e.g. `amd64`, and hardware acceleration, e.g., NVIDIA GPUs.
 
-      Go to `installation/conda-osx-arm64-mps/README.md` for the setup.
-      Come back here after following the instructions there.
+        If you plan to support multiple platforms or hardware accelerations,
+        you can duplicate this installation method
+        or adapt it to support multiple platforms at the same time.
+
+        Go to `installation/conda-osx-arm64-mps/README.md` for the setup.
+        Come back here after following the instructions there.
 
    Delete the installation directory for the installation method you don't use.
 
-   Naturally, results will be reproducible on machines with the same architecture using the same installation method,
+   Naturally, results will be reproducible on machines with the same architecture and hardware acceleration
+   using the same installation method,
    but not necessarily across architectures and installation methods.
    This is because dependency versions may vary across platforms.
-   Try to keep the dependency versions as close as possible to ensure the replicability of your results.
+   Try to keep the dependency versions close to ensure an easy replicability of your results.
 
 6. Edit this `README.md` file.
     1. Edit the title with the name of your project.
@@ -144,6 +153,8 @@ Here are a few tips for keeping your project in good shape.
   If you use datasets, follow `data/README.md` to set them and write the instructions
   for the subsequent users there.
   Otherwise, delete the [data](#data) section.
+
+  Similarly, you can use the `outputs/README.md` file to share your trained models, logs, etc.
 - Remember to pin your dependencies whenever you install new ones.
   This is well described in the Maintaining the environment section of the installation instructions.
 - Keep your `reproducibility-scripts/` directory up to date.
@@ -161,11 +172,11 @@ Here are a few tips for keeping your project in good shape.
 > [!IMPORTANT]
 > **TEMPLATE TODO**:
 > Update the installation methods and platforms you support, delete the rest, and delete this note.
-> I.e. keep either Docker or Conda, or both and
-> 1. Change the platform for each option and its description to the one(s) you support
+> I.e. keep either Docker or Conda, or both, or multiple of each if you support multiple platforms.
+> 1. Specify the platform for each option and its description
 >    e.g., for Docker amd64, arm64, etc., and for conda osx-arm64, linux-amd64, etc.
-> 2. Change the hardware acceleration options to the one(s) you support
->    e.g., for Docker NVIDIA GPUs, etc.
+> 2. Specify the hardware acceleration options for each platform
+>    e.g., for Docker NVIDIA GPUs, AMD GPUs etc.
 > 3. Specify the hardware on which you ran your experiments (e.g., type of CPU/GPU and size of memory) and
 >    the minimum hardware required to run your code if applicable (e.g., NVIDIA GPU with 80GB of memory).
 
@@ -213,10 +224,17 @@ Otherwise, the runs will be anonymous (you don't need to be logged in).
 
 > [!IMPORTANT]
 > **TEMPLATE TODO**:
-> Keep these scripts up to date and run your experiments using them. Delete this note when shipping.
+> Keep these scripts up to date and run your experiments using them.
+> Do provide the W&B runs and trained models or update this section.
+> Delete this note when shipping.
 
 We provide scripts to reproduce our work in the `reproducibility-scripts/` directory.
 It has a README at its root describing which scripts reproduce which experiments.
+
+We share our Weights and Biases runs in [this W&B project](https://wandb.ai/claire-labo/template-project-name).
+
+Moreover, we make our trained models available.
+You can follow the instructions in `outputs/README.md` to download and use them.
 
 ### Experiment with different configurations
 
@@ -224,17 +242,6 @@ The default configuration for each script is stored in the `configs/` directory.
 They are managed by [Hydra](https://hydra.cc/docs/intro/).
 You can experiment with different configurations by passing the relevant arguments.
 You can get examples of how to do so in the `reproducibility-scripts/` directory.
-
-### Using trained models and experimenting with results
-
-> [!IMPORTANT]
-> **TEMPLATE TODO**:
-> Do provide the runs and trained models or update/delete this section, then delete this note.
-
-We share our Weights and Biases runs in [this W&B project](https://wandb.ai/claire-labo/template-project-name).
-
-Moreover, we make our trained models available.
-You can follow the instructions in `outputs/README.md` to download and use them.
 
 ## Repository structure
 
@@ -271,3 +278,12 @@ You can also trigger them manually with:
 ```bash
 pre-commit run --all-files
 ```
+
+## Licenses and acknowledgements
+
+This project is licensed under the LICENSE file in the root directory of the project.
+
+The initial code of this repository has been initiated by the [Python Machine Learning Research Project Template](https://github.com/CLAIRE-Labo/python-ml-research-template)
+with the LICENSE.ml-template file.
+
+Additional LICENSE files may be present in subdirectories of the project.

@@ -8,7 +8,7 @@
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
@@ -19,7 +19,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
@@ -34,7 +34,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
@@ -48,7 +48,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e JUPYTER_SERVER=1 \
