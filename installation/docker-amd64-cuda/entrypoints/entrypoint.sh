@@ -33,7 +33,7 @@ else
   echo "[TEMPLATE INFO] Expecting ${PROJECT_ROOT_AT} to be a Python project."
   echo "[TEMPLATE INFO] To skip this installation use the env variable SKIP_INSTALL_PROJECT=1."
   # The path is relative on purpose.
-  pip install -e .
+  pip install --user -e .
   # Test that the package can be imported.
   echo "[TEMPLATE INFO] Testing that the package can be imported."
   python -c "import ${PACKAGE_NAME}"
