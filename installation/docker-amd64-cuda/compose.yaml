@@ -3,7 +3,7 @@ services:
     extends:
       file: compose-base.yaml
       service: args-run-root
-    image: ${IMAGE_NAME}:run-latest-root
+    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root
     build:
       platforms:
         - "linux/amd64"
@@ -17,7 +17,7 @@ services:
   image-dev-root:
     extends:
       service: image-run-root
-    image: ${IMAGE_NAME}:dev-latest-root
+    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root
     build:
       dockerfile: Dockerfile
       target: development-generic
@@ -25,12 +25,13 @@ services:
   image-run-user:
     extends:
       service: image-run-root
-    image: ${IMAGE_NAME}:run-latest-${USR}
+    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR}
     build:
       dockerfile: Dockerfile-user
       target: runtime-user
       args:
         GENERIC_IMAGE: ${IMAGE_NAME}
+        IMAGE_PLATFORM: ${IMAGE_PLATFORM}
         GRPID: ${GRPID}
         USRID: ${USRID}
         GRP: ${GRP}
@@ -40,7 +41,7 @@ services:
   image-dev-user: # Service to build the development image.
     extends:
       service: image-run-user
-    image: ${IMAGE_NAME}:dev-latest-${USR}
+    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}
     build:
       target: development-user
 

@@ -32,9 +32,12 @@ WANDB_API_KEY=
 PROJECT_NAME=template-project-name
 PACKAGE_NAME=template_package_name
 IMAGE_NAME=\${LAB_NAME}/\${USR}/\${PROJECT_NAME}
+IMAGE_PLATFORM=amd64-cuda
 # The image name also includes the USR
 # to avoid conflicts between users using the same build machine
 # Or sharing repositories. (Duplicate images with different names will still be stored only once.)
+# The platform is in the image tag to to make it explicit for reproducibility.
+
 EOF
 )
 
@@ -81,7 +84,7 @@ edit_from_base() {
     rm -rf dependencies
     rm -f Dockerfile
     rm -f compose-base.yaml
-    cp -r "${FROM_BASE}" dependencies
+    cp -r "template-${FROM_BASE}" dependencies
     mv dependencies/Dockerfile .
     mv dependencies/compose-base.yaml .
   else
@@ -101,11 +104,11 @@ pull_generic() {
     exit 1
   fi
 
-  docker pull "${PULL_IMAGE_NAME}:run-latest-root"
-  docker tag "${PULL_IMAGE_NAME}:run-latest-root" "${IMAGE_NAME}:run-latest-root"
+  docker pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root"
+  docker tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root"
 
-  docker pull "${PULL_IMAGE_NAME}:dev-latest-root"
-  docker tag "${PULL_IMAGE_NAME}:dev-latest-root" "${IMAGE_NAME}:dev-latest-root"
+  docker pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
+  docker tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root" "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
 }
 
 build_generic() {
@@ -116,8 +119,8 @@ build_generic() {
 
   # Tag the images with the current git commit.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  docker tag "${IMAGE_NAME}:run-latest-root" "${IMAGE_NAME}:run-${GIT_COMMIT}-root"
-  docker tag "${IMAGE_NAME}:dev-latest-root" "${IMAGE_NAME}:dev-${GIT_COMMIT}-root"
+  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-root"
+  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root" "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-root"
 }
 
 build_user() {
@@ -128,10 +131,10 @@ build_user() {
 
   # If the generic image has the current git tag, then the user image has been build from that tag.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  if [[ $(docker images --format '{{.Repository}}:{{.Tag}}' |\
+  if [[ $(docker images --format '{{.Repository}}:${IMAGE_PLATFORM}-{{.Tag}}' |\
    grep -c "${GIT_COMMIT}") -ge 1 ]]; then
-    docker tag "${IMAGE_NAME}:run-latest-${USR}" "${IMAGE_NAME}:run-${GIT_COMMIT}-${USR}"
-    docker tag "${IMAGE_NAME}:dev-latest-${USR}" "${IMAGE_NAME}:dev-${GIT_COMMIT}-${USR}"
+    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR}" "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-${USR}"
+    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}" "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-${USR}"
   fi
 }
 
@@ -157,25 +160,25 @@ push_usr_or_root() {
     PUSH_IMAGE_NAME="registry.rcp.epfl.ch/${IMAGE_NAME}"
   fi
 
-  docker tag "${IMAGE_NAME}:run-latest-${USR_OR_ROOT}" \
-  "${PUSH_IMAGE_NAME}:run-latest-${USR_OR_ROOT}"
-  docker push "${PUSH_IMAGE_NAME}:run-latest-${USR_OR_ROOT}"
+  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR_OR_ROOT}" \
+  "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR_OR_ROOT}"
+  docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR_OR_ROOT}"
 
-  docker tag "${IMAGE_NAME}:dev-latest-${USR_OR_ROOT}" \
-  "${PUSH_IMAGE_NAME}:dev-latest-${USR_OR_ROOT}"
-  docker push "${PUSH_IMAGE_NAME}:dev-latest-${USR_OR_ROOT}"
+  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR_OR_ROOT}" \
+  "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR_OR_ROOT}"
+  docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR_OR_ROOT}"
 
   # If the image has a git tag push it as well.
   GIT_COMMIT=$(git rev-parse --short HEAD)
   if [[ $(docker images --format '{{.Repository}}:{{.Tag}}' |\
   grep "${GIT_COMMIT}-${USR_OR_ROOT}" -c) -ge 1 ]]; then
-    docker tag "${IMAGE_NAME}:run-${GIT_COMMIT}-${USR_OR_ROOT}" \
-      "${PUSH_IMAGE_NAME}:run-${GIT_COMMIT}-${USR_OR_ROOT}"
-    docker push "${PUSH_IMAGE_NAME}:run-${GIT_COMMIT}-${USR_OR_ROOT}"
+    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-${USR_OR_ROOT}" \
+      "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-${USR_OR_ROOT}"
+    docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-${USR_OR_ROOT}"
 
-    docker tag "${IMAGE_NAME}:dev-${GIT_COMMIT}-${USR_OR_ROOT}" \
-      "${PUSH_IMAGE_NAME}:dev-${GIT_COMMIT}-${USR_OR_ROOT}"
-    docker push "${PUSH_IMAGE_NAME}:dev-${GIT_COMMIT}-${USR_OR_ROOT}"
+    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-${USR_OR_ROOT}" \
+      "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-${USR_OR_ROOT}"
+    docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-${USR_OR_ROOT}"
   fi
 }
 
@@ -243,14 +246,14 @@ run() {
 list_env() {
   # List the conda environment.
   check
-  docker run --rm "${IMAGE_NAME}:run-latest-root" pip list
-  docker run --rm "${IMAGE_NAME}:run-latest-root" mamba list
+  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" pip list
+  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" mamba list
 }
 
 empty_interactive() {
   # Start an interactive shell in an empty container.
   check
-  docker run --rm -it "${IMAGE_NAME}:dev-latest-root"
+  docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
 }
 
 get_runai_scripts() {

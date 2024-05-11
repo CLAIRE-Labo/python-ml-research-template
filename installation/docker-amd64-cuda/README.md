@@ -1,4 +1,4 @@
-# Installation with Docker (OCI container)
+# Installation with Docker (or any OCI container engine)
 
 ## Template getting started
 
@@ -29,12 +29,15 @@ for your future users (and yourself).
    # For examples run:
    ./installation/edit-platform-and-acceleration.sh
    # To do the change run:
-   ./installation/edit-platform-and-acceleration.sh docker CURR_PLATFORM CURR_ACCELERATION NEW_PLATFORM NEW_ACCELERATION
+   ./installation/edit-platform-and-acceleration.sh change docker CURR_PLATFORM CURR_ACCELERATION NEW_PLATFORM NEW_ACCELERATION
    # The hardware acceleration will be determined by the packages you install.
    # E.g. if you install PyTorch with CUDA, set the acceleration to cuda.
    ```
-   The template currently supports setting only a single platform & hardware acceleration combination.
-   You can always adapt it to have multiple platforms
+   If you plan to support multiple platforms or hardware accelerations,
+   you can duplicate this installation method directory
+   with `./installation/edit-platform-and-acceleration.sh copy ...`
+   then perform the setup again.
+   You could also try to adapt the Docker files to support multiple platforms
    (in some cases, may just get away with adding a line to the build platforms,
    and in others may need separate Dockerfiles and environment files.
    Test them, and ensure your results/conclusions hold across platforms.)
@@ -42,24 +45,25 @@ for your future users (and yourself).
    ```bash
    cd installation/docker-amd64-cuda
    ```
-3. Choose whether you will start your image and environment from scratch (Ubuntu image and new conda environment),
-   or if you will base it from an existing image already having a Python environment
-   (e.g., the [NGC images](https://catalog.ngc.nvidia.com/containers)).
-    - The `from-scratch` installation is based on an Ubuntu image (which you can change if you want), installs
-      conda and manages all the dependencies with it.
-
-      This is a good option if you want full control over your environment, e.g., know exactly which system packages
-      are installed, pick the Python version, pick all the Python dependencies, etc.
-    - The `from-python` installation assumes that you base your image from an image which
+3. Choose whether you will start your image from an existing image already having a Python environment
+   (recommended)(e.g., the [NGC images](https://catalog.ngc.nvidia.com/containers) which have
+   well-configured hardware acceleration dependencies)
+   or from scratch (Ubuntu image and new conda environment):
+    - (Recommended) The `from-python` installation assumes that you base your image from an image which
       already has a Python environment and that this environment is well configured
       to be extended with pip, independently of how Python is installed
-      (e.g. if with system Python like the NGC Pytorch image, nothing to do, but if with conda then
-      the environment must be configured to be activated by default).
+      (e.g. if with system Python like the NGC Pytorch image, you have nothing to do, but if with conda then
+      the environment must be configured to be activated by default or you have to edit the Dockerfile).
 
       This is a great option to get started quickly with a well-tuned environment, and only add missing
       dependencies.
       However, this comes at the cost of not choosing your Python version and
       not having a granular choice over your dependencies.
+    - The `from-scratch` installation is based on an Ubuntu image (which you can change if you want), installs
+      conda and manages all the dependencies with it.
+
+      This is a good option if you want full control over your environment, e.g., know exactly which system packages
+      are installed, pick the Python version, pick all the Python dependencies, etc.
 
    The default base is `from-python` to quickly get started with the NGC images.
    Run the following if you want to edit it.
@@ -67,7 +71,6 @@ for your future users (and yourself).
    # from-base can be from-scratch or from-python
    ./template.sh edit_from_base <from-base>
    ```
-   Delete the two folders `from-scratch` and `from-python` after the choice is made.
 4. Edit `compose-base.yaml` to specify your base image (`BASE_IMAGE`) and its eventual options.
    E.g., the NGC image you use as a base image and its entrypoint (`BASE_ENTRYPOINT`) in the `from-python` option
    or the Ubuntu and conda version (`CONDA_URL`) in the `from-scratch` option.
@@ -89,6 +92,7 @@ for your future users (and yourself).
        E.g., your personal Docker Hub registry has free unlimited public repositories.
     2. Push the generic images to the registry you chose.
        ```bash
+       # Don't include the tag. All relevant tags will be pushed.
        ./template.sh push_generic FULL_IMAGE_NAME_WITH_REGISTRY
        ```
     3. Add this link to the TODO ADD PULL_IMAGE_NAME in
@@ -178,7 +182,8 @@ and running on each with either `cpu` or `cuda` support.
 We provide a utility script, `template.sh`, to help you interact with Docker Compose.
 It has a function for each of the main operations you will have to do.
 
-You can always interact directly with `docker compose` if you prefer and get examples from the `./template.sh` script.
+You can always interact directly with `docker` or `docker compose` if you prefer
+and get examples from the `./template.sh` script.
 
 ## The environment
 
@@ -222,7 +227,7 @@ We provide the following guides for obtaining/building and running the environme
 Clone the git repository.
 
 ```bash
-git clone <URL/SSH> template-project-name
+git clone <HTTPS/SSH> template-project-name
 cd template-project-name
 ```
 
@@ -261,8 +266,8 @@ cd installation/docker-amd64-cuda
    The runtime images will be used to run the code in an unattended way.
    The dev image has additional utilities that facilitate development in the container.
    They will be named according to the image name in your `.env`.
-   They will be tagged with `run-latest-root` and `dev-latest-root` and if you're building them,
-   they will also be tagged with the latest git commit hash `run-<sha>-root` and `dev-<sha>-root`.
+   They will be tagged with `<platform>-run-latest-root` and `<platform>-dev-latest-root` and if you're building them,
+   they will also be tagged with the latest git commit hash `<platform>-run-<sha>-root` and `<platform>-dev-<sha>-root`.
     - Pull the generic images if they're available.
       ```bash
       # Pull the generic image if available.
@@ -288,7 +293,7 @@ cd installation/docker-amd64-cuda
    ./template.sh build_user
    ```
    This will build a user layer on top of each generic image
-   and tag them `*-*-${USR}` instead of `*-*-root`.
+   and tag them `*-${USR}` instead of `*-root`.
    These will be the images that you actually run and deploy to match the permissions on your mounted storage.
 
 For the local deployment option with Docker Compose, follow the instructions below,
@@ -391,7 +396,7 @@ An image with the runtime environment and an image with the development environm
 both running as root (but with a configured zshell for users specified at runtime as well)
 is available at TODO: LINK TO PUBLIC IMAGE.
 
-The tags are `run-latest-root` and `dev-latest-root` for the runtime and development images respectively.
+The tags are `amd64-cuda-run-latest-root` and `amd64-cuda-dev-latest-root` for the runtime and development images respectively.
 You can use your favorite container runtime to run these images.
 
 They have an entrypoint which installs the project with pip
@@ -651,7 +656,7 @@ The error messages will possibly be more informative, and you will be able to di
 Alternatively, you can open a container at the layer before the installation of the dependencies,
 like described above, and try to install the environment manually.
 
-## Licenses and Acknowledgements
+## Licenses and acknowledgements
 
 This Docker setup is based on the [Cresset template](https://github.com/cresset-template/cresset)
 with the LICENSE.cresset file included in this directory.
