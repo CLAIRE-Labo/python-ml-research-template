@@ -71,6 +71,13 @@ for your future users (and yourself).
    # from-base can be from-scratch or from-python
    ./template.sh edit_from_base <from-base>
    ```
+   Typically, you would support a single image per platform and hardware acceleration,
+   however, if your use case requires multiple images
+   (say you are using different RL environments with completely different dependencies),
+   you can further duplicate the installation directory (as for supporting multiple platforms)
+   and tag each of them by its specifics.
+   The template doesn't provide helper scripts for this,
+   but you can refer to the [Troubleshooting section](#supporting-multiple-images) for guidance.
 4. Edit `compose-base.yaml` to specify your base image (`BASE_IMAGE`) and its eventual options.
    E.g., the NGC image you use as a base image and its entrypoint (`BASE_ENTRYPOINT`) in the `from-python` option
    or the Ubuntu and conda version (`CONDA_URL`) in the `from-scratch` option.
@@ -611,6 +618,26 @@ you have to remove it, so that conda does not pick it up, and it is installed in
 For `apt` dependencies add them manually to the `apt-*.txt` files.
 
 ## Troubleshooting
+
+### Supporting multiple images
+
+In case you want to support multiple images for the same platform and hardware acceleration, you can do the following.
+(Note that this can also be a way
+to have both a `from-python` and `from-scratch` image for the same platform and hardware acceleration
+if you want to benchmark/switch between them.)
+
+1. Duplicate the installation directory. E.g.,
+   ```bash
+   mv installation/docker-amd64-cuda installation/docker-amd64-cuda-env1
+   cp installation/docker-amd64-cuda-env1 installation/docker-amd64-cuda-env2
+   ```
+2. Add an additional field to the image tag for each installation directory.
+   Edit the `./template.sh` and your `.env` if already created and edit
+   ```bash
+   IMAGE_PLATFORM=amd64-cuda-envX
+   ```
+   This is important so that your images are not mixed.
+3. Follow the instructions for each installation directory.
 
 ### Debugging the Docker build
 
