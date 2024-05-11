@@ -35,8 +35,11 @@ fi
 
 if [ "${CHANGE_OR_COPY}" = "change" ]; then
   mv installation/"${INSTALL_METHOD}-${CURR_PLATFORM}-${CURR_ACCELERATION}" installation/"${INSTALL_METHOD}-${NEW_PLATFORM}-${NEW_ACCELERATION}"
-else
+elif [ "${CHANGE_OR_COPY}" = "copy" ]; then
   cp -r installation/"${INSTALL_METHOD}-${CURR_PLATFORM}-${CURR_ACCELERATION}" installation/"${INSTALL_METHOD}-${NEW_PLATFORM}-${NEW_ACCELERATION}"
+else
+  echo "CHANGE_OR_COPY must be either change or copy."
+  exit 1
 fi
 
 # Rename the installation combination in all the files.
@@ -49,7 +52,7 @@ done
 # Rename the default platform for the docker installation.
 if [ "${INSTALL_METHOD}" = "docker" ]; then
   if [ "${NEW_ACCELERATION}" != "cuda" ]; then
-    cat "You have to edit the compose.yaml manually to add services that can leverage
+    echo "You have to edit the compose.yaml manually to add services that can leverage
      the ${NEW_ACCELERATION} acceleration for the local deployment option with Docker Compose.
      Refer to the dev-local-cuda service as an example for using NVIDIA GPUs."
   fi
