@@ -10,9 +10,8 @@
 > **TEMPLATE TODO:**
 > Replace the description below with a description of your project, then delete this note.
 
-This is a template for starting Python machine-learning research
-projects with hardware acceleration at the EPFL CLAIRE lab.
-It features and encourages best practices for:
+A template for starting Python machine-learning research
+projects with hardware acceleration featuring best practices such as:
 
 - Reproducible environments on major platforms with hardware acceleration with a great development experience
   covering multiple use cases:
@@ -26,14 +25,16 @@ It features and encourages best practices for:
   and [Weights & Biases](https://wandb.ai/site).
 - Code quality with [pre-commit](https://pre-commit.com) hooks.
 
-Thanks to its focus on reproducibility, this template can readily be used by other labs at EPFL and beyond.
-It makes collaboration and open-sourcing your work straightforward, avoiding setup issues and
-[maximizing its impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501#a826).
+The template makes collaboration and open-sourcing straightforward, avoiding setup issues and
+[maximizing impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501#a826).
 The practices in this template earned its authors
 an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5dI5aEn)
 at the [ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
 
-A project made with the template would look like [this](https://github.com/skandermoalla/pytoych-benchmark).
+Projects made with the template would look like
+[this toy project](https://github.com/skandermoalla/pytoych-benchmark)
+or [this paper](https://github.com/CLAIRE-Labo/no-representation-no-trust) whose curves have been exactly reproduced
+(exact same numbers) on multiple different platforms (EPFL Kubernetes cluster, VM on GCP, HPC cluster with Apptainer),
 
 Follow this README to get started with the template.
 
@@ -50,6 +51,7 @@ Give it a lowercase hyphen-separated name (we will refer to this name as `PROJEC
 then follow the instructions below to set up your project.
 You can also give your GitHub repo another name format if you prefer, but for the template, you will have to pick
 a `PROJECT_NAME` as well.
+
 It's useful to commit after some checkpoints to be able to go back if you make a mistake.
 Some instructions will send you to different READMEs in the template that will compile nicely together in the end.
 Remember to get back to this root one after finishing each step.
@@ -62,21 +64,21 @@ Remember to get back to this root one after finishing each step.
       We would recommend that your local machine is of the same platform as the cluster (e.g. `amd64`, `arm64`),
       or that you have access to a remote Docker engine running on the same platform of the cluster.)
     ```
-    git clone <URL/SSH> PROJECT_NAME
+    git clone <HTTPS/SSH> PROJECT_NAME
     ```
    We will refer to the absolute path to the root of the repository as `PROJECT_ROOT`.
 
 2. Fill the template variables in `template/template-variables.env` by
    editing the ones with the `$NEW_` prefix, then run the script
    ```bash
+   # After filling the template variables in template/template-variables.env.
    ./template/change-project-name.sh
    ```
    Commit.
 3. Initialize the pre-commit hooks as described in the [contributing](#contributing) section.
    Update them to their latest version with `pre-commit autoupdate`.
    Commit.
-4. Edit the `LICENSE` file.
-   Or delete it and remember to add one when open-sourcing your code.
+4. Edit the `LICENSE` file, or delete it and remember to add one when open-sourcing your code.
    [(Some help here).](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
    A simple change if you're fine with the MIT license is to replace the `2022 Skander Moalla` with your year and name.
    Commit.
@@ -271,3 +273,12 @@ You can also trigger them manually with:
 ```bash
 pre-commit run --all-files
 ```
+
+## Licenses and Acknowledgements
+
+This project is licensed under the LICENSE file in the root directory of the project.
+
+The initial code of this repository has been initiated by the [Python Machine Learning Research Project Template](https://github.com/CLAIRE-Labo/python-ml-research-template)
+with the LICENSE.ml-template file.
+
+Additional LICENSE files may be present in subdirectories of the project.

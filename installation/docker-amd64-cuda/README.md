@@ -651,6 +651,7 @@ The error messages will possibly be more informative, and you will be able to di
 Alternatively, you can open a container at the layer before the installation of the dependencies,
 like described above, and try to install the environment manually.
 
-## Acknowledgements
+## Licenses and Acknowledgements
 
-This Docker setup is based on the [Cresset template](https://github.com/cresset-template/cresset).
+This Docker setup is based on the [Cresset template](https://github.com/cresset-template/cresset)
+with the LICENSE.cresset file included in this directory.
