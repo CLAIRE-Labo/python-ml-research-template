@@ -260,6 +260,7 @@ dev() {
   # Run a command in a new runtime container.
   # Usage:
   # ./template.sh run -e VAR1=VAL1 -e VAR2=VAL2 ... python -c "print('hello world')"
+  check
   local env_vars=()
 
   # Collect environment variables and commands dynamically
