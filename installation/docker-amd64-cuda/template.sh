@@ -197,6 +197,19 @@ push() {
   push_user "${1}"
 }
 
+list_env() {
+  # List the conda environment.
+  check
+  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c "if command -v mamba >/dev/null 2>&1; then mamba list; else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi"
+  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" pip list
+}
+
+empty_interactive() {
+  # Start an interactive shell in an empty container.
+  check
+  docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
+}
+
 up() {
   # Start service.
   # Creates a detached container from the development image.
@@ -243,17 +256,20 @@ run() {
   docker compose -p "${COMPOSE_PROJECT}" run --rm "run-local-${ACCELERATION}" "${@:1}"
 }
 
-list_env() {
-  # List the conda environment.
-  check
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c "if command -v mamba >/dev/null 2>&1; then mamba list; else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi"
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" pip list
-}
+dev() {
+  # Run a command in a new runtime container.
+  # Usage:
+  # ./template.sh run -e VAR1=VAL1 -e VAR2=VAL2 ... python -c "print('hello world')"
+  local env_vars=()
 
-empty_interactive() {
-  # Start an interactive shell in an empty container.
-  check
-  docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
+  # Collect environment variables and commands dynamically
+  while [[ "$1" == "-e" ]]; do
+    env_vars+=("$1" "$2")  # Store environment variable flags and values as array elements
+    shift 2
+  done
+
+  # Execute the docker command using array expansion for environment variables
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
 }
 
 get_runai_scripts() {
