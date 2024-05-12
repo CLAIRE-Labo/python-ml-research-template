@@ -84,7 +84,7 @@ edit_from_base() {
     rm -rf dependencies
     rm -f Dockerfile
     rm -f compose-base.yaml
-    cp -r "template-${FROM_BASE}" dependencies
+    cp -r "${FROM_BASE}-template" dependencies
     mv dependencies/Dockerfile .
     mv dependencies/compose-base.yaml .
   else
