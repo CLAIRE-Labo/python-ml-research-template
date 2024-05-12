@@ -363,7 +363,7 @@ You can pass environment variables to the container with the `-e VAR=VALUE` flag
 
 ```bash
 ./template.sh run -e FOO=1 env
-./template.sh dev sleep infinity
+./template.sh dev zsh
 ```
 
 In particular, you can pass environment variables that the entrypoint can use to facilitate your development experience.
@@ -395,7 +395,8 @@ and forward the ports to your local machine as follows:
 ```bash
 # In a separate shell start the Jupyter Lab server (better use tmux).
 # And get the link to the server.
-./template.sh dev -e JUPYTER_SERVER=1 sleep infinity
+# The container is using your host's network, you can change JUPYTER_PORT if it's already used.
+./template.sh dev -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8888 zsh
 # Forward the ports to your local machine.
 # From your local machine
 ssh -N -L 8888:localhost:8888 <USER@HOST> # or anything specified in your ssh config.

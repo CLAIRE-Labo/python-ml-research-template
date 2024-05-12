@@ -86,5 +86,5 @@ if [ -n "${JUPYTER_SERVER}" ]; then
   echo "[TEMPLATE INFO] Starting Jupyter Lab server."
   # Workaround to open zsh.
   SHELL=zsh \
-    jupyter-lab --no-browser --notebook-dir="${PROJECT_ROOT_AT}" &
+    jupyter-lab --no-browser --port="${JUPYTER_PORT:-8888}" --notebook-dir="${PROJECT_ROOT_AT}" &
 fi
