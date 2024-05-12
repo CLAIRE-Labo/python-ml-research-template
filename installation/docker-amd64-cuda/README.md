@@ -84,7 +84,8 @@ for your future users (and yourself).
 5. You can try to specify your dependencies if you are sure of how to install them and that they are compatible.
    Otherwise, you should build with the default dependencies and install them interactively in the running container
    then freeze them in the dependency files once you are sure of which to include and how to include them.
-   You will find more information in the [instructions to maintain the environment](#from-python-instructions-to-maintain-the-environment).
+   You will find more information in
+   the [instructions to maintain the environment](#from-python-instructions-to-maintain-the-environment).
    Delete the section of the from-base you are not using.
 
    If you change the dependency files commit so that you can track what worked and what didn't.
@@ -311,8 +312,11 @@ otherwise get back to the instructions of deployment option you're following.
 ## Running locally with Docker Compose
 
 > [!IMPORTANT]
-> **TEMPLATE TODO:**
-> If you change the hardware acceleration
+> **TEMPLATE TODO:** Adapt the compose.yaml file to your local deployment needs.
+> - Add the necessary container options (ipc=host, network, additional mounts, etc)
+    > to the run-local and dev-local services in the compose.yaml file.
+>
+> - If you change the hardware acceleration:
 > 1. change the `compose.yaml` file to adapt the
      > `run-local-cuda` and `dev-local-cuda` to the new hardware acceleration.
 > 2. change the supported values of the `ACCELERATION` listed below.
@@ -333,67 +337,71 @@ Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 Edit the `.env` file to specify which hardware acceleration to use with the `ACCELERATION` variable.
 Supported values are `cpu` and `cuda`.
 
-Then you can:
+Then you can run jobs in independent containers running the runtime or the development image with
 
-- Start the development container with
-    ```bash
-    ./template.sh up
-    ```
-  This will start a container running the development image in the background.
-  It has an entrypoint that installs the project, checking that the code directory has correctly been mounted.
-  The Docker Compose run and dev services are already setup to mount the project code and specify its location
-  to the entrypoint.
+```bash
+# You can for example open tmux shells and run your experiments in them.
+# template_experiment is an actual script that you can run.
+./template.sh run your_command
+./template.sh run python --version
+./template.sh run python -m template_package_name.template_experiment some_arg=some_value
+```
 
-  You can check its logs with
-    ```bash
-    ./template.sh logs
-    ```
-  and open a shell in this background container with
-    ```bash
-    ./template.sh shell
-    ```
-  You can stop the container or delete it with
-    ```bash
-    # To stop.
-    ./template.sh stop
-    # Which can then be restarted with
-    ./template.sh start
-    # Or, to delete.
-    ./template.sh down
-    ```
+These containers start with the entrypoint and then run the command you specified.
+By default, they are automatically removed after they exit.
+The container has an entrypoint that installs the project, checking that the code directory has correctly been mounted.
+The Docker Compose run and dev services are already setup to mount the project code and specify its location
+to the entrypoint.
 
-- Run jobs in independent containers running the runtime image with
-    ```bash
-    # You can for example open tmux shells and run your experiments in them.
-    # template_experiment is an actual script that you can run.
-    ./template.sh run your_command
-    ./template.sh run python --version
-    ./template.sh run python -m template_package_name.template_experiment some_arg=some_value
-    ```
-  These containers start with the entrypoint and then run the command you specified.
-  By default, they are automatically removed after they exit.
+You should not need to override the entrypoint of the container, it performs important setups.
+It installs the project from its mounted location when specified to avoid hacky imports,
+runs the original entrypoint of your base image if it exists,
+and execs your command with PID 1.
+Only do so if you need to debug the entrypoint itself or if you have a custom use case.
 
-  You should not need to override the entrypoint of the container, it performs important setups.
-  It installs the project from its mounted location when specified to avoid hacky imports,
-  runs the original entrypoint of your base image if it exists,
-  and execs your command with PID 1.
-  Only do so if you need to debug the entrypoint itself or if you have a custom use case.
+You can pass environment variables to the container with the `-e VAR=VALUE` flag before your command
 
-  You can read the following section for quick tips on development with containers,
-  then return to the root README for the rest of the instructions to run our experiments.
+```bash
+./template.sh run -e FOO=1 env
+./template.sh dev zsh
+```
 
+In particular, you can pass environment variables that the entrypoint can use to facilitate your development experience.
+This is described in the following section.
+You should then return to the root README for the rest of the instructions to run our experiments.
 
 ### Development
 
-For remote development with this Docker Compose setup, you should have your IDE
+For remote development with this Docker Compose setup, you can have your IDE
 running on the machine where you run the Docker Compose services (not inside the container),
-E.g. Pycharm Remote Development or VSCode Remote Development.
-
-Then you would use the remote development features of this IDE to connect to the container
-through Docker Compose with `dev-local-${ACCELERATION}` service, if the IDE allows,
+e.g., Pycharm Remote Development (Gateway) or VSCode Remote Development.
+Then you would use the remote development features of this IDE to connect to the container (double remote
+development)
+through Docker Compose with the `dev-local-${ACCELERATION}` service, if the IDE allows,
 which has the mount set up to the code directory.
-Otherwise, through the image directly and you'll have to add the mount yourself
+Otherwise, through the image directly and you'll have to add the mounts yourself
 (look at how this is done in `compose.yaml`).
+(A current limitation is that IDEs will typically create a new container each time you run/debug a script,
+and each container will install the project which can take a few seconds.
+We welcome contributions to improve this.
+To avoid this delay you pass the env variable `SKIP_INSTALL_PROJECT=1` if your IDE is already tweaking the PYTHONPATH of the
+container behind the scenes.).
+
+You should set the working directory of scripts ran from your IDE to `/project/template-project-name`.
+
+To use Jupyter Lab you can have the server running directly in the container
+and forward the ports to your local machine as follows:
+
+```bash
+# In a separate shell start the Jupyter Lab server (better use tmux).
+# And get the link to the server.
+# The container is using your host's network, you can change JUPYTER_PORT if it's already used.
+./template.sh dev -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8888 zsh
+# Forward the ports to your local machine.
+# From your local machine
+ssh -N -L 8888:localhost:8888 <USER@HOST> # or anything specified in your ssh config.
+# Connect to the server with at http://localhost:8888/?token=...
+```
 
 ## Running with your favorite container runtime
 
@@ -405,7 +413,8 @@ An image with the runtime environment and an image with the development environm
 both running as root (but with a configured zshell for users specified at runtime as well)
 is available at TODO: LINK TO PUBLIC IMAGE.
 
-The tags are `amd64-cuda-run-latest-root` and `amd64-cuda-dev-latest-root` for the runtime and development images respectively.
+The tags are `amd64-cuda-run-latest-root` and `amd64-cuda-dev-latest-root` for the runtime and development images
+respectively.
 You can use your favorite container runtime to run these images.
 
 They have an entrypoint which installs the project with pip

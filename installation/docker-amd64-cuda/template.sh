@@ -18,11 +18,11 @@ PASSWD=$(id -un)
 # It must be lowercase.
 LAB_NAME=$(id -un | tr "[:upper:]" "[:lower:]")
 
-## For running locally
+#### For running locally
 # You can find the acceleration options in the compose.yaml file
 # by looking at the services with names dev-local-ACCELERATION.
 PROJECT_ROOT_AT=/project/template-project-name
-ACCELERATION=cpu
+ACCELERATION=cuda
 WANDB_API_KEY=
 
 ####################
@@ -84,7 +84,7 @@ edit_from_base() {
     rm -rf dependencies
     rm -f Dockerfile
     rm -f compose-base.yaml
-    cp -r "template-${FROM_BASE}" dependencies
+    cp -r "${FROM_BASE}-template" dependencies
     mv dependencies/Dockerfile .
     mv dependencies/compose-base.yaml .
   else
@@ -197,52 +197,6 @@ push() {
   push_user "${1}"
 }
 
-up() {
-  # Start service.
-  # Creates a detached container from the development image.
-  # ./template.sh up
-  check
-  docker compose -p "${COMPOSE_PROJECT}" up -d "dev-local-${ACCELERATION}"
-}
-
-down() {
-  # Shut down the service and delete containers, volumes, networks, etc.
-  check
-  docker compose -p "${COMPOSE_PROJECT}" down
-}
-
-logs() {
-  # Show logs from the service.
-  # ./template.sh logs
-  check
-  docker compose -p "${COMPOSE_PROJECT}" logs "dev-local-${ACCELERATION}"
-}
-
-shell() {
-  # Enter interactive shell in the development container.
-  check
-  docker compose -p "${COMPOSE_PROJECT}" exec "dev-local-${ACCELERATION}" zsh
-}
-
-stop() {
-  # Stop the service without deleting the container.
-  check
-  docker compose -p "${COMPOSE_PROJECT}" stop "dev-local-${ACCELERATION}"
-}
-
-start() {
-  # Start a stopped service without recreating the container.
-  check
-  docker compose -p "${COMPOSE_PROJECT}" start "dev-local-${ACCELERATION}"
-}
-
-run() {
-  # Run a command in a new runtime container.
-  # ./template.sh run python -c "print('hello world')"
-  check
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "run-local-${ACCELERATION}" "${@:1}"
-}
-
 list_env() {
   # List the conda environment.
   check
@@ -254,6 +208,40 @@ empty_interactive() {
   # Start an interactive shell in an empty container.
   check
   docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
+}
+
+run() {
+  # Run a command in a new runtime container.
+  # Usage:
+  # ./template.sh run -e VAR1=VAL1 -e VAR2=VAL2 ... python -c "print('hello world')"
+  check
+  local env_vars=()
+
+  # Collect environment variables and commands dynamically
+  while [[ "$1" == "-e" ]]; do
+    env_vars+=("$1" "$2")  # Store environment variable flags and values as array elements
+    shift 2
+  done
+
+  # Execute the docker command using array expansion for environment variables
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
+}
+
+dev() {
+  # Run a command in a new development container.
+  # Usage:
+  # ./template.sh dev -e VAR1=VAL1 -e VAR2=VAL2 -e SSH_SERVER=1 ... sleep infinity"
+  check
+  local env_vars=()
+
+  # Collect environment variables and commands dynamically
+  while [[ "$1" == "-e" ]]; do
+    env_vars+=("$1" "$2")  # Store environment variable flags and values as array elements
+    shift 2
+  done
+
+  # Execute the docker command using array expansion for environment variables
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
 }
 
 get_runai_scripts() {
