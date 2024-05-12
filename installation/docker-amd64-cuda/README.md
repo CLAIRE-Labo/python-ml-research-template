@@ -311,7 +311,8 @@ otherwise get back to the instructions of deployment option you're following.
 ## Running locally with Docker Compose
 
 > [!IMPORTANT]
-> **TEMPLATE TODO:**
+> **TEMPLATE TODO:** Adapt the compose.yaml file to your local deployment needs.
+> Add the necessary .
 > If you change the hardware acceleration
 > 1. change the `compose.yaml` file to adapt the
      > `run-local-cuda` and `dev-local-cuda` to the new hardware acceleration.

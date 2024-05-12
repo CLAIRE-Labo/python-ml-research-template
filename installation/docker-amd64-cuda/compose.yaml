@@ -55,6 +55,10 @@ services:
     environment:
       PROJECT_ROOT_AT: ${PROJECT_ROOT_AT}
       WANDB_API_KEY: ${WANDB_API_KEY}
+    ipc: host                 # Edit as needed (NGC default recommendations).
+    ulimits:                  # Edit as needed (NGC default recommendations).
+      memlock: -1
+      stack: 67108864
 
   dev-local-cpu: # Service to develop locally with CPU only.
     extends:
@@ -66,12 +70,14 @@ services:
     environment:
       PROJECT_ROOT_AT: ${PROJECT_ROOT_AT}
       WANDB_API_KEY: ${WANDB_API_KEY}
+    ipc: host                 # Edit as needed (NGC default recommendations).
+    ulimits:                  # Edit as needed (NGC default recommendations).
+      memlock: -1
+      stack: 67108864
 
   run-local-cuda: # Service to run the image locally with NVIDIA GPU.
     extends:
       service: run-local-cpu
-    environment:
-      CUDA_VISIBLE_DEVICES: all # Can be overridden by the user.
     deploy:
       resources:
         reservations:
@@ -82,8 +88,6 @@ services:
   dev-local-cuda: # Service to develop locally with NVIDIA GPU.
     extends:
       service: dev-local-cpu
-    environment:
-      CUDA_VISIBLE_DEVICES: all # Can be overridden by the user.
     deploy:
       resources:
         reservations:

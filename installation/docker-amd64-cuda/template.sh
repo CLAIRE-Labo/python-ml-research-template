@@ -18,11 +18,11 @@ PASSWD=$(id -un)
 # It must be lowercase.
 LAB_NAME=$(id -un | tr "[:upper:]" "[:lower:]")
 
-## For running locally
+#### For running locally
 # You can find the acceleration options in the compose.yaml file
 # by looking at the services with names dev-local-ACCELERATION.
 PROJECT_ROOT_AT=/project/template-project-name
-ACCELERATION=cpu
+ACCELERATION=cuda
 WANDB_API_KEY=
 
 ####################
