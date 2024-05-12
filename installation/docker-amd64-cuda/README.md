@@ -381,9 +381,13 @@ through Docker Compose with the `dev-local-${ACCELERATION}` service, if the IDE 
 which has the mount set up to the code directory.
 Otherwise, through the image directly and you'll have to add the mounts yourself
 (look at how this is done in `compose.yaml`).
-(A current limitation is that this will create a new container each time you run/debug a script,
+(A current limitation is that IDEs will typically create a new container each time you run/debug a script,
 and each container will install the project which can take a few seconds.
-We welcome contributions to improve this.)
+We welcome contributions to improve this.
+To avoid this delay you pass the env variable `SKIP_INSTALL_PROJECT=1` if your IDE is already tweaking the PYTHONPATH of the
+container behind the scenes.).
+
+You should set the working directory of scripts ran from your IDE to `/project/template-project-name`.
 
 To use Jupyter Lab you can have the server running directly in the container
 and forward the ports to your local machine as follows:
@@ -392,12 +396,9 @@ and forward the ports to your local machine as follows:
 # In a separate shell start the Jupyter Lab server (better use tmux).
 # And get the link to the server.
 ./template.sh dev -e JUPYTER_SERVER=1 sleep infinity
-# In a separate shell get the IP address of the container.
-docker ps # Get the container ID.
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <CONTAINER_ID>
 # Forward the ports to your local machine.
 # From your local machine
-ssh -N -L 8888:<CONTAINER_IP>:8888 <USER@HOST> # or anything specified in your ssh config.
+ssh -N -L 8888:localhost:8888 <USER@HOST> # or anything specified in your ssh config.
 # Connect to the server with at http://localhost:8888/?token=...
 ```
 

@@ -74,8 +74,10 @@ services:
     extends:
       service: run-local-cpu
     image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}
+    network_mode: host       # For easier remote development.
 
   dev-local-cuda: # Service to develop locally with NVIDIA GPU.
     extends:
       service: run-local-cuda
     image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}
+    network_mode: host       # For easier remote development.
