@@ -5,8 +5,9 @@ echo "[TEMPLATE INFO] Running entrypoint.sh"
 # Check that the PROJECT_ROOT_AT is set.
 if [ -z "${PROJECT_ROOT_AT}" ]; then
   echo "[TEMPLATE WARNING] PROJECT_ROOT_AT is not set."
-  echo "[TEMPLATE WARNING] It is expected to point to the location of your mounted  project."
-  echo "[TEMPLATE WARNING] It has been defaulted to $(pwd)"
+  echo "[TEMPLATE WARNING] It is expected to point to the location of your mounted project if you plan to run you code."
+  echo "[TEMPLATE WARNING] Ignore if you only need the development environment."
+  echo "[TEMPLATE WARNING] PROJECT_ROOT_AT has been defaulted to $(pwd)"
   echo "[TEMPLATE WARNING] The project installation will be skipped."
   PROJECT_ROOT_AT="$(pwd)"
   SKIP_INSTALL_PROJECT=1
