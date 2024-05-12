@@ -36,11 +36,13 @@ for your future users (and yourself).
    you can duplicate this installation method directory
    with `./installation/edit-platform-and-acceleration.sh copy ...`
    then perform the setup again.
-2. Specify your initial dependencies.
+2. You can try to specify your dependencies if you are sure of how to install them and that they are compatible.
+   Otherwise, you should build with the default dependencies and install them interactively in the running container
+   then freeze them in the dependency files once you are sure of which to include and how to include them.
+   You will find more information in the [instructions to maintain the environment](#from-python-instructions-to-maintain-the-environment).
    The Python version and package name have already been filled by the `fill-template.sh` script.
-   Follow the [instructions to maintain the environment](#maintaining-the-environment)
-   up to (including) the manual editing section without actually creating the environment.
-   Commit so that you can get back to this file to edit it manually.
+
+   If you change the dependency files commit so that you can track what worked and what didn't.
 3. Create the environment following the user
    [instructions to create the environment](#creating-the-environment) below.
 4. Get familiar with running the environment following the user [instructions to
@@ -142,7 +144,7 @@ Here are references and reasons to follow the above claims:
 There are two ways to add dependencies to the environment:
 
 1. **Manually edit the `environment.yml` file.**
-   This will be needed the first time you set up the environment.
+   This is used the first time you set up the environment.
    It will also be useful if you run into conflicts and have to restart from scratch.
 2. **Add/upgrade dependencies interactively** while running a shell with the environment activated
    to experiment with which dependency is needed.

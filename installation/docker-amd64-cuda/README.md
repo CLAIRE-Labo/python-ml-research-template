@@ -81,11 +81,13 @@ for your future users (and yourself).
 4. Edit `compose-base.yaml` to specify your base image (`BASE_IMAGE`) and its eventual options.
    E.g., the NGC image you use as a base image and its entrypoint (`BASE_ENTRYPOINT`) in the `from-python` option
    or the Ubuntu and conda version (`CONDA_URL`) in the `from-scratch` option.
-5. Specify your initial dependencies.
-   Follow the [instructions to maintain the environment](#from-python-instructions-to-maintain-the-environment)
-   up to (including) the manual editing section.
-   Commit so that you can get back to this file to edit it manually.
+5. You can try to specify your dependencies if you are sure of how to install them and that they are compatible.
+   Otherwise, you should build with the default dependencies and install them interactively in the running container
+   then freeze them in the dependency files once you are sure of which to include and how to include them.
+   You will find more information in the [instructions to maintain the environment](#from-python-instructions-to-maintain-the-environment).
    Delete the section of the from-base you are not using.
+
+   If you change the dependency files commit so that you can track what worked and what didn't.
 6. Build the environment following the instructions to [build the environment](#obtainingbuilding-the-environment).
    (Obviously, you'll have to build the generic images not pull them.)
 7. Follow the instructions to [run the environment](#the-environment) with your target
@@ -436,7 +438,7 @@ should have their instructions performed in the `Dockerfile` directly.
 There are two ways to add dependencies to the environment:
 
 1. **Manually edit the dependency files.**
-   This will be needed the first time you set up the environment.
+   This is used the first time you set up the environment.
    It will also be useful if you run into conflicts and have to restart from scratch.
 2. **Add/upgrade dependencies interactively** while running a shell in the container to experiment with which
    dependency is needed.
@@ -533,7 +535,7 @@ Here are references and reasons to follow the above claims:
 There are two ways to add dependencies to the environment:
 
 1. **Manually edit the dependency files.**
-   This will be needed the first time you set up the environment.
+   This is used the first time you set up the environment.
    It will also be useful if you run into conflicts and have to restart from scratch.
 2. **Add/upgrade dependencies interactively** while running a shell in the container to experiment with which
    dependency is needed.
