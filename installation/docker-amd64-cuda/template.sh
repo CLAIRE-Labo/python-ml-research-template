@@ -246,8 +246,8 @@ run() {
 list_env() {
   # List the conda environment.
   check
+  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c "if command -v mamba >/dev/null 2>&1; then mamba list; else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi"
   docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" pip list
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" mamba list
 }
 
 empty_interactive() {
