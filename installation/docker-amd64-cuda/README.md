@@ -407,7 +407,7 @@ ssh -N -L 8888:localhost:8888 <USER@HOST> # or anything specified in your ssh co
 
 > [!IMPORTANT]
 > **TEMPLATE TODO:**
-> Provide the images and fill the TODO link, or delete this section.
+> Provide the images and fill the TODO link and PULL_IMAGE_NAME, or delete this section.
 
 An image with the runtime environment and an image with the development environment (includes shell utilities)
 both running as root (but with a configured zshell for users specified at runtime as well)
@@ -424,8 +424,28 @@ E.g., you can mount it at `/project/template-project-name` and specify `PROJECT_
 The entrypoint can then take any command to run in the container and will run it with PID 1.
 (If you don't specify the `PROJECT_ROOT_AT`, the entrypoint will skip the project installation and warn you about it.)
 
-You can refer to the `EPFL-runai-setup/README.md` for an idea of how this would work on a Kubernetes cluster
-interfaced with Run:ai.
+You can refer to the `run-local-*` services in the `compose.yaml` file and to the `EPFL-runai-setup/README.md` file
+for an idea of how this would work on a Kubernetes cluster interfaced with Run:ai.
+
+For example, on an HPC system with Apptainer/Singularity you could do
+```bash
+# After cloning the project, inside the PROJECT_ROOT on your system.
+# E.g. apptainer pull docker://registry-1.docker.io/library/ubuntu:latest
+apptainer pull PULL_IMAGE_NAME:amd64-cuda-dev-latest-root
+
+# Location to mount the project, also used by the entrypoint
+export PROJECT_ROOT_AT=/project/template-project-name
+apptainer run \
+    -c \
+    -B $(pwd):${PROJECT_ROOT_AT} \
+    --env PROJECT_ROOT_AT=${PROJECT_ROOT_AT} \
+    --env WANDB_API_KEY="" \
+    --nv template-project-name_amd64-cuda-dev-latest-root.sif
+# --env PROJECT_ROOT_AT is used by the entrypoint to install the project
+# *.sif is the downloaded image.
+# -c to not mount all home to avoid spoiling reproducibility
+# --nv to use NVIDIA GPUs
+```
 
 Return to the root README for the rest of the instructions to run our experiments.
 
