@@ -229,7 +229,7 @@ We provide the following guides for obtaining/building and running the environme
 
 ### Prerequisites
 
-* `docker` (`docker version` >= v23). [Install here.](https://docs.docker.com/engine/)
+* `docker` (A Docker Engine `docker version` >= v23). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 
 ### Clone the repository
@@ -326,7 +326,7 @@ otherwise get back to the instructions of deployment option you're following.
 
 Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 
-* `docker` (`docker version` >= v23). [Install here.](https://docs.docker.com/engine/)
+* `docker` (A Docker Engine `docker version` >= v23). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 * [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc.)
 * [CUDA] `nvidia-docker` (the NVIDIA Container

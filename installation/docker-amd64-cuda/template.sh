@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 
 ENV_TEXT=$(
@@ -99,8 +101,8 @@ pull_generic() {
   PULL_IMAGE_NAME="${1}"
   if [ "${PULL_IMAGE_NAME}" == "" ]; then
     echo "[TEMPLATE ERROR] Please specify the name of the image to pull."
-    echo "For example: ./template.sh pull ic-registry.epfl.ch/${LAB_NAME}/moalla/${PROJECT_NAME}"
-    echo "For example: ./template.sh pull docker.io/skandermoalla/${PROJECT_NAME}"
+    echo "For example: ./template.sh pull ic-registry.epfl.ch/${LAB_NAME}/gaspar/${PROJECT_NAME}"
+    echo "For example: ./template.sh pull docker.io/docker-username/${PROJECT_NAME}"
     exit 1
   fi
 
@@ -149,7 +151,7 @@ push_usr_or_root() {
   PUSH_IMAGE_NAME="${2}"
   if [ "${PUSH_IMAGE_NAME}" == "" ]; then
     echo "[TEMPLATE ERROR] Please specify the complete name of the image to push."
-    echo "For example: ./template.sh push docker.io/skandermoalla/template-project-name"
+    echo "For example: ./template.sh push docker.io/docker-username/template-project-name"
     echo "EPFL people can just do ./template.sh push IC or ./template.sh push RCP
       And it will be pushed to ic-registry.epfl.ch/${IMAGE_NAME}
       or registry.rcp.epfl.ch/${IMAGE_NAME}"
@@ -260,5 +262,30 @@ get_runai_scripts() {
   done
 }
 
+usage() {
+  echo "Usage: $0 {env|pull_generic|build_generic|build_user|build|push_generic|push_user|push|list_env|empty_interactive|run|dev|get_runai_scripts}"
+
+  # Describe each function with its arguments.
+  echo "env: Create the .env file with the user-specific variables."
+  echo "pull_generic IMAGE_NAME: Pull the generic runtime and dev images."
+  echo "build_generic: Build the generic runtime and dev images."
+  echo "build_user: Build the user runtime and dev images."
+  echo "build: Build the generic and user runtime and dev images."
+  echo "push_generic IMAGE_NAME: Push the generic runtime and dev images."
+  echo "push_user IMAGE_NAME: Push the user runtime and dev images."
+  echo "push IMAGE_NAME: Push the generic and user runtime and dev images."
+  echo "list_env: List the pip/conda environment."
+  echo "empty_interactive: Start an interactive shell in an empty container."
+  echo "run -e VAR1=VAL1 -e VAR2=VAL2 ... COMMAND: Run a command in a new runtime container."
+  echo "dev -e VAR1=VAL1 -e VAR2=VAL2 ... COMMAND: Run a command in a new development container."
+  echo "get_runai_scripts: Rename the runai examples."
+}
+
 # Call the function passed as the first argument
 "$@"
+
+if [ $# -eq 0 ]; then
+    usage
+else
+    "$@"
+fi
