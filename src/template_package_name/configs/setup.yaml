@@ -38,7 +38,7 @@ wandb:
   # Make outputs/wandb a symlink if you want to save the wandb summaries elsewhere.
   # Same as with outputs_subdir.
   dir: ${hydra:runtime.cwd}/outputs
-  mode: offline
+  mode: online
   anonymous: allow
   tags:
     - development
