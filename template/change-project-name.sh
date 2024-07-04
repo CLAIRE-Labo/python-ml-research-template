@@ -3,7 +3,7 @@ set -eo pipefail
 source template/template-variables.env
 
 # Iterate through all files in the project except dot directories and this directory.
-for file in $(find . -type f -not -path './template/*' -not -path '*/\.*' -not -path '*/__*__/*'); do
+for file in $(find . -type f -not -path './template/*' -not -path '*/\.*' -not -path '*/__*__/*' -not -path './outputs/*'); do
   # .deleteme is a trick to make sed work the same way on both Linux and OSX.
   # https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
   sed -i.deleteme "s/${OLD_PROJECT_NAME}/${NEW_PROJECT_NAME}/g" "${file}"
