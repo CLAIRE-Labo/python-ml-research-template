@@ -2,6 +2,13 @@
 set -eo pipefail
 echo "[TEMPLATE INFO] Running entrypoint.sh"
 
+# The original entrypoint should exec the command it receives otherwise this will break
+# if BASE_ENTRYPOINT is set run it
+if [ -n "${BASE_ENTRYPOINT}" ]; then
+  echo "[TEMPLATE INFO] Running the base entrypoint."
+  source "${BASE_ENTRYPOINT}"
+fi
+
 # Check that the PROJECT_ROOT_AT is set.
 if [ -z "${PROJECT_ROOT_AT}" ]; then
   echo "[TEMPLATE WARNING] PROJECT_ROOT_AT is not set."

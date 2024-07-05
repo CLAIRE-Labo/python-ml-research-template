@@ -23,7 +23,7 @@ LAB_NAME=$(id -un | tr "[:upper:]" "[:lower:]")
 #### For running locally
 # You can find the acceleration options in the compose.yaml file
 # by looking at the services with names dev-local-ACCELERATION.
-PROJECT_ROOT_AT=/project/template-project-name
+PROJECT_ROOT_AT=$(pwd)/../..
 ACCELERATION=cuda
 WANDB_API_KEY=
 
@@ -35,10 +35,9 @@ PROJECT_NAME=template-project-name
 PACKAGE_NAME=template_package_name
 IMAGE_NAME=\${LAB_NAME}/\${USR}/\${PROJECT_NAME}
 IMAGE_PLATFORM=amd64-cuda
-# The image name also includes the USR
-# to avoid conflicts between users using the same build machine
-# Or sharing repositories. (Duplicate images with different names will still be stored only once.)
-# The platform is in the image tag to to make it explicit for reproducibility.
+# The image name includes the USR to separate the images in an image registry.
+# Its tag includes the platform for registries that don't hand multi-platform images for the same tag.
+# You can also add a suffix to the platform e.g. -jax or -pytorch if you use different images for different environments/models etc.
 
 EOF
 )
@@ -64,7 +63,7 @@ check() {
     exit 1
   fi
   source "${ENV_FILE}"
-  COMPOSE_PROJECT="${PROJECT_NAME}-${USR}"
+  COMPOSE_PROJECT="${PROJECT_NAME}-${IMAGE_PLATFORM}-${USR}"
 
   # Check that the files in the installation/ directory are all committed to git.
   # The image uses the git commit as a tag to know which dependencies where installed.

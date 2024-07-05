@@ -1,6 +1,7 @@
 ## See README for additional features like
-# -e GIT_CONFIG_AT=<>
 # -e WANDB_API_KEY_FILE_AT=<>
+
+## Go to the end of the file for useful commands and troubleshooting tips.
 
 ## PyCharm example:
 
@@ -13,6 +14,7 @@ runai submit \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
   -e PYCHARM_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm-config \
+  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -- sleep infinity
 
 # Option 2 (preferred). PyCharm launched from the remote server.
@@ -25,6 +27,7 @@ runai submit \
   -e SSH_SERVER=1 \
   -e PYCHARM_IDE_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm \
   -e PYCHARM_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm-config \
+  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -- sleep infinity
 
 ## The new bits here are:
@@ -39,6 +42,7 @@ runai submit \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
   -e VSCODE_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
+  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -- sleep infinity
 
 ## The new bits here are:
@@ -51,6 +55,7 @@ runai submit \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
+  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -e JUPYTER_SERVER=1 \
   -- sleep infinity
 

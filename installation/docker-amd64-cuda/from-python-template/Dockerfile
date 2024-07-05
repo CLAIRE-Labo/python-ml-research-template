@@ -180,7 +180,7 @@ ARG BASE_ENTRYPOINT
 ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
-ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh" ]
+ENTRYPOINT ["/bin/zsh", "-i", "/opt/template-entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################

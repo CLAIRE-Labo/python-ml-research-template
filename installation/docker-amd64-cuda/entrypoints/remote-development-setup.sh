@@ -1,8 +1,10 @@
 ####################
 # Git config.
-# Workaround when clusters do not allow to mount specific directories from PVCs.
+# Workaround using symlinks when clusters do not allow to mount specific directories or files.
 
 if [ -n "${GIT_CONFIG_AT}" ]; then
+  mkdir -p "${GIT_CONFIG_AT}"/..
+  touch "${GIT_CONFIG_AT}"
   ln -s "${GIT_CONFIG_AT}" "${HOME}/.gitconfig"
   echo "[TEMPLATE INFO] Sym-linked Git config to ${GIT_CONFIG_AT}."
 fi
@@ -49,6 +51,7 @@ fi
 # You can set the env variable PYCHARM_CONFIG_AT to persist your JetBrains configuration and cache.
 # You can set the env variable PYCHARM_IDE_AT to the location of the PyCharm binaries in your mounted storage.
 
+# Workaround using symlinks when clusters do not allow to mount specific directories or files.
 if [ -n "${PYCHARM_CONFIG_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to PyCharm project config files."
   # Something that looks like ~/.config/JetBrains/
@@ -63,7 +66,6 @@ fi
 
 if [ -n "${PYCHARM_IDE_AT}" ]; then
   echo "[TEMPLATE INFO] Starting PyCharm remote development server."
-
   REMOTE_DEV_NON_INTERACTIVE=1 \
     "${PYCHARM_IDE_AT}"/bin/remote-dev-server.sh run "${PROJECT_ROOT_AT}" \
     --ssh-link-host 127.0.0.1 \
@@ -73,15 +75,18 @@ fi
 
 ####################
 ## VS Code remote development server.
-# if the pycharm_ide_location variable is set:
+# Workaround using symlinks when clusters do not allow to mount specific directories or files.
+
 if [ -n "${VSCODE_CONFIG_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to VSCode server config files."
+  mkdir -p "${VSCODE_CONFIG_AT}"
   ln -s "${VSCODE_CONFIG_AT}" "${HOME}/.vscode-server"
 fi
 
 #####################
 # Jupyter Lab server.
-# Jupyter must be installed with your conda environment.
+# Jupyter must be installed in the environment.
+
 if [ -n "${JUPYTER_SERVER}" ]; then
   echo "[TEMPLATE INFO] Starting Jupyter Lab server."
   # Workaround to open zsh.
