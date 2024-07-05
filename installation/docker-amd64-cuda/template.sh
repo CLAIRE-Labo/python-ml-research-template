@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 set -e
 
 ENV_TEXT=$(
@@ -279,9 +279,6 @@ usage() {
   echo "dev -e VAR1=VAL1 -e VAR2=VAL2 ... COMMAND: Run a command in a new development container."
   echo "get_runai_scripts: Rename the runai examples."
 }
-
-# Call the function passed as the first argument
-"$@"
 
 if [ $# -eq 0 ]; then
     usage
