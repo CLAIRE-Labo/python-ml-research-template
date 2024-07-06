@@ -145,9 +145,21 @@ ENV HYDRA_FULL_ERROR=1
 # A final record of the dependencies from pip freeze.
 RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-final.txt
 
+# Make bash login shells start in the project directory.
+# This is a workaround
+# to accommodate deployment options which can't mount subdirectories to specific locations.
+# (so we cannot assume a predefined location for the project exists in Docker image.)
+# Also for runtimes that don't support setting a workdir ar creation time.
+RUN {   echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
+    } >> /etc/profile.d/template.sh
+# same for bash interactive shells
+RUN echo "source /etc/profile.d/template.sh" >> /etc/bash.bashrc
+# Same for zsh
+RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zprofile
+RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zshrc
+
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
-ENV GLOBAL_ZSHRC=/etc/zsh/zshrc
 
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
@@ -165,11 +177,8 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "alias wns='watch nvidia-smi'"; \
         echo "alias hist='history 1'"; \
         echo "alias update-env-file='source \${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/dependencies/update-env-file.sh'"; \
-        echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
-    } >> ${GLOBAL_ZSHRC}
+    } >> /etc/zsh/zshrc
 
-# A place to put the project if needed.
-RUN mkdir -m 777 /project
 
 # Entrypoints.
 # Don't overwrite the entrypoint, it is installing the project
@@ -180,7 +189,7 @@ ARG BASE_ENTRYPOINT
 ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
-ENTRYPOINT ["/bin/zsh", "/opt/template-entrypoints/entrypoint.sh"]
+ENTRYPOINT ["/opt/template-entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################
