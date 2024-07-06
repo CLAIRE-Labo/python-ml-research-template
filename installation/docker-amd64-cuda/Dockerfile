@@ -222,7 +222,7 @@ RUN echo 'echo /etc/zsh/zshrc' >> /etc/zsh/zshrc
 
 # Add the conda env to the PATH for non-login non-intractive shells, in case the user runs a command directly.
 # Caveat: this will be unintuitive for interactive sessions, if the users wants to deactivate the conda env.
-ENV PATH=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/bin:${PATH}
+#ENV PATH=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/bin:${PATH}
 
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
