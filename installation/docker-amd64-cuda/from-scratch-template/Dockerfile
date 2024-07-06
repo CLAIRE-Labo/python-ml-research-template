@@ -149,7 +149,7 @@ FROM runtime-apt-pkgs AS runtime-deps
 # A directory to record all the dependency files used at multiple stages.
 # This is useful for a later inspection or debugging.
 ENV DEPENDENCIES_DIR=/opt/template-dependencies
-RUN mkdir -m 777 ${DEPENDENCIES_DIR}
+RUN mkdir ${DEPENDENCIES_DIR}
 COPY dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
 COPY dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
 COPY dependencies/environment.yml ${DEPENDENCIES_DIR}/environment.yml
@@ -189,10 +189,33 @@ ENV HYDRA_FULL_ERROR=1
 # A final record of the depedenencies from mamba.
 RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-final.yml
 
+# Initialize conda for login and interactive shells, the entrypoint is run as a login shell to activate conda.
+
+# Initialize for bash login shell and activate the environment
+RUN mamba init --system bash
+RUN echo "mamba activate ${PROJECT_NAME}" >> /etc/profile.d/conda.sh
+# Same for bash interactive shell
+RUN cat /etc/profile.d/conda.sh >> /etc/bash.bashrc
+# Same for zsh login shell
+RUN cat /etc/profile.d/conda.sh >> /etc/zsh/zprofile
+# Same for zsh interactive shell
+RUN cat /etc/profile.d/conda.sh >> /etc/zsh/zshrc
+
+# Make bash login start in the project directory.
+RUN {   echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
+    } >> /etc/profile.d/template.sh
+# same for bash interactive shells
+RUN echo "source /etc/profile.d/template.sh" >> /etc/bash.bashrc
+# Same for zsh
+RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zprofile
+RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zshrc
+
+# Add the conda env to the PATH for non-login non-intractive shells, in case the user runs a command directly.
+# Caveat: this will be unintuitive for interactive sessions, if the users wants to deactivate the conda env.
+ENV PATH=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/bin:${PATH}
+
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
-ENV GLOBAL_ZSHRC=/etc/zsh/zshrc
-
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
 ARG ZSHS_PATH=${ZSH_ENHANCE_DIR}/zsh-syntax-highlighting
@@ -210,18 +233,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "alias wns='watch nvidia-smi'"; \
         echo "alias hist='history 1'"; \
         echo "alias update-env-file='source \${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/dependencies/update-env-file.sh'"; \
-        echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
-    } >> ${GLOBAL_ZSHRC}
-
-# Initialize conda for interactive shells, the entrypoint is run as an interactive shell.
-## Write it in /root/.zshrc (which is empty before) and copy to the global zshrc.
-RUN /bin/zsh -i -c "mamba init zsh" && \
-    cat /root/.zshrc >> ${GLOBAL_ZSHRC} && \
-    rm /root/.zshrc && \
-    echo "mamba activate ${PROJECT_NAME}" >> ${GLOBAL_ZSHRC}
-
-# A place to put the project if needed.
-RUN mkdir -m 777 /project
+    } >> /etc/zsh/zshrc
 
 # Entrypoints.
 # The entrypoint is run in an interactive shell so that the conda environment is activated before.
@@ -229,8 +241,8 @@ RUN mkdir -m 777 /project
 # and testing that you correctly mounted the project code.
 # It also performs some other important setup depending on the deployment platform.
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
-COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
-ENTRYPOINT ["/bin/zsh", "-i", "/opt/template-entrypoints/entrypoint.sh"]
+COPY --link entrypoints ${ENTRYPOINTS_ROOT}
+ENTRYPOINT ["/opt/template-entrypoints/entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################

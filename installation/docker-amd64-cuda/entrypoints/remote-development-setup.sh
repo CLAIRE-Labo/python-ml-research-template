@@ -12,6 +12,23 @@ fi
 ####################
 # Open ssh server.
 
+if [ -n "${SSH_SERVER}" ] || [ -n "${SOURCE_ENV_FOR_SSH}" ];then
+  # Export environment variables lost through ssh connection.
+  # (Assumes a single user).
+  # SSH connections don't have the environment variables, so we need to set them.
+  # Export all the env variables except the ones specific to the current shell.
+  # Not sure if this is the best way to do it.
+  env | grep -v -E '^(BASH|SHLVL|PWD|OLDPWD|SHELL|LOGNAME|_)' |\
+   sed -E 's/=(.*)/="\1"/' | sed 's/^/export /' > "${HOME}"/.docker-env-vars
+  # Export to login shells.
+  echo "source ${HOME}/.docker-env-vars" >> "${HOME}/.bash_profile"
+  echo "source ${HOME}/.docker-env-vars" >> "${HOME}/.zprofile"
+  echo "[TEMPLATE INFO] Environment variables have been written to ${HOME}/.docker-env-vars."
+  echo "[TEMPLATE_INFO] And will be sourced in login shells to preserve environment variables in ssh connections."
+  echo "[TEMPLATE INFO] If you change one at runtime and want it to be preserved in subsequence shell invocations, you need to write it to ${HOME}/.docker-env-vars as well."
+fi
+
+
 if [ -n "${SSH_SERVER}" ]; then
   # Configuration for ssh server.
   # This could be done without sudo if needed.
@@ -25,17 +42,6 @@ if [ -n "${SSH_SERVER}" ]; then
     echo "${PASSWD}" | sudo -S sed -i \
     's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
   fi
-
-  # Export environment variables relevant for ssh connection.
-  # SSH connections don't have the environment variables, so we need to set them.
-  # Export all the env variables except the ones specific to the current shell.
-  # Not sure if this is the best way to do it.
-  env | grep -v -E '^(BASH|SHLVL|PWD|OLDPWD|SHELL|LOGNAME|_)' |\
-   sed -E 's/=(.*)/="\1"/' | sed 's/^/export /' > "${HOME}"/.docker-env-vars
-  echo "source ${HOME}/.docker-env-vars" >> "${HOME}"/.zshenv
-  echo "[TEMPLATE INFO] Environment variables have been written to ${HOME}/.docker-env-vars."
-  echo "[TEMPLATE_INFO] And will be sourced at every zsh invocation to preserve environment variables in ssh connections."
-  echo "[TEMPLATE INFO] If you change one at runtime and want it to be preserved in subsequence zsh invocations, you need to write it to ${HOME}/.docker-env-vars as well."
 
   echo "[TEMPLATE INFO] Starting ssh server."
   # This runs in background, so the script will continue.

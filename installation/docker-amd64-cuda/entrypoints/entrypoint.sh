@@ -1,3 +1,5 @@
+#!/bin/bash -l
+# Runs as login shell to setup the environment (if conda for example, or other workarounds)
 # Halt in case of errors. https://gist.github.com/vncsna/64825d5609c146e80de8b1fd623011ca
 set -eo pipefail
 echo "[TEMPLATE INFO] Running entrypoint.sh"
@@ -22,14 +24,10 @@ if [ -z "${PROJECT_ROOT_AT}" ]; then
   export SKIP_INSTALL_PROJECT
 else
   echo "[TEMPLATE INFO] PROJECT_ROOT_AT is set to ${PROJECT_ROOT_AT}."
+  # This is a login shell so already in the PROJECT_ROOT_AT if it was set.
 fi
-# Run the rest from the project root.
-# This is set in the entrypoint and not in the Dockerfile as a Workdir
-# to accommodate deployment options which can't mount subdirectories to specific locations.
-# (so we cannot assume a predefined location for the project).
 echo "[TEMPLATE INFO] The next commands will be run from ${PROJECT_ROOT_AT}."
-echo "[TEMPLATE INFO] Interactive zsh shells will also be started in ${PROJECT_ROOT_AT}."
-cd "${PROJECT_ROOT_AT}"
+echo "[TEMPLATE INFO] Login and interactive shells will also be started in ${PROJECT_ROOT_AT}."
 
 # Install the package in editable mode.
 # Also ensures the code is mounted correctly.
@@ -51,11 +49,11 @@ fi
 
 # Login options, e.g., wandb.
 # Doesn't do anything if no option provided.
-zsh "${ENTRYPOINTS_ROOT}"/logins-setup.sh
+source "${ENTRYPOINTS_ROOT}"/logins-setup.sh
 
 # Remote development options (e.g., PyCharm or VS Code configuration, Jupyter etc).
 # Doesn't do anything if no option provided.
-zsh "${ENTRYPOINTS_ROOT}"/remote-development-setup.sh
+source "${ENTRYPOINTS_ROOT}"/remote-development-setup.sh
 
 # Exec so that the child process receives the OS signals.
 # E.g., signals that the container will be preempted.
