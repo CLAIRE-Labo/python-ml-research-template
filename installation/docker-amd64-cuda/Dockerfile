@@ -158,6 +158,12 @@ RUN echo "source /etc/profile.d/template.sh" >> /etc/bash.bashrc
 RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zprofile
 RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zshrc
 
+# DEBUGGING
+RUN echo 'echo /etc/profile.d.template' | cat - /etc/profile.d/template.sh > temppp && mv temppp /etc/profile.d/template.sh
+RUN echo 'echo /etc/bash.bashrc' | cat - /etc/bash.bashrc > temppp && mv temppp /etc/bash.bashrc
+RUN echo 'echo /etc/zsh/zprofile' | cat - /etc/zsh/zprofile > temppp && mv temppp /etc/zsh/zprofile
+RUN echo 'echo /etc/zsh/zshrc' | cat - /etc/zsh/zshrc > temppp && mv temppp /etc/zsh/zshrc
+
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
 
@@ -189,7 +195,7 @@ ARG BASE_ENTRYPOINT
 ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
-ENTRYPOINT ["/opt/template-entrypoints/entrypoint.sh"]
+ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################
