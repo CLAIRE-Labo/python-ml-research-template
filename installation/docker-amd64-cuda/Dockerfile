@@ -1,12 +1,11 @@
 # syntax = docker/dockerfile:1
 
-# CURL_IMAGE is used to download from the internet in independent layers.
-# GIT_IMAGE is used to clone git repositories in independent layers.
-# BASE_IMAGE is the base image for the project, likely the Ubuntu image.
+# BASE_IMAGE is the image that will be extended by this Dockerfile.
+# It is assumed to a well configured Python installation.
+# The reminaing packages will be installed with pip.
 
-ARG CURL_IMAGE
-ARG GIT_IMAGE
 ARG BASE_IMAGE
+ARG GIT_IMAGE
 
 ########################################################################
 # 1. Stages for downloading, installing, and building things.
@@ -25,27 +24,10 @@ RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
 RUN git clone --depth 1 ${ZSHA_URL} /opt/zsh/zsh-autosuggestions
 RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
 
-########################################################################
-# Download conda.
-
-FROM ${CURL_IMAGE} AS get-conda
-ARG CONDA_URL
-RUN mkdir /tmp/conda && \
-    curl -fvL -o /tmp/conda/miniconda.sh ${CONDA_URL}
 
 ########################################################################
-# Install conda.
-
-FROM ${BASE_IMAGE} AS install-conda
-
-ARG CONDA_INSTALL_PATH
-RUN --mount=type=bind,from=get-conda,source=/tmp/conda,target=/tmp/conda \
-    /bin/bash /tmp/conda/miniconda.sh -b -p ${CONDA_INSTALL_PATH}
-
-########################################################################
-# Install apt build packages.
+# Install missing apt build packages.
 ## This stage can be reused to build other software.
-## For example, it is used to build the conda environment in the conda-env stage.
 
 FROM ${BASE_IMAGE} AS build-apt-packages
 
@@ -68,48 +50,23 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     rm -rf /var/lib/apt/lists/*
 
 ########################################################################
-# Install the conda environment.
-## This stage can be reused to build Python packages.
-
-FROM build-apt-packages AS build-conda-env
-
-ARG PROJECT_NAME
-ENV PROJECT_NAME=${PROJECT_NAME}
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PIP_CACHE_DIR=/root/.cache/pip
-ARG CONDA_INSTALL_PATH
-ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
-ENV CONDA_CACHE_PKGS_DIRS=${CONDA_INSTALL_PATH}/pkgs
-ARG CONDA_ENV_FILE=/tmp/dependencies/environment.yml
-ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
-
-COPY --link --from=install-conda ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
-COPY --link dependencies/environment.yml ${CONDA_ENV_FILE}
-RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
-    --mount=type=cache,target=${CONDA_CACHE_PKGS_DIRS},sharing=private \
-    mamba env create --file ${CONDA_ENV_FILE}
-
-# Record the dependency file after conda install which may be useful.
-RUN mamba env export -n ${PROJECT_NAME} > ${CONDA_INSTALL_PATH}/environment-raw-after-env-create.yml
-
-# Cleaning must be in a separate `RUN` command to preserve the Docker cache.
-RUN mamba clean -fya && \
-    find ${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME} -name '__pycache__' | xargs rm -rf
-
 # Enable Intel MKL optimizations on AMD CPUs.
+
+FROM build-apt-packages AS build-fakeintel
+
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
-RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > ${CONDA_INSTALL_PATH}/fakeintel.c && \
-    gcc -shared -fPIC -o ${CONDA_INSTALL_PATH}/libfakeintel.so ${CONDA_INSTALL_PATH}/fakeintel.c
+RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
+    mkdir -p /opt/fakeintel && \
+    gcc -shared -fPIC -o /opt/fakeintel/libfakeintel.so /tmp/fakeintel.c
+
 
 ########################################################################
 # Here you can install other software starting from build-apt-packages,
-# then copy the installation artifacts to runtime-deps. (As done with the conda env).
+# then copy the installation artifacts to runtime-deps.
 # Think multi-stage and cache-efficient.
+# E.g. you can build wheels and then install them with pip in runtime-deps.
+# The MKL hack for AMD can be seen as an example.
 
-# You can also custom build and install pip packages starting from the build-conda-env stage.
-# Just make sure to prefix your pip commands with `mamba run -n ${PROJECT_NAME} pip install ...`
-# To have to package installed in the same location as the conda env of the project.
 
 ########################################################################
 # 2. Stages for setting up the runtime environment.
@@ -141,33 +98,32 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     rm -rf /var/lib/apt/lists/*
 
 ########################################################################
-# Copy over the conda env and other build artifacts and software.
-# You can use this stage to test the conda env and other build artifacts.
+# Copy build artifacts and software.
+# You can use this stage to test the python env and other build artifacts.
 
 FROM runtime-apt-pkgs AS runtime-deps
 
 # A directory to record all the dependency files used at multiple stages.
 # This is useful for a later inspection or debugging.
 ENV DEPENDENCIES_DIR=/opt/template-dependencies
-RUN mkdir ${DEPENDENCIES_DIR}
+RUN mkdir -m 777 ${DEPENDENCIES_DIR}
 COPY dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
 COPY dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
-COPY dependencies/environment.yml ${DEPENDENCIES_DIR}/environment.yml
+COPY dependencies/requirements.txt ${DEPENDENCIES_DIR}/requirements.txt
 
-# Copy the conda env.
-# Make it writeable by anyone so that it can be updated by the user created in the last layer.
-ARG CONDA_INSTALL_PATH
-ARG PROJECT_NAME
-ENV CONDA_INSTALL_PATH=${CONDA_INSTALL_PATH}
-ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
-COPY --link --from=build-conda-env --chmod=777 ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
-COPY --link --from=build-conda-env ${CONDA_INSTALL_PATH}/environment-raw-after-env-create.yml \
-    ${DEPENDENCIES_DIR}/environment-raw-after-env-create.yml
+# Install pip packages.
+ARG PIP_REQS_FILE=/tmp/dependencies/requirements.txt
+COPY --link dependencies/requirements.txt ${PIP_REQS_FILE}
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-before-pip-install-r.txt
+RUN pip install -r ${PIP_REQS_FILE}
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install-r.txt
 
 # Optional optimizations.
 # Enable Intel MKL optimizations on AMD CPUs.
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
-ENV LD_PRELOAD=${CONDA_INSTALL_PATH}/libfakeintel.so:${LD_PRELOAD}
+ARG FAKEINTEL_PATH=/opt/fakeintel/libfakeintel.so
+COPY --link --from=build-fakeintel --chmod=777 ${FAKEINTEL_PATH} ${FAKEINTEL_PATH}
+ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
 
 ########################################################################
 # This stage is the final user-agnostic (generic) stage.
@@ -186,24 +142,14 @@ ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PACKAGE_NAME=${PACKAGE_NAME}
 ENV HYDRA_FULL_ERROR=1
 
-# A final record of the depedenencies from mamba.
-RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-final.yml
+# A final record of the dependencies from pip freeze.
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-final.txt
 
-# Initialize conda for login and interactive shells, the entrypoint is run as a login shell to activate conda.
-
-# Initialize for bash login shell and activate the environment
-RUN mamba init --system bash
-RUN { echo "mamba activate ${PROJECT_NAME}"; \
-      echo "echo conda initialized and environment activated"; \
-    } >> /etc/profile.d/conda.sh
-# Same for bash interactive shell
-RUN cat /etc/profile.d/conda.sh >> /etc/bash.bashrc
-# Same for zsh login shell
-RUN cat /etc/profile.d/conda.sh >> /etc/zsh/zprofile
-# Same for zsh interactive shell
-RUN cat /etc/profile.d/conda.sh >> /etc/zsh/zshrc
-
-# Make bash login start in the project directory.
+# Make bash login shells start in the project directory.
+# This is a workaround
+# to accommodate deployment options which can't mount subdirectories to specific locations.
+# (so we cannot assume a predefined location for the project exists in Docker image.)
+# Also for runtimes that don't support setting a workdir ar creation time.
 RUN {   echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
     } >> /etc/profile.d/template.sh
 # same for bash interactive shells
@@ -212,27 +158,15 @@ RUN echo "source /etc/profile.d/template.sh" >> /etc/bash.bashrc
 RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zprofile
 RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zshrc
 
-
-# DEBUGGING
-RUN echo 'echo /etc/profile.d.template' >> /etc/profile.d/template.sh
-RUN echo 'echo /etc/bash.bashrc' >> /etc/bash.bashrc
-RUN echo 'echo /etc/zsh/zprofile' >> /etc/zsh/zprofile
-RUN echo 'echo /etc/zsh/zshrc' >> /etc/zsh/zshrc
-
-
-# Add the conda env to the PATH for non-login non-intractive shells, in case the user runs a command directly.
-# Caveat: this will be unintuitive for interactive sessions, if the users wants to deactivate the conda env.
-#ENV PATH=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/bin:${PATH}
-
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
+
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
 ARG ZSHS_PATH=${ZSH_ENHANCE_DIR}/zsh-syntax-highlighting
 COPY --link --from=get-pure /opt/zsh/pure ${PURE_PATH}
 COPY --link --from=get-pure /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
 COPY --link --from=get-pure /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
-# Utilities for interactive shells.
 RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "autoload -Uz promptinit; promptinit"; \
         echo "prompt pure"; \
@@ -245,13 +179,18 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "alias update-env-file='source \${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/dependencies/update-env-file.sh'"; \
     } >> /etc/zsh/zshrc
 
+
 # Entrypoints.
-# The entrypoint is run in an interactive shell so that the conda environment is activated before.
 # Don't overwrite the entrypoint, it is installing the project
 # and testing that you correctly mounted the project code.
 # It also performs some other important setup depending on the deployment platform.
+
+ARG BASE_ENTRYPOINT
+ARG BASE_ENTRYPOINT_EXECS
+ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
+ENV BASE_ENTRYPOINT_EXECS=${BASE_ENTRYPOINT_EXECS}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
-COPY --link entrypoints ${ENTRYPOINTS_ROOT}
+COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
 ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh", "-l"]
 
