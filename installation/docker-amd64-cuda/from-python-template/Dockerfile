@@ -159,10 +159,10 @@ RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zprofile
 RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zshrc
 
 # DEBUGGING
-RUN sed -i '1i echo /etc/profile.d.template' /etc/profile.d/template.sh
-RUN sed -i '1i echo /etc/bash.bashrc' /etc/bash.bashrc
-RUN sed -i '1i echo /etc/zsh/zprofile' /etc/zsh/zprofile
-RUN sed -i '1i echo /etc/zsh/zshrc' /etc/zsh/zshrc
+RUN echo 'echo /etc/profile.d.template' >> /etc/profile.d/template.sh
+RUN echo 'echo /etc/bash.bashrc' >> /etc/bash.bashrc
+RUN echo 'echo /etc/zsh/zprofile' >> /etc/zsh/zprofile
+RUN echo 'echo /etc/zsh/zshrc' >> /etc/zsh/zshrc
 
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
