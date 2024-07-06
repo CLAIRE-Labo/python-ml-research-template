@@ -1,0 +1,13 @@
+name: template-project-name
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - hydra-core
+      - tqdm
+      - wandb
+      - pre-commit
+      - black
+prefix: /opt/conda/envs/template-project-name
