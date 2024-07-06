@@ -68,13 +68,14 @@ check() {
   # Check that the files in the installation/ directory are all committed to git.
   # The image uses the git commit as a tag to know which dependencies where installed.
   # Error if there are uncommitted changes.
-  if [[ $(git status --porcelain | grep  "installation/" | grep -v -E "README|template.sh" -c)\
-    -ge 1 ]]; then
+  if [[ ${IGNORE_UNCOMMITTED} -ne 1 ]] && \
+    [[ $(git status --porcelain | grep  "installation/" | grep -v -E "README|template.sh" -c) -ge 1 ]]; then
     echo "[TEMPLATE ERROR] There are uncommitted changes in the installation/ directory.
     Please commit them before building your generic and user image.
     The image uses the git commit as a tag to keep track of which dependencies where installed.
     If these change don't affect the build (e.g. README),
     feel free to just commit and ignore the rebuild."
+    echo "Force ignoring this error with the flag --ignore-uncommitted."
     exit 1
   fi
 }
@@ -283,5 +284,17 @@ usage() {
 if [ $# -eq 0 ]; then
     usage
 else
-    "$@"
+  # catch the flags
+  case "$1" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --ignore-uncommitted)
+      IGNORE_UNCOMMITTED=1
+      shift
+      ;;
+  esac
+  # run the command
+  "$@"
 fi

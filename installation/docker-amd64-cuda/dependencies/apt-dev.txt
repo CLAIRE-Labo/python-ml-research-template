@@ -3,5 +3,5 @@
 # These dependencies must not be required to run your code in a non-interactive session.
 # They will not be available in the runtime image.
 # They should only help in the interactive development images.
-# openssh-server  # Required for remote development with most IDEs.
+openssh-server  # Required for remote development with most IDEs.
 sudo            # Recommended.
