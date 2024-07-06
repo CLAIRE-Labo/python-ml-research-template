@@ -23,7 +23,8 @@ for your future users (and yourself).
    The default platform is Linux (fixed) on AMD64 CPUs `amd64` (can be changed to e.g. `arm64`)
    with support for NVIDIA GPUs.
    (reflected in the name of the directory `docker-amd64-cuda` by default).
-   To edit it, run
+   If this is good for you, you can skip this part.
+   Otherwise, to edit it, run
    ```bash
    # When in the PROJECT_ROOT directory.
    # For examples run:
@@ -41,13 +42,13 @@ for your future users (and yourself).
    (in some cases, may just get away with adding a line to the build platforms,
    and in others may need separate Dockerfiles and environment files.
    Test them, and ensure your results/conclusions hold across platforms.)
-2. The remaining commands will be run from this `installation/docker-amd64-cuda` directory.
+2. Run the rest of the commands from this `installation/docker-amd64-cuda` directory.
    ```bash
    cd installation/docker-amd64-cuda
    ```
 3. Choose whether you will start your image from an existing image already having a Python environment
    (recommended)(e.g., the [NGC images](https://catalog.ngc.nvidia.com/containers) which have
-   well-configured hardware acceleration dependencies)
+   well-configured hardware-acceleration dependencies)
    or from scratch (Ubuntu image and new conda environment):
     - (Recommended) The `from-python` installation assumes that you base your image from an image which
       already has a Python environment and that this environment is well configured
@@ -207,6 +208,8 @@ We provide the following guides for obtaining/building and running the environme
 - To run the image locally with Docker & Docker Compose, follow the instructions
   to [obtain/build the environment](#obtainingbuilding-the-environment) then
   the instructions [run locally with Docker Compose](#running-locally-with-docker-compose).
+
+  The guide also provides instructions to do remote development on the Run:ai cluster.
 - To run on the EPFL Run:ai clusters, follow the instructions
   to [obtain/build the environment](#obtainingbuilding-the-environment)
   (perform them on your local machine)
@@ -262,7 +265,7 @@ cd installation/docker-amd64-cuda
       (**EPFL Note:** _These should match the permissions on your lab's shared storage when mounting from there
       and running on some shared infrastructure, like HaaS setup with LDAP login or Run:ai.
       They will typically be your GASPAR credentials.
-      CLAIRE members should use the `claire-storage` group._)
+      CLAIRE members should use the `claire-storage` group, refer to the compute doc on Notion._)
     - `LAB_NAME` will be the first element in name of the local images you get.
 
       (**EPFL Note:** _If pushing to the IC or RCP registries this should be the name of your lab's project

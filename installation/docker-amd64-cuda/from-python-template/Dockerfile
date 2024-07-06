@@ -198,7 +198,7 @@ ENV BASE_ENTRYPOINT_EXECS=${BASE_ENTRYPOINT_EXECS}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
 ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
-CMD ["/bin/zsh"]
+CMD ["/bin/zsh", "-l"]
 
 ########################################################################
 # 3. Stages for setting up the user and the development environment.
