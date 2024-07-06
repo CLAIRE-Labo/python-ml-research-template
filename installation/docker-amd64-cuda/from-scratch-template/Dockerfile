@@ -194,7 +194,7 @@ RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-fi
 # Initialize for bash login shell and activate the environment
 RUN mamba init --system bash
 RUN { echo "mamba activate ${PROJECT_NAME}"; \
-      echo "conda initialized and environment activated"; \
+      echo "echo conda initialized and environment activated"; \
     } >> /etc/profile.d/conda.sh
 # Same for bash interactive shell
 RUN cat /etc/profile.d/conda.sh >> /etc/bash.bashrc
