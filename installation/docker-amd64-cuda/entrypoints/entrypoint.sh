@@ -1,15 +1,7 @@
-#!/bin/bash -l
-# Runs as login shell to setup the environment (if conda for example, or other workarounds)
+#!/bin/bash
 # Halt in case of errors. https://gist.github.com/vncsna/64825d5609c146e80de8b1fd623011ca
 set -eo pipefail
 echo "[TEMPLATE INFO] Running entrypoint.sh"
-
-# The original entrypoint should exec the command it receives otherwise this will break
-# if BASE_ENTRYPOINT is set run it
-if [ -n "${BASE_ENTRYPOINT}" ]; then
-  echo "[TEMPLATE INFO] Running the base entrypoint."
-  source "${BASE_ENTRYPOINT}"
-fi
 
 # Check that the PROJECT_ROOT_AT is set.
 if [ -z "${PROJECT_ROOT_AT}" ]; then

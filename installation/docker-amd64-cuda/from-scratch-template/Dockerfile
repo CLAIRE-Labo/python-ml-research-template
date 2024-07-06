@@ -193,7 +193,9 @@ RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-fi
 
 # Initialize for bash login shell and activate the environment
 RUN mamba init --system bash
-RUN echo "mamba activate ${PROJECT_NAME}" >> /etc/profile.d/conda.sh
+RUN { echo "mamba activate ${PROJECT_NAME}"; \
+      echo "conda initialized and environment activated"; \
+    } >> /etc/profile.d/conda.sh
 # Same for bash interactive shell
 RUN cat /etc/profile.d/conda.sh >> /etc/bash.bashrc
 # Same for zsh login shell
@@ -209,6 +211,14 @@ RUN echo "source /etc/profile.d/template.sh" >> /etc/bash.bashrc
 # Same for zsh
 RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zprofile
 RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zshrc
+
+
+# DEBUGGING
+RUN echo 'echo /etc/profile.d.template' | cat - /etc/profile.d/template.sh > temppp && mv temppp /etc/profile.d/template.sh
+RUN echo 'echo /etc/bash.bashrc' | cat - /etc/bash.bashrc > temppp && mv temppp /etc/bash.bashrc
+RUN echo 'echo /etc/zsh/zprofile' | cat - /etc/zsh/zprofile > temppp && mv temppp /etc/zsh/zprofile
+RUN echo 'echo /etc/zsh/zshrc' | cat - /etc/zsh/zshrc > temppp && mv temppp /etc/zsh/zshrc
+
 
 # Add the conda env to the PATH for non-login non-intractive shells, in case the user runs a command directly.
 # Caveat: this will be unintuitive for interactive sessions, if the users wants to deactivate the conda env.
@@ -242,7 +252,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
 # It also performs some other important setup depending on the deployment platform.
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link entrypoints ${ENTRYPOINTS_ROOT}
-ENTRYPOINT ["/opt/template-entrypoints/entrypoint.sh"]
+ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################
