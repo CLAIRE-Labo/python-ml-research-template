@@ -8,11 +8,11 @@
 
 # Do this if the entrypoint execs the command it receives (every entrypoint should do this).
 if [ "${BASE_ENTRYPOINT_EXECS}" -eq 1 ] && [ -n "${BASE_ENTRYPOINT}" ]; then
-  echo "[TEMPLATE INFO] execing the base entrypoint ${BASE_ENTRYPOINT} which will exec the template's entrypoint."
+  echo "[TEMPLATE INFO] execing the base image's entrypoint ${BASE_ENTRYPOINT} which will then exec the template's entrypoint."
   exec "${BASE_ENTRYPOINT}" /opt/template-entrypoints/entrypoint.sh "$@"
 else
   if [ -n "${BASE_ENTRYPOINT}" ]; then
-    echo "[TEMPLATE INFO] Sourcing the base entrypoint ${BASE_ENTRYPOINT} then execing the template's entrypoint."
+    echo "[TEMPLATE INFO] Sourcing the base image's entrypoint ${BASE_ENTRYPOINT} then execing the template's entrypoint."
     source "${BASE_ENTRYPOINT}" || { echo "Failed to source ${BASE_ENTRYPOINT}"; exit 1; }
     exec /opt/template-entrypoints/entrypoint.sh "$@"
   else
