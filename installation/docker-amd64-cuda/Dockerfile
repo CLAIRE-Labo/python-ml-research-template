@@ -192,7 +192,9 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
 # It also performs some other important setup depending on the deployment platform.
 
 ARG BASE_ENTRYPOINT
+ARG BASE_ENTRYPOINT_EXECS
 ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
+ENV BASE_ENTRYPOINT_EXECS=${BASE_ENTRYPOINT_EXECS}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
 ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
