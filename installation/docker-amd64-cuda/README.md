@@ -317,13 +317,13 @@ otherwise get back to the instructions of deployment option you're following.
 > [!IMPORTANT]
 > **TEMPLATE TODO:** Adapt the compose.yaml file to your local deployment needs.
 > - Add the necessary container options (ipc=host, network, additional mounts, etc)
-    > to the run-local and dev-local services in the compose.yaml file.
+>   to the run-local and dev-local services in the compose.yaml file.
 >
 > - If you change the hardware acceleration:
-> 1. change the `compose.yaml` file to adapt the
-     > `run-local-cuda` and `dev-local-cuda` to the new hardware acceleration.
-> 2. change the supported values of the `ACCELERATION` listed below.
-> 3. change the prerequisites for the hardware acceleration.
+>   1. change the `compose.yaml` file to adapt the
+>      `run-local-cuda` and `dev-local-cuda` to the new hardware acceleration.
+>   2. change the supported values of the `ACCELERATION` listed below.
+>   3. change the prerequisites for the hardware acceleration.
 
 **Prerequisites**
 
@@ -332,23 +332,14 @@ Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 * `docker` (A Docker Engine `docker version` >= v23). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 * [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc.)
-* [CUDA] `nvidia-docker` (the NVIDIA Container
-  Toolkit). [Install here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+* [CUDA] The NVIDIA Container Toolkit. [Install here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 
 **Run**
 
 Edit the `.env` file to specify which hardware acceleration to use with the `ACCELERATION` variable.
 Supported values are `cpu` and `cuda`.
 
-Then you can run jobs in independent containers running the runtime or the development image with
-
-```bash
-# You can for example open tmux shells and run your experiments in them.
-# template_experiment is an actual script that you can run.
-./template.sh run your_command
-./template.sh run python --version
-./template.sh run python -m template_package_name.template_experiment some_arg=some_value
-```
+Then you can run jobs in independent containers running the runtime or the development image.
 
 These containers start with the entrypoint and then run the command you specified.
 By default, they are automatically removed after they exit.
@@ -362,11 +353,26 @@ runs the original entrypoint of your base image if it exists,
 and execs your command with PID 1.
 Only do so if you need to debug the entrypoint itself or if you have a custom use case.
 
-You can pass environment variables to the container with the `-e VAR=VALUE` flag before your command
-
+For the runtime image you can run commands directly in independent containers with.
 ```bash
-./template.sh run -e FOO=1 env
-./template.sh dev zsh
+# template_experiment is an actual script that you can run.
+./template.sh run your_command
+./template.sh run python --version
+./template.sh run python -m template_package_name.template_experiment some_arg=some_value
+# You can pass environment variables to the container with the `-e VAR=VALUE` flag before your command
+./template.sh -e FOO=10 run bash -c 'echo $FOO'
+# E.g. open a tmux shell, then run containers there
+tmux
+./template.sh run your_command
+# Detach from the tmux.
+```
+
+For the dev image you can start it and then exec programs in it, or from a tmux shell
+```bash
+# To get a shell
+./template.sh dev
+# To open a container a let it be (remember to stop it)
+./template.sh dev -d
 ```
 
 In particular, you can pass environment variables that the entrypoint can use to facilitate your development experience.

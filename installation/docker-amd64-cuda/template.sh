@@ -64,20 +64,6 @@ check() {
   fi
   source "${ENV_FILE}"
   COMPOSE_PROJECT="${PROJECT_NAME}-${IMAGE_PLATFORM}-${USR}"
-
-  # Check that the files in the installation/ directory are all committed to git.
-  # The image uses the git commit as a tag to know which dependencies where installed.
-  # Error if there are uncommitted changes.
-  if [[ ${IGNORE_UNCOMMITTED} -ne 1 ]] && \
-    [[ $(git status --porcelain | grep  "installation/" | grep -v -E "README|template.sh" -c) -ge 1 ]]; then
-    echo "[TEMPLATE ERROR] There are uncommitted changes in the installation/ directory.
-    Please commit them before building your generic and user image.
-    The image uses the git commit as a tag to keep track of which dependencies where installed.
-    If these change don't affect the build (e.g. README),
-    feel free to just commit and ignore the rebuild."
-    echo "Force ignoring this error with the flag --ignore-uncommitted."
-    exit 1
-  fi
 }
 
 edit_from_base() {
@@ -114,6 +100,20 @@ pull_generic() {
 }
 
 build_generic() {
+  # Check that the files in the installation/ directory are all committed to git if running the build command.
+  # The image uses the git commit as a tag to know which dependencies where installed.
+  # Error if there are uncommitted changes.
+  if [[ ${IGNORE_UNCOMMITTED} -ne 1 ]] && \
+    [[ $(git status --porcelain | grep  "installation/" | grep -v -E "README|template.sh" -c) -ge 1 ]]; then
+    echo "[TEMPLATE ERROR] There are uncommitted changes in the installation/ directory.
+    Please commit them before building your generic and user image.
+    The image uses the git commit as a tag to keep track of which dependencies where installed.
+    If these change don't affect the build (e.g. README),
+    feel free to just commit and ignore the rebuild."
+    echo "Force ignoring this error with the flag --ignore-uncommitted."
+    exit 1
+  fi
+
   # Build the generic runtime and dev images and tag them with the current git commit.
   check
   docker compose -p "${COMPOSE_PROJECT}" build image-run-root
@@ -126,6 +126,20 @@ build_generic() {
 }
 
 build_user() {
+  # Check that the files in the installation/ directory are all committed to git if running the build command.
+  # The image uses the git commit as a tag to know which dependencies where installed.
+  # Error if there are uncommitted changes.
+  if [[ ${IGNORE_UNCOMMITTED} -ne 1 ]] && \
+    [[ $(git status --porcelain | grep  "installation/" | grep -v -E "README|template.sh" -c) -ge 1 ]]; then
+    echo "[TEMPLATE ERROR] There are uncommitted changes in the installation/ directory.
+    Please commit them before building your generic and user image.
+    The image uses the git commit as a tag to keep track of which dependencies where installed.
+    If these change don't affect the build (e.g. README),
+    feel free to just commit and ignore the rebuild."
+    echo "Force ignoring this error with the flag --ignore-uncommitted."
+    exit 1
+  fi
+
   # Build the user runtime and dev images and tag them with the current git commit.
   check
   docker compose -p "${COMPOSE_PROJECT}" build image-run-user
@@ -245,6 +259,12 @@ dev() {
   check
   local env_vars=()
 
+  # Catch detach flag
+  if [[ "$1" == "-d" ]]; then
+    shift
+    detach="-d"
+  fi
+
   # Collect environment variables and commands dynamically
   while [[ "$1" == "-e" ]]; do
     env_vars+=("$1" "$2")  # Store environment variable flags and values as array elements
@@ -252,7 +272,7 @@ dev() {
   done
 
   # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach}" "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
 }
 
 get_runai_scripts() {
