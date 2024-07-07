@@ -25,7 +25,9 @@ RUN groupadd -f -g ${GRPID} ${GRP} && \
     usermod -aG sudo ${USR}
 
 USER ${USR}
-RUN touch /home/${USR}/.zshrc
+
+# Workarounds for remote dev
+RUN touch ${HOME}/.zshrc
 
 ########################################################################
 # Final development layer for the user.
@@ -45,4 +47,9 @@ RUN groupadd -f -g ${GRPID} ${GRP} && \
     usermod -aG sudo ${USR}
 
 USER ${USR}
+
+# Workaround for remote dev
 RUN touch /home/${USR}/.zshrc
+RUN mkdir -p ${HOME}/.config
+RUN mkdir -p ${HOME}/.cache
+

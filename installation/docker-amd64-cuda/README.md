@@ -388,18 +388,15 @@ that you can then use to connect your IDE to and do remote development inside wi
 #### VS Code and PyCharm Remote Development
 
 ```bash
-# Start the dev container and an SSH server in it.
-./template.sh dev -d -e SSH_SERVER=1
-# Outputs a container ID.
-# Get the IP of the container.
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container-ID>
+# Start the dev container and an SSH server in it. Change the port if it's already used by another project.
+./template.sh dev -d -e SSH_SERVER=1 SSH_CONTAINER_PORT=2223
 
 # If the container is on your local machine you're good to go.
 
 # If the container is on a remote machine, you should forward the ports to your local machine.
 # Run the following on your local machine.
 # ssh -N -L port-on-local-machine:container-ip:container-port <USER@HOST>
-ssh -N -L 2222:<CONTAINER-IP>:22 <USER@HOST> # or anything specified in your ssh config.
+ssh -N -L 2223:localhost:2223 <USER@HOST> # or anything specified in your ssh config.
 ```
 
 Add your forwarded server to your local machine's SSH config file.
@@ -407,16 +404,17 @@ Add your forwarded server to your local machine's SSH config file.
 # Add the following to your SSH config file (~/.ssh/config)
 # If the container is on your local machine, without port forwarding
 # Replace localhost by the address of the container and Port by 22.
-Host local2222
+Host local2223
 	HostName localhost
 	User <same-username-as-.env>
-	Port 2222
+	Port 2223
 	StrictHostKeyChecking no
 	UserKnownHostsFile=/dev/null
 	ForwardAgent yes
 ```
 
 **Note**
+
 Directories for storing the IDE configurations, extensions, etc are mounted to the container to be persisted accross development sessions.
 You can find them in the `docker-compose.yaml` file.
 
@@ -439,24 +437,22 @@ With Jupyter Lab you should have the server running directly in the container
 and then forward the ports to your local machine as follows:
 
 ```bash
-# Start the jupyter server
+# Start the jupyter server. Change the port if it's already used by another project.
 ./template.sh dev -d -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8888
-# Outputs a container ID. Get its IP and logs to get the token
-# Get the IP of the docker container
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container-ID>
-# Get the logs of the container
+# Outputs a container ID. 
+# Get its logs to get the token.
 docker logs <container-ID>
 # The last line will be something like
 # http://hostname:8888/?token=<TOKEN>
 # Wait a bit and run again if the server is not ready yet.
 
 # If the container is on your local machine open the URL
-# http://<CONTAINER-IP>:8888/?token=<TOKEN> on your local machine.
+# http://localhost:8888/?token=<TOKEN> on your local machine.
 
 # If the container is on a remote machine, you should forward the ports to your local machine.
 # Run the following on your local machine.
 # ssh -N -L port-on-local-machine:container-ip:container-port <USER@HOST>
-ssh -N -L 8888:<CONTAINER-IP>:8888 <USER@HOST> # or anything specified in your ssh config.
+ssh -N -L 8888:localhost:8888 <USER@HOST> # or anything specified in your ssh config.
 # Connect to the server with this URL on your local machine http://localhost:8888/?token=TOKEN
 ```
 

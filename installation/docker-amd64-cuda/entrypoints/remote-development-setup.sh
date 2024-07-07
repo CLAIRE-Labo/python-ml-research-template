@@ -38,13 +38,13 @@ if [ -n "${SSH_SERVER}" ]; then
     mkdir /var/run/sshd
     sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
     # Change the default port to ${SSH_CONTAINER_PORT}.
-    sed -i "s/#Port 22/Port ${SSH_CONTAINER_PORT:-2222}/" /etc/ssh/sshd_config
+    sed -i "s/#Port 22/Port ${SSH_CONTAINER_PORT:-2223}/" /etc/ssh/sshd_config
   else
     echo "${PASSWD}" | sudo -S mkdir /var/run/sshd
     echo "${PASSWD}" | sudo -S sed -i \
     's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
     # Change the default port to ${SSH_CONTAINER_PORT}.
-    echo "${PASSWD}" | sudo -S sed -i "s/#Port 22/Port ${SSH_CONTAINER_PORT:-2222}/" /etc/ssh/sshd_config
+    echo "${PASSWD}" | sudo -S sed -i "s/#Port 22/Port ${SSH_CONTAINER_PORT:-2223}/" /etc/ssh/sshd_config
   fi
 
   echo "[TEMPLATE INFO] Starting ssh server."
