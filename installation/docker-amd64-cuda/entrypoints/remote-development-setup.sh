@@ -66,6 +66,7 @@ if [ -n "${PYCHARM_CONFIG_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to PyCharm project config files."
   # Something that looks like ~/.config/JetBrains/
   # IDE project-config.
+  # Create if doesn't exist.
   mkdir -p "${PYCHARM_CONFIG_AT}/.config/JetBrains/RemoteDev-PY"
   mkdir -p "${PYCHARM_CONFIG_AT}/.cache/JetBrains/RemoteDev-PY"
   mkdir -p "${HOME}/.config/JetBrains"
@@ -89,6 +90,7 @@ fi
 
 if [ -n "${VSCODE_CONFIG_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to VSCode server config files."
+  # Create if doesn't exist.
   mkdir -p "${VSCODE_CONFIG_AT}"
   ln -s "${VSCODE_CONFIG_AT}" "${HOME}/.vscode-server"
 fi

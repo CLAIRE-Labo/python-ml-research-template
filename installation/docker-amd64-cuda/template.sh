@@ -26,6 +26,8 @@ LAB_NAME=$(id -un | tr "[:upper:]" "[:lower:]")
 PROJECT_ROOT_AT=$(realpath "$(pwd)"/../..)
 ACCELERATION=cuda
 WANDB_API_KEY=
+PYCHARM_CONFIG_AT=${HOME}/.template-dev-pycharm-config
+
 
 ####################
 # Project-specific environment variables.
