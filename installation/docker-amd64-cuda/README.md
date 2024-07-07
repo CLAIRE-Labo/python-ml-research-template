@@ -375,41 +375,89 @@ For the dev image you can start it and then exec programs in it, or from a tmux 
 ./template.sh dev -d
 ```
 
-In particular, you can pass environment variables that the entrypoint can use to facilitate your development experience.
+You can pass environment variables that the entrypoint can use to facilitate your development experience.
 This is described in the following section.
 You should then return to the root README for the rest of the instructions to run our experiments.
 
 ### Development
 
-For remote development with this Docker Compose setup, you can have your IDE
-running on the machine where you run the Docker Compose services (not inside the container),
-e.g., Pycharm Remote Development (Gateway) or VSCode Remote Development.
-Then you would use the remote development features of this IDE to connect to the container (double remote
-development)
-through Docker Compose with the `dev-local-${ACCELERATION}` service, if the IDE allows,
-which has the mount set up to the code directory.
-Otherwise, through the image directly and you'll have to add the mounts yourself
-(look at how this is done in `compose.yaml`).
-(A current limitation is that IDEs will typically create a new container each time you run/debug a script,
-and each container will install the project which can take a few seconds.
-We welcome contributions to improve this.
-To avoid this delay you pass the env variable `SKIP_INSTALL_PROJECT=1` if your IDE is already tweaking the PYTHONPATH of the
-container behind the scenes.).
+We support Pycharm Remote Development (Gateway),  VSCode Remote Development, and Jupter Lab.
+For remote development, the template will open an SSH server in a dev container
+that you can then use to connect your IDE to and do remote development inside with your usual debugging tools.
 
-You should set the working directory of scripts ran from your IDE to `/project/template-project-name`.
-
-To use Jupyter Lab you can have the server running directly in the container
-and forward the ports to your local machine as follows:
+#### VS Code and PyCharm Remote Development
 
 ```bash
-# In a separate shell start the Jupyter Lab server (better use tmux).
-# And get the link to the server.
-# The container is using your host's network, you can change JUPYTER_PORT if it's already used.
-./template.sh dev -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8888 zsh
-# Forward the ports to your local machine.
-# From your local machine
-ssh -N -L 8888:localhost:8888 <USER@HOST> # or anything specified in your ssh config.
-# Connect to the server with at http://localhost:8888/?token=...
+# Start the dev container and an SSH server in it.
+./template.sh dev -d -e SSH_SERVER=1
+# Outputs a container ID.
+# Get the IP of the container.
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container-ID>
+
+# If the container is on your local machine you're good to go.
+
+# If the container is on a remote machine, you should forward the ports to your local machine.
+# Run the following on your local machine.
+# ssh -N -L port-on-local-machine:container-ip:container-port <USER@HOST>
+ssh -N -L 2222:<CONTAINER-IP>:22 <USER@HOST> # or anything specified in your ssh config.
+```
+
+Add your forwarded server to your local machine's SSH config file.
+```bash
+# Add the following to your SSH config file (~/.ssh/config)
+# If the container is on your local machine, without port forwarding
+# Replace localhost by the address of the container and Port by 22.
+Host local2222
+	HostName localhost
+	User <same-username-as-.env>
+	Port 2222
+	StrictHostKeyChecking no
+	UserKnownHostsFile=/dev/null
+	ForwardAgent yes
+```
+
+**Note**
+Directories for storing the IDE configurations, extensions, etc are mounted to the container to be persisted accross development sessions.
+You can find them in the `docker-compose.yaml` file.
+
+**VS Code**
+
+The idea is to connect to an SSH remote server as described [here](https://code.visualstudio.com/docs/remote/ssh).
+
+Install the [Remote Development extension in VSCode](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh).
+Then connect to the remote server following the steps [here](https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host).
+
+Open the directory of your project which is mounted in the same location as in you local machine or remote server.
+
+**PyCharm**
+
+
+
+#### Jupyter Lab
+
+With Jupyter Lab you should have the server running directly in the container
+and then forward the ports to your local machine as follows:
+
+```bash
+# Start the jupyter server
+./template.sh dev -d -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8888
+# Outputs a container ID. Get its IP and logs to get the token
+# Get the IP of the docker container
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container-ID>
+# Get the logs of the container
+docker logs <container-ID>
+# The last line will be something like
+# http://hostname:8888/?token=<TOKEN>
+# Wait a bit and run again if the server is not ready yet.
+
+# If the container is on your local machine open the URL
+# http://<CONTAINER-IP>:8888/?token=<TOKEN> on your local machine.
+
+# If the container is on a remote machine, you should forward the ports to your local machine.
+# Run the following on your local machine.
+# ssh -N -L port-on-local-machine:container-ip:container-port <USER@HOST>
+ssh -N -L 8888:<CONTAINER-IP>:8888 <USER@HOST> # or anything specified in your ssh config.
+# Connect to the server with this URL on your local machine http://localhost:8888/?token=TOKEN
 ```
 
 ## Running with your favorite container runtime

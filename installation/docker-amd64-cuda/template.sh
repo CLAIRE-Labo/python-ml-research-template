@@ -241,28 +241,12 @@ run() {
   # ./template.sh run -e VAR1=VAL1 -e VAR2=VAL2 ... python -c "print('hello world')"
   check
   local env_vars=()
-
-  # Collect environment variables and commands dynamically
-  while [[ "$1" == "-e" ]]; do
-    env_vars+=("$1" "$2")  # Store environment variable flags and values as array elements
-    shift 2
-  done
-
-  # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
-}
-
-dev() {
-  # Run a command in a new development container.
-  # Usage:
-  # ./template.sh dev -e VAR1=VAL1 -e VAR2=VAL2 -e SSH_SERVER=1 ... sleep infinity"
-  check
-  local env_vars=()
+  local detach=()
 
   # Catch detach flag
   if [[ "$1" == "-d" ]]; then
     shift
-    detach="-d"
+    detach+=("-d")
   fi
 
   # Collect environment variables and commands dynamically
@@ -272,7 +256,38 @@ dev() {
   done
 
   # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach}" "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
+}
+
+dev() {
+  # Run a command in a new development container.
+  # Usage:
+  # ./template.sh dev -e VAR1=VAL1 -e VAR2=VAL2 -e SSH_SERVER=1 ... sleep infinity"
+  check
+
+  # Create the placeholder directories for remote development.
+  touch ${HOME}/.template-gitconfig
+  mkdir -p ${HOME}/.template-dev-vscode-server
+  mkdir -p ${HOME}/.template-dev-pycharm-config/.config/JetBrains/RemoteDev-PY
+  mkdir -p ${HOME}/.template-dev-pycharm-config/.cache/JetBrains/RemoteDev-PY
+
+  local env_vars=()
+  local detach=()
+
+  # Catch detach flag
+  if [[ "$1" == "-d" ]]; then
+    shift
+    detach+=("-d")
+  fi
+
+  # Collect environment variables and commands dynamically
+  while [[ "$1" == "-e" ]]; do
+    env_vars+=("$1" "$2")  # Store environment variable flags and values as array elements
+    shift 2
+  done
+
+  # Execute the docker command using array expansion for environment variables
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
 }
 
 get_runai_scripts() {
