@@ -205,7 +205,11 @@ list_env() {
   echo "[TEMPLATE INFO] Listing the dependencies in an empty container (nothing mounted)."
   echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
   echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c "if command -v mamba >/dev/null 2>&1; then mamba list; else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi; pip list"
+  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c \
+  "echo '[TEMPLATE INFO] Running mamba list';\
+  if command -v mamba >/dev/null 2>&1; then mamba list; \
+  else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi;
+  echo '[TEMPLATE INFO] Running pip list'; pip list"
 }
 
 empty_interactive() {
