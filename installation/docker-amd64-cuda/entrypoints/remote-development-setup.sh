@@ -81,7 +81,7 @@ if [ -n "${PYCHARM_IDE_AT}" ]; then
     "${PYCHARM_IDE_AT}"/bin/remote-dev-server.sh run "${PROJECT_ROOT_AT}" \
     --ssh-link-host 127.0.0.1 \
     --ssh-link-user "${USER:-$(id -un)}" \
-    --ssh-link-port "${SSH_FORWARD_PORT:-2222}" &
+    --ssh-link-port "${SSH_FORWARD_PORT:-2223}" &
 fi
 
 ####################
