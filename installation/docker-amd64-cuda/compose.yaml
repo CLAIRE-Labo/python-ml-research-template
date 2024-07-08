@@ -72,7 +72,7 @@ services:
       - ${HOME}/.template-dev-vscode-server:/home/${USR}/.vscode-server
       - ${HOME}/.template-dev-jetbrains-server:${JETBRAINS_SERVER_AT}
     environment:
-      PYCHARM_IDE_AT: ${PYCHARM_IDE_AT}
+      # PYCHARM_IDE_AT: ${PYCHARM_IDE_AT}
       JETBRAINS_SERVER_AT: ${JETBRAINS_SERVER_AT}
 
 
