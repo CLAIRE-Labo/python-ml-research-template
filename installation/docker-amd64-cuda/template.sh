@@ -27,7 +27,7 @@ PROJECT_ROOT_AT=$(realpath "$(pwd)"/../..)
 ACCELERATION=cuda
 WANDB_API_KEY=
 PYCHARM_IDE_AT=
-PYCHARM_CONFIG_AT=/home/${USR}/.pycharm-server
+PYCHARM_CONFIG_AT=/home/${USR}/.jetbrains-server
 
 
 ####################
@@ -271,7 +271,7 @@ dev() {
   # Create the placeholder directories for remote development.
   touch ${HOME}/.template-gitconfig
   mkdir -p ${HOME}/.template-dev-vscode-server
-  mkdir -p ${HOME}/.template-dev-pycharm-server
+  mkdir -p ${HOME}/.template-dev-jetbrains-server
 
   local env_vars=()
   local detach=()
