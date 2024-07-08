@@ -64,25 +64,24 @@ fi
 # Workaround using symlinks when clusters do not allow to mount specific directories or files.
 if [ -n "${JETBRAINS_SERVER_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to PyCharm project config files."
-  # Something that looks like ~/.config/JetBrains/
   # IDE project-config.
   # Create if doesn't exist.
-  PROJECR_JETBRAINS_SERVER_AT= "${JETBRAINS_SERVER_AT}${PROJECT_ROOT_AT}"
-  mkdir -p "${PROJECR_JETBRAINS_SERVER_AT}/config"
-  mkdir -p "${PROJECR_JETBRAINS_SERVER_AT}/local"
-  mkdir -p "${PROJECR_JETBRAINS_SERVER_AT}/cache"
+  PROJECT_JETBRAINS_SERVER_AT="${JETBRAINS_SERVER_AT}${PROJECT_ROOT_AT}"
+  mkdir -p "${PROJECT_JETBRAINS_SERVER_AT}/config"
+  mkdir -p "${PROJECT_JETBRAINS_SERVER_AT}/local"
+  mkdir -p "${PROJECT_JETBRAINS_SERVER_AT}/cache"
   mkdir -p "${HOME}/.config"
   mkdir -p "${HOME}/.local/share"
   mkdir -p "${HOME}/.cache"
-  ln -s "${JETBRAINS_SERVER_AT}/config" "${HOME}/.config/JetBrains"
-  ln -s "${JETBRAINS_SERVER_AT}/local" "${HOME}/.local/share/JetBrains"
-  ln -s "${JETBRAINS_SERVER_AT}/cache" "${HOME}/.cache/JetBrains"
+  ln -s "${PROJECT_JETBRAINS_SERVER_AT}/config" "${HOME}/.config/JetBrains"
+  ln -s "${PROJECT_JETBRAINS_SERVER_AT}/local" "${HOME}/.local/share/JetBrains"
+  ln -s "${PROJECT_JETBRAINS_SERVER_AT}/cache" "${HOME}/.cache/JetBrains"
 fi
 
 if [ -n "${PYCHARM_IDE_AT}" ]; then
   echo "[TEMPLATE INFO] Starting PyCharm remote development server."
   REMOTE_DEV_NON_INTERACTIVE=1 \
-    "${PYCHARM_IDE_AT}"/bin/remote-dev-server.sh run "${PROJECT_ROOT_AT}" \
+    "${JETBRAINS_SERVER_AT}/dist/${PYCHARM_IDE_AT}"/bin/remote-dev-server.sh run "${PROJECT_ROOT_AT}" \
     --ssh-link-host 127.0.0.1 \
     --ssh-link-user "${USER:-$(id -un)}" \
     --ssh-link-port "${SSH_FORWARD_PORT:-2223}" &
