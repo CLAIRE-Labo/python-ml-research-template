@@ -58,28 +58,28 @@ fi
 
 ####################
 ## PyCharm remote development server.
-# You can set the env variable PYCHARM_CONFIG_AT to persist your JetBrains configuration and cache.
+# You can set the env variable JETBRAINS_SERVER_AT to persist your JetBrains configuration and cache.
 # You can set the env variable PYCHARM_IDE_AT to the location of the PyCharm binaries in your mounted storage.
 
 # Workaround using symlinks when clusters do not allow to mount specific directories or files.
-if [ -n "${PYCHARM_CONFIG_AT}" ]; then
+if [ -n "${JETBRAINS_SERVER_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to PyCharm project config files."
   # Something that looks like ~/.config/JetBrains/
   # IDE project-config.
   # Create if doesn't exist.
-  mkdir -p "${PYCHARM_CONFIG_AT}/.config"
-  mkdir -p "${PYCHARM_CONFIG_AT}/.cache/JetBrains"
-  mkdir -p "${PYCHARM_CONFIG_AT}/.local/share/JetBrains"
+  mkdir -p "${JETBRAINS_SERVER_AT}/.config/JetBrains"
+  mkdir -p "${JETBRAINS_SERVER_AT}/.cache/JetBrains"
+  mkdir -p "${JETBRAINS_SERVER_AT}/.local/share/JetBrains"
   mkdir -p "${HOME}/.config"
   mkdir -p "${HOME}/.cache"
   mkdir -p "${HOME}/.local/share"
-  ln -s "${PYCHARM_CONFIG_AT}/.config/JetBrains" "${HOME}/.config/JetBrains"
-  ln -s "${PYCHARM_CONFIG_AT}/.cache/JetBrains" "${HOME}/.cache/JetBrains"
-  ln -s "${PYCHARM_CONFIG_AT}/.local/share/JetBrains" "${HOME}/.local/share/JetBrains"
+  ln -s "${JETBRAINS_SERVER_AT}/.config/JetBrains" "${HOME}/.config/JetBrains"
+  ln -s "${JETBRAINS_SERVER_AT}/.cache/JetBrains" "${HOME}/.cache/JetBrains"
+  ln -s "${JETBRAINS_SERVER_AT}/.local/share/JetBrains" "${HOME}/.local/share/JetBrains"
 fi
 
 if [ -n "${PYCHARM_IDE_AT}" ]; then
-  if [ -n "${PYCHARM_CONFIG_AT}" ]; then
+  if [ -n "${JETBRAINS_SERVER_AT}" ]; then
     PYCHARM_LOCATION="${HOME}/.cache/JetBrains/RemoteDev/dist/${PYCHARM_IDE_AT}"
   else
     PYCHARM_LOCATION="${PYCHARM_IDE_AT}"

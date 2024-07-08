@@ -27,7 +27,7 @@ PROJECT_ROOT_AT=$(realpath "$(pwd)"/../..)
 ACCELERATION=cuda
 WANDB_API_KEY=
 PYCHARM_IDE_AT=
-PYCHARM_CONFIG_AT=/home/${USR}/.jetbrains-server
+JETBRAINS_SERVER_AT=/home/${USR}/.jetbrains-server
 
 
 ####################

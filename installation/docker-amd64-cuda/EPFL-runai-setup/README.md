@@ -355,7 +355,7 @@ The remote IDE stores its configuration (e.g., the interpreters you set up, memo
 in `~/.config/JetBrains/RemoteDev-PY/...` and its cache in `~/.cache/JetBrains/RemoteDev-PY/...`.
 Every project will have its own configuration and cache if a different directory there.
 
-To have it preserved between different dev containers, you should specify the `PYCHARM_CONFIG_AT` env variable
+To have it preserved between different dev containers, you should specify the `JETBRAINS_SERVER_AT` env variable
 with your submit command as shown in the examples in `submit-scripts/remote-development.sh`.
 The missing directories will be created automatically if they don't exist.
 
@@ -363,8 +363,8 @@ The missing directories will be created automatically if they don't exist.
 
 1. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
    variables
-    - `PYCHARM_CONFIG_AT`: set it to the `pycharm-server` directory in your PVC as described above.
-    - `PYCHARM_IDE_AT`: don't include it as the IDE is not installed yet.
+    - `JETBRAINS_SERVER_AT`: set it to the `jetbrains-config` directory described above.
+    - `PYCHARM_IDE_AT`: don't include it as IDE is not installed yet.
 2. Enable port forwarding for the SSH port.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
    install the IDE in your `${PYCHARM_CONFIG_AT}/dist` not in its default location
