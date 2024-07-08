@@ -435,11 +435,12 @@ The first time connecting you will have to install the IDE in the container in a
 After that, or if you already have the IDE stored in your machine already,
 the template will start the IDE mounted in the container at the container creation, and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
 
-The first time follow the steps [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) to install the IDE.
-Install it in `/home/YOUR-USERNAME/.pycharm-server/dist`, not in it's default location (small "installation options..." link.)
+The first time follow the steps [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) to install the IDE,
+and install it in `/home/YOUR-USERNAME/.pycharm-server/dist`, not in it's default location (small "installation options..." link.)
 The project directory should be mounted in the container at the same location as in your local machine.
 
-In the container, locate the name of the PyCharm IDE installed it will be at
+In the container, locate the name of the PyCharm IDE installed.
+It will be at
 ```bash
 ls ${HOME}/.pycharm-server/dist
 # Outputs something like e632f2156c14a_pycharm-professional-2024.1.4
@@ -448,8 +449,10 @@ Copy the absolute path to this directory and paste it in your `.env` file as the
 ```bash
 PYCHARM_IDE_AT=/home/${USR}/.pycharm-server/dist/e632f2156c14a_pycharm-professional-2024.1.4
 ```
+Your interpreter configurations will not be stored in this first time installation, but it will be in the next ones.
+Stop the container and start it again to have the IDE mounted in the container.
 
-Then in the next times, the IDE will start at the container start and you will find it in your JetBrains Gateway list of projects.
+The next time you start the development container, the IDE will start at the container start and you will find it in your JetBrains Gateway list of projects.
 
 
 #### Jupyter Lab
