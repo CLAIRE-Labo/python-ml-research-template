@@ -64,7 +64,7 @@ fi
 # Workaround using symlinks when clusters do not allow to mount specific directories or files.
 if [ -n "${JETBRAINS_SERVER_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to PyCharm project config files."
-  # IDE project-config.
+  # Per-project server.
   # Create if doesn't exist.
   PROJECT_JETBRAINS_SERVER_AT="${JETBRAINS_SERVER_AT}/projects${PROJECT_ROOT_AT}"
   mkdir -p "${JETBRAINS_SERVER_AT}"/dist
@@ -92,11 +92,13 @@ fi
 ## VS Code remote development server.
 # Workaround using symlinks when clusters do not allow to mount specific directories or files.
 
-if [ -n "${VSCODE_CONFIG_AT}" ]; then
+if [ -n "${VSCODE_SERVER_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to VSCode server config files."
+  # Per-project server.
   # Create if doesn't exist.
-  mkdir -p "${VSCODE_CONFIG_AT}"
-  ln -s "${VSCODE_CONFIG_AT}" "${HOME}/.vscode-server"
+  PROJECT_VSCODE_SERVER_AT="${VSCODE_SERVER_AT}/projects${PROJECT_ROOT_AT}"
+  mkdir -p "${PROJECT_VSCODE_SERVER_AT}"
+  ln -s "${PROJECT_VSCODE_SERVER_AT}" "${HOME}/.vscode-server"
 fi
 
 #####################

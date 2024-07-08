@@ -426,7 +426,7 @@ feature of VS code that runs a remote IDE in the container via SSH.
 
 The remote IDE stores its configuration (e.g., the extensions you set up) in `~/.vscode-server`.
 To have it preserved between different dev containers, you should specify the
-`VSCODE_CONFIG_AT` env variable with your submit command
+`VSCODE_SERVER_AT` env variable with your submit command
 as shown in the examples in `submit-scripts/remote-development.sh`.
 The missing directories will be created automatically if they don't exist.
 
@@ -440,7 +440,7 @@ to set up your ssh config file for runai jobs.
 
 1. In your `runai submit` command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
-    - preserving your config `VSCODE_CONFIG_AT`.
+    - preserving your config `VSCODE_SERVER_AT`.
 2. Enable port forwarding for the SSH connection.
 3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
    extension on your local VS Code.

@@ -41,12 +41,12 @@ runai submit \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e VSCODE_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
+  -e VSCODE_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -- sleep infinity
 
 ## The new bits here are:
-# -e VSCODE_CONFIG_AT=<> will be mapped to ~/.vscode-server in the container
+# -e VSCODE_SERVER_AT=<> will be mapped to ~/.vscode-server in the container
 
 ## Jupyter Lab example:
 runai submit \
