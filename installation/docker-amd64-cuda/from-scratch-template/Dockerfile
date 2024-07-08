@@ -164,6 +164,9 @@ COPY --link --from=build-conda-env --chmod=777 ${CONDA_INSTALL_PATH} ${CONDA_INS
 COPY --link --from=build-conda-env ${CONDA_INSTALL_PATH}/environment-raw-after-env-create.yml \
     ${DEPENDENCIES_DIR}/environment-raw-after-env-create.yml
 
+# Add conda env to path.
+ENV PATH=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/bin:${PATH}
+
 # Optional optimizations.
 # Enable Intel MKL optimizations on AMD CPUs.
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
@@ -189,32 +192,14 @@ ENV HYDRA_FULL_ERROR=1
 # A final record of the depedenencies from mamba.
 RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-final.yml
 
-# Initialize conda for login and interactive shells, the entrypoint is run as a login shell to activate conda.
-
-# Initialize for bash login shell and activate the environment
+# Initialize conda for login and interactive shells, for a better development experience.
+# Although the environment is already in the PATH.
 RUN mamba init --system bash
 RUN { echo "mamba activate ${PROJECT_NAME}"; \
-      echo "echo conda initialized and environment activated"; \
     } >> /etc/profile.d/conda.sh
-# Same for bash interactive shell
 RUN cat /etc/profile.d/conda.sh >> /etc/bash.bashrc
-# Same for zsh login shell
 RUN cat /etc/profile.d/conda.sh >> /etc/zsh/zprofile
-# Same for zsh interactive shell
 RUN cat /etc/profile.d/conda.sh >> /etc/zsh/zshrc
-
-# Make bash login start in the project directory.
-RUN {   echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
-    } >> /etc/profile.d/template.sh
-# same for bash interactive shells
-RUN echo "source /etc/profile.d/template.sh" >> /etc/bash.bashrc
-# Same for zsh
-RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zprofile
-RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zshrc
-
-# Add the conda env to the PATH for non-login non-intractive shells, in case the user runs a command directly.
-# Caveat: this will be unintuitive for interactive sessions, if the users wants to deactivate the conda env.
-ENV PATH=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/bin:${PATH}
 
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance

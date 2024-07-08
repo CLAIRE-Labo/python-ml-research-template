@@ -11,6 +11,7 @@ runai submit \
   --interactive \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
   -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-config \
@@ -23,6 +24,7 @@ runai submit \
   --interactive \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
   -e PYCHARM_IDE_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm-server/dist/e632f2156c14a_pycharm-professional-2024.1.4 \
@@ -39,6 +41,7 @@ runai submit \
   --interactive \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
   -e VSCODE_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
@@ -54,6 +57,7 @@ runai submit \
   --interactive \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -e JUPYTER_SERVER=1 \

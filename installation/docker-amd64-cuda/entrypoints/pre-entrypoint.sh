@@ -1,5 +1,4 @@
-#!/bin/bash -l
-# Runs as login shell to setup the environment (if conda for example, or other workarounds)
+#!/bin/bash
 
 # The base entrypoint (from the base image) should exec the command it receives otherwise this will break
 # the signal handling.

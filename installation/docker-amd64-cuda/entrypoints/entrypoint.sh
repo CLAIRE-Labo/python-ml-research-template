@@ -10,16 +10,17 @@ if [ -z "${PROJECT_ROOT_AT}" ]; then
   echo "[TEMPLATE WARNING] Ignore if you only need the development environment."
   echo "[TEMPLATE WARNING] PROJECT_ROOT_AT has been defaulted to $(pwd)"
   echo "[TEMPLATE WARNING] The project installation will be skipped."
-  PROJECT_ROOT_AT="$(pwd)"
-  SKIP_INSTALL_PROJECT=1
-  export PROJECT_ROOT_AT
-  export SKIP_INSTALL_PROJECT
+  export PROJECT_ROOT_AT="$(pwd)"
+  export SKIP_INSTALL_PROJECT=1
 else
   echo "[TEMPLATE INFO] PROJECT_ROOT_AT is set to ${PROJECT_ROOT_AT}."
-  # This is a login shell so already in the PROJECT_ROOT_AT if it was set.
 fi
-echo "[TEMPLATE INFO] The next commands will be run from ${PROJECT_ROOT_AT}."
-echo "[TEMPLATE INFO] Login and interactive shells will also be started in ${PROJECT_ROOT_AT}."
+echo "[TEMPLATE INFO] Expecting workdir to be ${PROJECT_ROOT_AT}."
+
+if [ "$(pwd)" != "${PROJECT_ROOT_AT}" ]; then
+  echo "[TEMPLATE WARNING] The current directory $(pwd) is different from PROJECT_ROOT_AT."
+  echo "[TEMPLATE WARNING] The template expects them to be the same."
+fi
 
 # Install the package in editable mode.
 # Also ensures the code is mounted correctly.
@@ -32,7 +33,7 @@ else
   echo "[TEMPLATE INFO] Expecting ${PROJECT_ROOT_AT} to be a Python project."
   echo "[TEMPLATE INFO] To skip this installation use the env variable SKIP_INSTALL_PROJECT=1."
   # The path is relative on purpose.
-  pip install --user -e .
+  pip install --user -e "${PROJECT_ROOT_AT}"
   # Test that the package can be imported.
   echo "[TEMPLATE INFO] Testing that the package can be imported."
   python -c "import ${PACKAGE_NAME}"

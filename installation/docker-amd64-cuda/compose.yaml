@@ -53,6 +53,7 @@ services:
     volumes:
       - ../..:${PROJECT_ROOT_AT}
       # Here you can mount other volumes and symlink directories in data and outputs to them.
+    working_dir: ${PROJECT_ROOT_AT}
     environment:
       PROJECT_ROOT_AT: ${PROJECT_ROOT_AT}
       WANDB_API_KEY: ${WANDB_API_KEY}

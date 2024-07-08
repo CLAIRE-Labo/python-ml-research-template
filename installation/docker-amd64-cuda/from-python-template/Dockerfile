@@ -145,19 +145,6 @@ ENV HYDRA_FULL_ERROR=1
 # A final record of the dependencies from pip freeze.
 RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-final.txt
 
-# Make bash login shells start in the project directory.
-# This is a workaround
-# to accommodate deployment options which can't mount subdirectories to specific locations.
-# (so we cannot assume a predefined location for the project exists in Docker image.)
-# Also for runtimes that don't support setting a workdir ar creation time.
-RUN {   echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
-    } >> /etc/profile.d/template.sh
-# same for bash interactive shells
-RUN echo "source /etc/profile.d/template.sh" >> /etc/bash.bashrc
-# Same for zsh
-RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zprofile
-RUN echo "source /etc/profile.d/template.sh" >> /etc/zsh/zshrc
-
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
 

@@ -415,7 +415,7 @@ Host local2223
 
 **Notes**
 
-Directories for storing the IDE configurations, extensions, etc are mounted to the container to be persisted accross development sessions.
+Directories for storing the IDE configurations, extensions, etc are mounted to the container to be persisted across development sessions.
 You can find them in the `docker-compose.yaml` file.
 
 **VS Code**
@@ -463,7 +463,7 @@ and then forward the ports to your local machine as follows:
 ```bash
 # Start the jupyter server. Change the port if it's already used by another project.
 ./template.sh dev -d -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8887
-# Outputs a container ID. 
+# Outputs a container ID.
 # Get its logs to get the token.
 docker logs -f <container-ID>
 # The last line will be something like
@@ -501,6 +501,7 @@ environment variable `PROJECT_ROOT_AT`.
 E.g., you can mount it at `/project/template-project-name` and specify `PROJECT_ROOT_AT=/project/template-project-name`.
 The entrypoint can then take any command to run in the container and will run it with PID 1.
 (If you don't specify the `PROJECT_ROOT_AT`, the entrypoint will skip the project installation and warn you about it.)
+It also expects the working directory to be set to `$PROJECT_ROOT_AT`.
 
 You can refer to the `run-local-*` services in the `compose.yaml` file and to the `EPFL-runai-setup/README.md` file
 for an idea of how this would work on a Kubernetes cluster interfaced with Run:ai.
@@ -516,6 +517,7 @@ export PROJECT_ROOT_AT=/project/template-project-name
 apptainer run \
     -c \
     -B $(pwd):${PROJECT_ROOT_AT} \
+    --cwd ${PROJECT_ROOT_AT} \
     --env PROJECT_ROOT_AT=${PROJECT_ROOT_AT} \
     --env WANDB_API_KEY="" \
     --nv template-project-name_amd64-cuda-dev-latest-root.sif
