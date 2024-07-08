@@ -381,15 +381,15 @@ You should then return to the root README for the rest of the instructions to ru
 
 ### Development
 
-We support Pycharm Remote Development (Gateway),  VSCode Remote Development, and Jupter Lab.
+We support Pycharm Remote Development (Gateway), VSCode Remote Development, and Jupter Lab.
 For remote development, the template will open an SSH server in a dev container
 that you can then use to connect your IDE to and do remote development inside with your usual debugging tools.
 
-#### VS Code and PyCharm Remote Development
+#### VS Code and PyCharm Professional Remote Development
 
 ```bash
 # Start the dev container and an SSH server in it. Change the port if it's already used by another project.
-./template.sh dev -d -e SSH_SERVER=1 SSH_CONTAINER_PORT=2223
+./template.sh dev -d -e SSH_SERVER=1 -e SSH_CONTAINER_PORT=2223
 
 # If the container is on your local machine you're good to go.
 
@@ -413,14 +413,14 @@ Host local2223
 	ForwardAgent yes
 ```
 
-**Note**
+**Notes**
 
 Directories for storing the IDE configurations, extensions, etc are mounted to the container to be persisted accross development sessions.
 You can find them in the `docker-compose.yaml` file.
 
 **VS Code**
 
-The idea is to connect to an SSH remote server as described [here](https://code.visualstudio.com/docs/remote/ssh).
+The idea is to connect to an SSH remote server (the container) as described [here](https://code.visualstudio.com/docs/remote/ssh).
 
 Install the [Remote Development extension in VSCode](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh).
 Then connect to the remote server following the steps [here](https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host).
@@ -429,6 +429,27 @@ Open the directory of your project which is mounted in the same location as in y
 
 **PyCharm**
 
+The idea is to run the IDE inside the SSH remote server (the container) as described [here](https://www.jetbrains.com/help/pycharm/remote-development-overview.html)
+
+The first time connecting you will have to install the IDE in the container in a mounted directory so that it is stored on your machine.
+After that, or if you already have the IDE stored in your machine already,
+the template will start the IDE mounted in the container at the container creation, and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
+
+The first time follow the steps [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) to install the IDE.
+Install it in `/home/YOUR-USERNAME/.pycharm-server/dist`, not in it's default location (small "installation options..." link.)
+The project directory should be mounted in the container at the same location as in your local machine.
+
+In the container, locate the name of the PyCharm IDE installed it will be at
+```bash
+ls ${HOME}/.pycharm-server/dist
+# Outputs something like e632f2156c14a_pycharm-professional-2024.1.4
+```
+Copy the absolute path to this directory and paste it in your `.env` file as the value of the `PYCHARM_IDE_AT` variable.
+```bash
+PYCHARM_IDE_AT=/home/${USR}/.pycharm-server/dist/e632f2156c14a_pycharm-professional-2024.1.4
+```
+
+Then in the next times, the IDE will start at the container start and you will find it in your JetBrains Gateway list of projects.
 
 
 #### Jupyter Lab
@@ -438,22 +459,23 @@ and then forward the ports to your local machine as follows:
 
 ```bash
 # Start the jupyter server. Change the port if it's already used by another project.
-./template.sh dev -d -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8888
+./template.sh dev -d -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8887
 # Outputs a container ID. 
 # Get its logs to get the token.
-docker logs <container-ID>
+docker logs -f <container-ID>
 # The last line will be something like
-# http://hostname:8888/?token=<TOKEN>
-# Wait a bit and run again if the server is not ready yet.
+# http://hostname:8887/?token=<TOKEN>
+# Wait a bit if the server is not ready yet.
+# Ctrl-C to quit the logs.
 
 # If the container is on your local machine open the URL
-# http://localhost:8888/?token=<TOKEN> on your local machine.
+# http://localhost:8887/?token=<TOKEN> on your local machine.
 
 # If the container is on a remote machine, you should forward the ports to your local machine.
 # Run the following on your local machine.
 # ssh -N -L port-on-local-machine:container-ip:container-port <USER@HOST>
-ssh -N -L 8888:localhost:8888 <USER@HOST> # or anything specified in your ssh config.
-# Connect to the server with this URL on your local machine http://localhost:8888/?token=TOKEN
+ssh -N -L 8887:localhost:8887 <USER@HOST> # or anything specified in your ssh config.
+# Connect to the server with this URL on your local machine http://localhost:8887/?token=TOKEN
 ```
 
 ## Running with your favorite container runtime
@@ -496,7 +518,7 @@ apptainer run \
     --nv template-project-name_amd64-cuda-dev-latest-root.sif
 # --env PROJECT_ROOT_AT is used by the entrypoint to install the project
 # *.sif is the downloaded image.
-# -c to not mount all home to avoid spoiling reproducibility
+# -c to not mount all the home drectory to avoid spoiling reproducibility
 # --nv to use NVIDIA GPUs
 ```
 

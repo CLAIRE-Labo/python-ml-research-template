@@ -70,7 +70,11 @@ services:
       # To persist IDE settings and cache.
       - ${HOME}/.template-gitconfig:/home/${USR}/.gitconfig
       - ${HOME}/.template-dev-vscode-server:/home/${USR}/.vscode-server
-      - ${HOME}/.template-dev-pycharm-config:/home/${USR}/.template-dev-pycharm-config
+      - ${HOME}/.template-dev-pycharm-server:${PYCHARM_CONFIG_AT}
+    environment:
+      PYCHARM_IDE_AT: ${PYCHARM_IDE_AT}
+      PYCHARM_CONFIG_AT: ${PYCHARM_CONFIG_AT}
+
 
   run-local-cuda: # Service to run the image locally with NVIDIA GPU.
     extends:

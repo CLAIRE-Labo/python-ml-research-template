@@ -69,6 +69,7 @@ if [ -n "${PYCHARM_CONFIG_AT}" ]; then
   # Create if doesn't exist.
   mkdir -p "${PYCHARM_CONFIG_AT}/.config/JetBrains/RemoteDev-PY"
   mkdir -p "${PYCHARM_CONFIG_AT}/.cache/JetBrains/RemoteDev-PY"
+  mkdir -p "${PYCHARM_CONFIG_AT}/dist"
   mkdir -p "${HOME}/.config/JetBrains"
   mkdir -p "${HOME}/.cache/JetBrains"
   ln -s "${PYCHARM_CONFIG_AT}/.config/JetBrains/RemoteDev-PY" "${HOME}/.config/JetBrains/RemoteDev-PY"
@@ -77,7 +78,7 @@ fi
 
 if [ -n "${PYCHARM_IDE_AT}" ]; then
   echo "[TEMPLATE INFO] Starting PyCharm remote development server."
-  REMOTE_DEV_NON_INTERACTIVE=1 \
+  REMOTE_DEV_NON_INTERACTIVE=1 REMOTE_DEV_LEGACY_PER_PROJECT_CONFIGS=1 \
     "${PYCHARM_IDE_AT}"/bin/remote-dev-server.sh run "${PROJECT_ROOT_AT}" \
     --ssh-link-host 127.0.0.1 \
     --ssh-link-user "${USER:-$(id -un)}" \
@@ -103,5 +104,5 @@ if [ -n "${JUPYTER_SERVER}" ]; then
   echo "[TEMPLATE INFO] Starting Jupyter Lab server."
   # Workaround to open zsh.
   SHELL=zsh \
-    jupyter-lab --no-browser --port="${JUPYTER_PORT:-8888}" --notebook-dir="${PROJECT_ROOT_AT}" &
+    jupyter-lab --no-browser --port="${JUPYTER_PORT:-8887}" --notebook-dir="${PROJECT_ROOT_AT}" &
 fi
