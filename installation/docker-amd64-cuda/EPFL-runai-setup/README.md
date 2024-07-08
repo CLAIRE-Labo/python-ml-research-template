@@ -249,16 +249,16 @@ Your job will open an ssh server when you set the environment variable `SSH_SERV
 This is necessary for some remote IDEs like PyCharm to work and can be beneficial
 for other things like ssh key forwarding.
 
-The ssh server is configured to run on port 22 of the container.
+The ssh server is configured to run on port 2223 of the container.
 You can forward a local port on your machine to this port on the container.
 
 When your container is up, run
 
 ```bash
-# Here 2222 on the local machine is forwarded to 22 on the pod.
+# Here 2223 on the local machine is forwarded to 2223 on the pod.
 # You can change the local port number to another port number.
 kubectl get pods
-kubectl port-forward <pod-name> 2222:22
+kubectl port-forward <pod-name> 2223:2223
 ```
 
 You can then ssh to your container by ssh-ing to that port on your local machine.
@@ -266,14 +266,14 @@ Connect with the user and password you specified in your `.env` file when you bu
 
 ```bash
 # ssh to local machine is forwarded to the pod.
-ssh -p 2222 <username>@localhost
+ssh -p 2223 <username>@localhost
 ```
 
 As the container will each time be on a different machine, you will have to reset the ssh key for the remote server.
 You can do this with
 
 ```bash
-ssh-keygen -R '[localhost]:2222'
+ssh-keygen -R '[localhost]:2223'
 ```
 
 With the ssh connection, you can forward the ssh keys on your local machine (that you use for GitHub, etc.)
@@ -289,10 +289,10 @@ GitHub provides a guide for that
 and for the ssh config file you can use the following:
 
 ```bash
-Host runai2222
+Host local2223
 	HostName 127.0.0.1
 	User <username>
-	Port 2222
+	Port 2223
 	StrictHostKeyChecking no
 	UserKnownHostsFile=/dev/null
 	ForwardAgent yes
@@ -305,7 +305,7 @@ of the host [(ref)](https://linuxcommando.blogspot.com/2008/10/how-to-disable-ss
 which keeps changing every time a job is scheduled,
 so that you don't have to reset it each time.
 
-With this config you can then simply connect to your container with `ssh runai` when the port 2222 is forwarded.
+With this config you can then simply connect to your container with `ssh local2223` when the port 2223 is forwarded.
 
 **Limitations**
 
@@ -338,15 +338,16 @@ EOL
 Then specify something like `-e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig`
 in your `runai submit` command.
 
-### PyCharm
+### PyCharm Professional
 
 We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remote-development-overview.html)
 feature of PyCharm that runs a remote IDE in the container.
 
-The first time connecting you will have to install the IDE in the server and copy it to your PVC.
+The first time connecting you will have to install the IDE in the server in a location mounted from your PVC so
+that is stored for future use.
 After that, or if you already have the IDE stored in your PVC from a previous project,
-the IDE will start on its own at the container creation, and you will be able to directly connect to it from
-the JetBrains Gateway client on your local machine.
+the template will start the IDE on its own at the container creation,
+and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
 
 **Preliminaries: saving the project IDE configuration**
 
@@ -362,16 +363,24 @@ The missing directories will be created automatically if they don't exist.
 
 1. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
    variables
-    - `PYCHARM_CONFIG_AT`: set it to the `pycharm-config` directory described above.
-    - `PYCHARM_IDE_AT`: don't include it as IDE is not installed yet.
+    - `PYCHARM_CONFIG_AT`: set it to the `pycharm-server` directory in your PVC as described above.
+    - `PYCHARM_IDE_AT`: don't include it as the IDE is not installed yet.
 2. Enable port forwarding for the SSH port.
-3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
+3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
+   install the IDE in your `${PYCHARM_CONFIG_AT}/dist` not in its default location
+   (use the small "installation options..." link).
+   For the project directory, it should be in the same location as your PVC (${PROJECT_ROOT_AT}).
 
-When in the container, copy the directory containing the binaries `~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version>`
-
+When in the container, locate the name of the PyCharm IDE installed.
+It will be at
 ```bash
-# Example
-cp -r ~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version> /claire-rcp-scrach/home/moalla/remote-development/pycharm
+ls ${PYCHARM_CONFIG_AT}/dist
+# Outputs something like e632f2156c14a_pycharm-professional-2024.1.4
+```
+The absolute path to this directory will be what you should set the `PYCHARM_IDE_AT` variable in the next submissions
+so that it starts automatically.
+```bash
+PYCHARM_IDE_AT=/home/${USR}/.pycharm-server/dist/e632f2156c14a_pycharm-professional-2024.1.4
 ```
 
 **When you have the IDE in the PVC**
@@ -386,7 +395,7 @@ You can find an example in `submit-scripts/remote-development.sh`.
    The link looks like:
 
    ```bash
-    Gateway link: jetbrains-gateway://connect#idePath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Fremote-development%2Fpycharm&projectPath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Ftemplate-project-name%2Fdev&host=127.0.0.1&port=2222&user=moalla&type=ssh&deploy=false&newUi=true
+    Gateway link: jetbrains-gateway://connect#idePath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Fremote-development%2Fpycharm&projectPath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Ftemplate-project-name%2Fdev&host=127.0.0.1&port=2223&user=moalla&type=ssh&deploy=false&newUi=true
     ```
    Use it in Gateway to connect to the IDE.
 
@@ -469,12 +478,12 @@ To do so, you need to:
     To access the server, open this file in a browser:
         ...
     Or copy and paste this URL:
-        http://hostname:8888/?token=1098cadee3ac0c48e0b0a3bf012f8f06bb0d56a6cde7d128
+        http://hostname:8887/?token=1098cadee3ac0c48e0b0a3bf012f8f06bb0d56a6cde7d128
    ```
 
-2. Forward the port `8888` on your local machine to the port `8888` on the container.
+2. Forward the port `8887` on your local machine to the port `8887` on the container.
    ```bash
-   kubectl port-forward <pod-name> 8888:8888
+   kubectl port-forward <pod-name> 8887:8887
    ```
 
 3. Open the link in your browser, replacing `hostname` with `localhost`.
