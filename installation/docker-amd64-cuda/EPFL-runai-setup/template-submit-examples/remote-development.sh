@@ -14,7 +14,7 @@ runai submit \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-config \
+  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -- sleep infinity
 
@@ -27,7 +27,7 @@ runai submit \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e PYCHARM_IDE_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm-server/dist/e632f2156c14a_pycharm-professional-2024.1.4 \
+  -e PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4 \
   -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-config \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -- sleep infinity

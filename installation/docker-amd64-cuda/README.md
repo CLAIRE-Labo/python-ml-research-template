@@ -415,8 +415,11 @@ Host local2223
 
 **Notes**
 
-Directories for storing the IDE configurations, extensions, etc are mounted to the container to be persisted across development sessions.
+Directories for storing the IDE configurations, extensions, etc
+are mounted to the container to be persisted across development sessions.
 You can find them in the `docker-compose.yaml` file.
+Each project (defined by its `PROJECT_ROOT_AT` path) will have its own cache directory to avoid conflicts
+between containers.
 
 **VS Code**
 
@@ -425,34 +428,47 @@ The idea is to connect to an SSH remote server (the container) as described [her
 Install the [Remote Development extension in VSCode](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh).
 Then connect to the remote server following the steps [here](https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host).
 
-Open the directory of your project which is mounted in the same location as in you local machine or remote server.
+Open the directory of your project which is mounted in the same location as in your local machine or remote server.
 
 **PyCharm**
 
 The idea is to run the IDE inside the SSH remote server (the container) as described [here](https://www.jetbrains.com/help/pycharm/remote-development-overview.html)
 
-The first time connecting you will have to install the IDE in the container in a mounted directory so that it is stored on your machine.
-After that, or if you already have the IDE stored in your machine already,
-the template will start the IDE mounted in the container at the container creation, and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
+The first time connecting you will have to install the IDE in the container in a mounted directory
+so that it is stored on your machine.
+After that, or if you already have the IDE stored from another project,
+the template will start the IDE mounted in the container at the container creation,
+and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
 
-The first time follow the steps [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) to install the IDE,
-and install it in `/home/YOUR-USERNAME/.jetbrains-server/dist`, not in it's default location (small "installation options..." link.)
+The first time,
+follow the steps [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) to install the IDE,
+and install it in `/home/YOUR-USERNAME/.jetbrains-server/dist`, not in its default location
+(small "installation options..." link).
 For the project directory, it should be mounted in the container at the same location as in your local machine.
 
 In the container, locate the name of the PyCharm IDE installed.
 It will be at
 ```bash
-ls ${HOME}/.jetbrains-server/dist/
+ls ${HOME}/.jetbrains-server/dist
 # Outputs something like e632f2156c14a_pycharm-professional-2024.1.4
 ```
-Copy the name of this directory to your `.env` file as the value of the `PYCHARM_IDE_AT` variable.
+Copy the name of this directory to your `.env` file as the value of the `PYCHARM_IDE_AT` variable
+so that the template can start the IDE for you next time.
 ```bash
 PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 ```
-Your interpreter configurations will not be stored in this first time installation, but it will be in the next ones.
-Stop the container and start it again to have the IDE mounted in the container.
 
-The next time you start the development container, the IDE will start at the container start and you will find it in your JetBrains Gateway list of projects.
+The next time you start the development container, the IDE will start at the container start,
+and you will find it in your JetBrains Gateway list of projects.
+
+_Configuration_:
+
+* PyCharm's default terminal is bash. Change it to zsh in the Settings -> Tools -> Terminal.
+* When running Run/Debug configurations, set your working directory the project root (`$PROJECT_ROOT_AT`), not the script's directory.
+* Your interpreter will be
+  * the system Python `/usr/bin/python` with the `from-python` option.
+  * the Python in your conda environment with the `from-scratch` option, with the conda binary found at `/opt/conda/condabin/conda`.
+
 
 
 #### Jupyter Lab

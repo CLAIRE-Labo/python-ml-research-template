@@ -351,36 +351,37 @@ and you will be able to directly connect to it from the JetBrains Gateway client
 
 **Preliminaries: saving the project IDE configuration**
 
-The remote IDE stores its configuration (e.g., the interpreters you set up, memory requirements, etc.)
-in `~/.config/JetBrains/RemoteDev-PY/...` and its cache in `~/.cache/JetBrains/RemoteDev-PY/...`.
-Every project will have its own configuration and cache if a different directory there.
+The remote IDE stores its configuration and cache (e.g., the interpreters you set up, memory requirements, etc.)
+in `~/.config/JetBrains/RemoteDev-PY/...`, `~/.cache/JetBrains/RemoteDev-PY/...`, and other directories.
 
 To have it preserved between different dev containers, you should specify the `JETBRAINS_SERVER_AT` env variable
 with your submit command as shown in the examples in `submit-scripts/remote-development.sh`.
-The missing directories will be created automatically if they don't exist.
+The template will use it to store the IDE configuration and cache in a separate directory
+per project (defined by its $PROJECT_ROOT_AT).
+All the directories will be created automatically.
 
 **First time only (if you don't have the IDE stored from another project), or if you want to update the IDE.**
 
 1. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
    variables
-    - `JETBRAINS_SERVER_AT`: set it to the `jetbrains-config` directory described above.
+    - `JETBRAINS_SERVER_AT`: set it to the `jetbrains-server` directory described above.
     - `PYCHARM_IDE_AT`: don't include it as IDE is not installed yet.
 2. Enable port forwarding for the SSH port.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
-   install the IDE in your `${PYCHARM_CONFIG_AT}/dist` not in its default location
+   install the IDE in your `${JETBRAINS_SERVER_AT}/dist` not in its default location
    (use the small "installation options..." link).
    For the project directory, it should be in the same location as your PVC (${PROJECT_ROOT_AT}).
 
 When in the container, locate the name of the PyCharm IDE installed.
 It will be at
 ```bash
-ls ${PYCHARM_CONFIG_AT}/dist
+ls ${JETBRAINS_SERVER_AT}/dist
 # Outputs something like e632f2156c14a_pycharm-professional-2024.1.4
 ```
-The absolute path to this directory will be what you should set the `PYCHARM_IDE_AT` variable in the next submissions
+The name of this directory will be what you should set the `PYCHARM_IDE_AT` variable to in the next submissions
 so that it starts automatically.
 ```bash
-PYCHARM_IDE_AT=/home/${USR}/.pycharm-server/dist/e632f2156c14a_pycharm-professional-2024.1.4
+PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 ```
 
 **When you have the IDE in the PVC**
@@ -428,7 +429,9 @@ The remote IDE stores its configuration (e.g., the extensions you set up) in `~/
 To have it preserved between different dev containers, you should specify the
 `VSCODE_SERVER_AT` env variable with your submit command
 as shown in the examples in `submit-scripts/remote-development.sh`.
-The missing directories will be created automatically if they don't exist.
+The template will use it to store the IDE configuration and cache in a separate directory
+per project (defined by its $PROJECT_ROOT_AT).
+All the directories will be created automatically.
 
 **ssh configuration**
 
