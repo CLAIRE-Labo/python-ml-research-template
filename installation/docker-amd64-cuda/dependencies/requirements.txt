@@ -1,5 +1,0 @@
-hydra-core
-tqdm
-wandb
-pre-commit
-black

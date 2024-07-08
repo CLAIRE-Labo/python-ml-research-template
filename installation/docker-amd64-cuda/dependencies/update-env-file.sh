@@ -4,11 +4,7 @@
 # In that case, you have to update this file to add commands that
 # will fix the environment file. (you could also just edit it manually afterwards).
 
-ENV_FILE="${PROJECT_ROOT_AT}"/installation/docker-amd64-cuda/dependencies/requirements.txt
+ENV_FILE="${PROJECT_ROOT_AT}"/installation/docker-amd64-cuda/dependencies/environment.yml
 # Export, but delete the package itself as it's installed at runtime.
 # This is because it is only available after mounting the code.
-# Also remove the details of all packages installed from files prefixed with @.
-pip freeze \
-  | sed "/-e.*/d" \
-  | sed "s/ @.*//g" \
-  > "${ENV_FILE}"
+mamba env export --no-builds | sed "/${PROJECT_NAME}==.*/d" >"$ENV_FILE"
