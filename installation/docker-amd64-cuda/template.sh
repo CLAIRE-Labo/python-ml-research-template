@@ -26,8 +26,8 @@ LAB_NAME=$(id -un | tr "[:upper:]" "[:lower:]")
 PROJECT_ROOT_AT=$(realpath "$(pwd)"/../..)
 ACCELERATION=cuda
 WANDB_API_KEY=
-PYCHARM_IDE_AT=
-JETBRAINS_SERVER_AT=/home/${USR}/.jetbrains-server
+# PyCharm-related. Fill after installing the IDE manually the first time.
+PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 
 
 ####################

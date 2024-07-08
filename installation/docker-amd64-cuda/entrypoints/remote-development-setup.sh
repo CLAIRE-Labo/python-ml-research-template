@@ -67,26 +67,22 @@ if [ -n "${JETBRAINS_SERVER_AT}" ]; then
   # Something that looks like ~/.config/JetBrains/
   # IDE project-config.
   # Create if doesn't exist.
-  mkdir -p "${JETBRAINS_SERVER_AT}/.config/JetBrains"
-  mkdir -p "${JETBRAINS_SERVER_AT}/.local/share/JetBrains"
-  mkdir -p "${JETBRAINS_SERVER_AT}/.cache/JetBrains"
+  PROJECR_JETBRAINS_SERVER_AT= "${JETBRAINS_SERVER_AT}${PROJECT_ROOT_AT}"
+  mkdir -p "${PROJECR_JETBRAINS_SERVER_AT}/config"
+  mkdir -p "${PROJECR_JETBRAINS_SERVER_AT}/local"
+  mkdir -p "${PROJECR_JETBRAINS_SERVER_AT}/cache"
   mkdir -p "${HOME}/.config"
   mkdir -p "${HOME}/.local/share"
   mkdir -p "${HOME}/.cache"
-  ln -s "${JETBRAINS_SERVER_AT}/.config/JetBrains" "${HOME}/.config/JetBrains"
-  ln -s "${JETBRAINS_SERVER_AT}/.local/share/JetBrains" "${HOME}/.local/share/JetBrains"
-  ln -s "${JETBRAINS_SERVER_AT}/.cache/JetBrains" "${HOME}/.cache/JetBrains"
+  ln -s "${JETBRAINS_SERVER_AT}/config" "${HOME}/.config/JetBrains"
+  ln -s "${JETBRAINS_SERVER_AT}/local" "${HOME}/.local/share/JetBrains"
+  ln -s "${JETBRAINS_SERVER_AT}/cache" "${HOME}/.cache/JetBrains"
 fi
 
 if [ -n "${PYCHARM_IDE_AT}" ]; then
-  if [ -n "${JETBRAINS_SERVER_AT}" ]; then
-    PYCHARM_LOCATION="${HOME}/.cache/JetBrains/RemoteDev/dist/${PYCHARM_IDE_AT}"
-  else
-    PYCHARM_LOCATION="${PYCHARM_IDE_AT}"
-  fi
   echo "[TEMPLATE INFO] Starting PyCharm remote development server."
   REMOTE_DEV_NON_INTERACTIVE=1 \
-    "${PYCHARM_LOCATION}"/bin/remote-dev-server.sh run "${PROJECT_ROOT_AT}" \
+    "${PYCHARM_IDE_AT}"/bin/remote-dev-server.sh run "${PROJECT_ROOT_AT}" \
     --ssh-link-host 127.0.0.1 \
     --ssh-link-user "${USER:-$(id -un)}" \
     --ssh-link-port "${SSH_FORWARD_PORT:-2223}" &
