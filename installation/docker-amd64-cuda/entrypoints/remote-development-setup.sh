@@ -67,12 +67,12 @@ if [ -n "${PYCHARM_CONFIG_AT}" ]; then
   # Something that looks like ~/.config/JetBrains/
   # IDE project-config.
   # Create if doesn't exist.
-  mkdir -p "${PYCHARM_CONFIG_AT}/.config/JetBrains"
+  mkdir -p "${PYCHARM_CONFIG_AT}/.config"
   mkdir -p "${PYCHARM_CONFIG_AT}/.cache/JetBrains"
   mkdir -p "${PYCHARM_CONFIG_AT}/.local/share/JetBrains"
-  mkdir -p "${HOME}/.config/JetBrains"
-  mkdir -p "${HOME}/.cache/JetBrains"
-  mkdir -p "${HOME}/.local/share/JetBrains"
+  mkdir -p "${HOME}/.config"
+  mkdir -p "${HOME}/.cache"
+  mkdir -p "${HOME}/.local/share"
   ln -s "${PYCHARM_CONFIG_AT}/.config/JetBrains" "${HOME}/.config/JetBrains"
   ln -s "${PYCHARM_CONFIG_AT}/.cache/JetBrains" "${HOME}/.cache/JetBrains"
   ln -s "${PYCHARM_CONFIG_AT}/.local/share/JetBrains" "${HOME}/.local/share/JetBrains"
