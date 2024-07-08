@@ -435,13 +435,14 @@ The first time connecting you will have to install the IDE in the container in a
 After that, or if you already have the IDE stored in your machine already,
 the template will start the IDE mounted in the container at the container creation, and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
 
-The first time follow the steps [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) to install the IDE.
+The first time follow the steps [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) to install the IDE,
+and install it in `/home/YOUR-USERNAME/.jetbrains-server/dist`, not in it's default location (small "installation options..." link.)
 For the project directory, it should be mounted in the container at the same location as in your local machine.
 
 In the container, locate the name of the PyCharm IDE installed.
 It will be at
 ```bash
-ls ${HOME}/.cache/JetBrains/RemoteDev/dist
+ls ${HOME}/.jetbrains-server/dist/
 # Outputs something like e632f2156c14a_pycharm-professional-2024.1.4
 ```
 Copy the name of this directory to your `.env` file as the value of the `PYCHARM_IDE_AT` variable.

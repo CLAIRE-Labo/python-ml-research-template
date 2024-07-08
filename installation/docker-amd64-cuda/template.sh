@@ -27,7 +27,7 @@ PROJECT_ROOT_AT=$(realpath "$(pwd)"/../..)
 ACCELERATION=cuda
 WANDB_API_KEY=
 # PyCharm-related. Fill after installing the IDE manually the first time.
-PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
+PYCHARM_IDE_AT=
 
 
 ####################

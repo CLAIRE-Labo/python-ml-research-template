@@ -66,7 +66,8 @@ if [ -n "${JETBRAINS_SERVER_AT}" ]; then
   echo "[TEMPLATE INFO] Sym-linking to PyCharm project config files."
   # IDE project-config.
   # Create if doesn't exist.
-  PROJECT_JETBRAINS_SERVER_AT="${JETBRAINS_SERVER_AT}${PROJECT_ROOT_AT}"
+  PROJECT_JETBRAINS_SERVER_AT="${JETBRAINS_SERVER_AT}/projects${PROJECT_ROOT_AT}"
+  mkdir -p "${JETBRAINS_SERVER_AT}"/dist
   mkdir -p "${PROJECT_JETBRAINS_SERVER_AT}/config"
   mkdir -p "${PROJECT_JETBRAINS_SERVER_AT}/local"
   mkdir -p "${PROJECT_JETBRAINS_SERVER_AT}/cache"
