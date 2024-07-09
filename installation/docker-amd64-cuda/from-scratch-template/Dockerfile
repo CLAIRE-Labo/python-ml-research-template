@@ -230,7 +230,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link entrypoints ${ENTRYPOINTS_ROOT}
 ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
-CMD ["/bin/zsh", "-l"]
+CMD ["/bin/zsh"]
 
 ########################################################################
 # 3. Stages for setting up the user and the development environment.
