@@ -281,9 +281,6 @@ usage() {
   echo "get_runai_scripts: Rename the runai examples."
 }
 
-# Call the function passed as the first argument
-"$@"
-
 if [ $# -eq 0 ]; then
     usage
 else
