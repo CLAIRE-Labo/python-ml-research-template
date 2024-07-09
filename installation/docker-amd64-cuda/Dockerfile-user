@@ -44,4 +44,3 @@ RUN groupadd -f -g ${GRPID} ${GRP} && \
     usermod -aG sudo ${USR}
 
 USER ${USR}
-
