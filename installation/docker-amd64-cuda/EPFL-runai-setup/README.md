@@ -33,14 +33,14 @@ The simple checks below will be enough.
 
 **Run:ai**:
 
-1. You should have access to a Run:ai project and have minimum knowledge of the Run:ai platform, e.g.,
+1. You should have access to a Run:ai project and have some knowledge of the Run:ai platform, e.g.,
    know the commands to submit jobs and check their status.
 2. You should have one or more PVC(s) (Persistent Volume Claim) connecting some persistent storage
    to your Run:ai jobs, typically your lab's shared storage.
    (E.g. `runai-claire-gaspar-scratch`, you can run `kubectl get pvc` to list them).
 3. You should have access to a project on the [IC](https://ic-registry.epfl.ch/) or [RCP](https://registry.rcp.epfl.ch/)
    image registries
-   and should be logged in (`docker login <registry>`).
+   and should be logged in to them (`docker login <registry>`).
 
 EPIC provides an introduction to these tools [here](https://epic-guide.github.io/tools/ic-compute-storage).
 We also have a guide at CLAIRE which you can get inspiration from
@@ -92,14 +92,15 @@ We strongly suggest having two instances of your project repository on your PVCs
 2. One for running unattended jobs, which is always referring to a commit at a working state of the code.
 
 You can still have the outputs and data directories of those two instances shared.
-This can be done by creating symlinks between them, the way you can read data from another PVC,
+This can be done by creating symlinks between them, in the same the way you can read data from another PVC,
 say a shared PVC that has model weights, etc. All of this is described in the
 `data/README.md` and `outputs/README.md` files of the template and can be done later.
 
 Follow the steps below to clone your repository in your PVCs.
 
 If you have access to the storage underlying your PVC, you can skip step 1 and 2.
-(E.g., CLAIRE members can use the `claire-build-machine` for this to access `claire-rcp-scratch`).
+(E.g., CLAIRE members can use the `claire-build-machine` for this to access `claire-rcp-scratch`.
+RCP also provides a ).
 Otherwise, the template covers a deployment option that simply opens an ssh server
 on your container without setting up the project,
 forwards your ssh keys, and allows you to clone your repository on the container.
