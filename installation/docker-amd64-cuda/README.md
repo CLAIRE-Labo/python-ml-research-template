@@ -379,8 +379,10 @@ For the dev image you can start it and then exec programs in it, or from a tmux 
 ./template.sh dev -d
 ```
 
+You can check how `./template.sh run` is running `docker-compose` commands if you want more control over the containers.
 You can pass environment variables that the entrypoint can use to facilitate your development experience.
-This is described in the following section.
+This is described in the following sections.
+
 You should then return to the root README for the rest of the instructions to run our experiments.
 
 We also recommend that you keep two different copies of the repository, one for the development code
@@ -398,7 +400,7 @@ git clone <HTTPS/SSH> template-project-name/run
 
 ### Development
 
-We support Pycharm Remote Development (Gateway), VSCode Remote Development, and Jupter Lab.
+We support Pycharm Remote Development (Gateway), VSCode Remote Development, and Jupyter Lab.
 For remote development, the template will open an SSH server in a dev container
 that you can then use to connect your IDE to and do remote development inside with your usual debugging tools.
 
@@ -430,9 +432,15 @@ Host local2223
 	ForwardAgent yes
 ```
 
+In case of issues you can check the logs of the container with
+```bash
+# A container ID is outputted when you start the container.
+docker logs -f <container-ID>
+```
+
 **Notes**
 
-Directories for storing the IDE configurations, extensions, etc
+Directories for storing the IDE configurations, extensions, etc.
 are mounted to the container to be persisted across development sessions.
 You can find them in the `docker-compose.yaml` file.
 Each project (defined by its `PROJECT_ROOT_AT` path) will have its own cache directory to avoid conflicts
@@ -477,6 +485,8 @@ PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 
 The next time you start the development container, the IDE will start at the container start,
 and you will find it in your JetBrains Gateway list of projects.
+If it's a new host (e.g. one for a simultaneous container on port 2224), you can add it,
+and it will detect that the IDE is already installed.
 
 _Configuration_:
 
