@@ -100,7 +100,7 @@ Follow the steps below to clone your repository in your PVCs.
 
 If you have access to the storage underlying your PVC, you can skip step 1 and 2.
 (E.g., CLAIRE members can use the `claire-build-machine` for this to access `claire-rcp-scratch`.
-RCP also provides a ).
+RCP also provides a shared jump host `haas001.rcp.epfl.ch`).
 Otherwise, the template covers a deployment option that simply opens an ssh server
 on your container without setting up the project,
 forwards your ssh keys, and allows you to clone your repository on the container.
