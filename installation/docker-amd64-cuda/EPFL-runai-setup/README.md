@@ -111,13 +111,18 @@ forwards your ssh keys, and allows you to clone your repository on the container
    ```text
     $ runai logs example-first-steps
    ...
+    [TEMPLATE INFO] Execing the template's entrypoint.
     [TEMPLATE INFO] Running entrypoint.sh
     [TEMPLATE WARNING] PROJECT_ROOT_AT is not set.
-    [TEMPLATE WARNING] It is expected to point to the location of your mounted  project.
-    [TEMPLATE WARNING] It has been defaulted to /workspace
+    [TEMPLATE WARNING] It is expected to point to the location of your mounted project if you plan to run you code.
+    [TEMPLATE WARNING] Ignore if you only need the development environment.
+    [TEMPLATE WARNING] PROJECT_ROOT_AT has been defaulted to /
     [TEMPLATE WARNING] The project installation will be skipped.
-    [TEMPLATE INFO] The next commands (and all interactive shells) will be run from /workspace.
+    [TEMPLATE INFO] Expecting workdir to be /.
     [TEMPLATE INFO] Skipping the installation of the project.
+    [TEMPLATE INFO] Environment variables have been written to /home/moalla/.docker-env-vars.
+    [TEMPLATE_INFO] And will be sourced in login shells to preserve environment variables in ssh connections.
+    [TEMPLATE INFO] If you change one at runtime and want it to be preserved in subsequence shell invocations, you need to write it to /home/moalla/.docker-env-vars as well.
     [TEMPLATE INFO] Configuring ssh server.
     [TEMPLATE INFO] Starting ssh server.
     [TEMPLATE INFO] Executing the command sleep infinity
@@ -152,12 +157,13 @@ When the container starts, its entrypoint does the following:
 
 - It runs the entrypoint of the base image if you specified it in the `compose-base.yaml` file.
 - It expects you specify `PROJECT_ROOT_AT=<location to your project in the PVC>`.
-  and will make `PROJECT_ROOT_AT` the working directory for the next commands and any interactive shell.
+  and `PROJECT_ROOT_AT` to be the working directory of the container.
   Otherwise, it will issue a warning and set it to the default working directory of the container.
-- It then tries to install the project in editable mode, assuming that it is in the working directory.
+- It then tries to install the project in editable mode.
   This is a lightweight installation that allows to avoid all the hacky import path manipulations.
   (This will be skipped if `PROJECT_ROOT_AT` has not been specified or if you specify `SKIP_INSTALL_PROJECT=1`.)
-- It also handles all the remote development setups (VS Code, Jupyter, ...) that you specify with environment variables.
+- It also handles all the remote development setups (VS Code, PyCharm, Jupyter, ...)
+  that you specify with environment variables.
   These are described in the later sections of this README.
 - Finally, it executes a provided command (e.g. `sleep infinity`), otherwise by default will run a shell and stop.
   It runs this command with PID 1 so that it can receive signals from the cluster and gracefully stop when preempted.
@@ -171,21 +177,19 @@ You should expect to see something like:
 ```text
 $ runai logs example-minimal
 ...
-[TEMPLATE INFO] Running entrypoint.sh
 [TEMPLATE INFO] PROJECT_ROOT_AT is set to /claire-rcp-scratch/home/moalla/template-project-name/dev.
-[TEMPLATE INFO] The next commands (and all interactive shells) will be run from /claire-rcp-scratch/home/moalla/template-project-name/dev.
+[TEMPLATE INFO] Expecting workdir to be /claire-rcp-scratch/home/moalla/template-project-name/dev.
 [TEMPLATE INFO] Installing the project with pip.
 [TEMPLATE INFO] Expecting /claire-rcp-scratch/home/moalla/template-project-name/dev to be a Python project.
 [TEMPLATE INFO] To skip this installation use the env variable SKIP_INSTALL_PROJECT=1.
-...
 Obtaining file:///claire-rcp-scratch/home/moalla/template-project-name/dev
-...
-Building wheels for collected packages: template-project-name
-...
+  Installing build dependencies: started
+  ...
+  Building editable for template-project-name (pyproject.toml): started
+  ...
 Successfully built template-project-name
 Installing collected packages: template-project-name
 Successfully installed template-project-name-0.0.1
-...
 [TEMPLATE INFO] Testing that the package can be imported.
 [TEMPLATE INFO] Package imported successfully.
 [TEMPLATE INFO] Executing the command sleep infinity
@@ -256,10 +260,10 @@ You can forward a local port on your machine to this port on the container.
 When your container is up, run
 
 ```bash
-# Here 2223 on the local machine is forwarded to 2223 on the pod.
+# Here 2222 on the local machine is forwarded to 2223 on the pod.
 # You can change the local port number to another port number.
 kubectl get pods
-kubectl port-forward <pod-name> 2223:2223
+kubectl port-forward <pod-name> 2222:2223
 ```
 
 You can then ssh to your container by ssh-ing to that port on your local machine.
@@ -267,14 +271,14 @@ Connect with the user and password you specified in your `.env` file when you bu
 
 ```bash
 # ssh to local machine is forwarded to the pod.
-ssh -p 2223 <username>@localhost
+ssh -p 2222 <username>@localhost
 ```
 
 As the container will each time be on a different machine, you will have to reset the ssh key for the remote server.
 You can do this with
 
 ```bash
-ssh-keygen -R '[localhost]:2223'
+ssh-keygen -R '[localhost]:2222'
 ```
 
 With the ssh connection, you can forward the ssh keys on your local machine (that you use for GitHub, etc.)
@@ -290,10 +294,10 @@ GitHub provides a guide for that
 and for the ssh config file you can use the following:
 
 ```bash
-Host local2223
+Host local2222
 	HostName 127.0.0.1
 	User <username>
-	Port 2223
+	Port 2222
 	StrictHostKeyChecking no
 	UserKnownHostsFile=/dev/null
 	ForwardAgent yes
@@ -306,7 +310,7 @@ of the host [(ref)](https://linuxcommando.blogspot.com/2008/10/how-to-disable-ss
 which keeps changing every time a job is scheduled,
 so that you don't have to reset it each time.
 
-With this config you can then simply connect to your container with `ssh local2223` when the port 2223 is forwarded.
+With this config you can then simply connect to your container with `ssh local2222` when the port 2222 is forwarded.
 
 **Limitations**
 
@@ -315,7 +319,7 @@ In particular, the following limitations apply:
 
 - environment variables in the image sent to the entrypoint of the container and any command exec'ed in it
   are not available in ssh connections.
-  There is a workaround for that in `entrypoints/remote-development-steup.sh` when opening an ssh server
+  There is a workaround for that in `entrypoints/remote-development-setup.sh` when opening an ssh server
   which should work for most cases, but you may still want to adapt it to your needs.
 
 ### Git config

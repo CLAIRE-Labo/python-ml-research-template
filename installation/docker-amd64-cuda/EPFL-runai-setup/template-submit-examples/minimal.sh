@@ -16,10 +16,12 @@ runai submit \
 # --pvc your_pvc_name:/where_to_mount_your_pvc (you can mount it anywhere)
 # 2.The environment variables that tell the entrypoint where to find your project.
 # -e PROJECT_ROOT_AT=<location of your project in your mounted PVC> .
+# 3.The working directory set to the PROJECT_ROOT_AT.
+# --working-dir same as PROJECT_ROOT_AT.
 
 # Note that here we are using the run image (run-latest-moalla)
-# There is no need to use the dev images when not planing to develop in the container.
-# The run image is typically smaller and can be scaled to run more jobs.
+# There is no need to use the dev images when not planning to develop in the container.
+# The run image is typically smaller and can be scaled to run multiple jobs.
 
 ## Useful commands.
 # runai describe job example-minimal

@@ -54,6 +54,10 @@ if [ -n "${SSH_SERVER}" ]; then
   else
     echo "${PASSWD}" | sudo -S /usr/sbin/sshd
   fi
+
+  # Make login shells cd to the project root.
+  echo "cd ${PROJECT_ROOT_AT}" >> "${HOME}/.bash_profile"
+  echo "cd ${PROJECT_ROOT_AT}" >> "${HOME}/.zprofile"
 fi
 
 ####################

@@ -25,6 +25,7 @@ RUN groupadd -f -g ${GRPID} ${GRP} && \
     usermod -aG sudo ${USR}
 
 USER ${USR}
+RUN touch /home/${USR}/.zshrc
 
 ########################################################################
 # Final development layer for the user.
@@ -44,3 +45,4 @@ RUN groupadd -f -g ${GRPID} ${GRP} && \
     usermod -aG sudo ${USR}
 
 USER ${USR}
+RUN touch /home/${USR}/.zshrc
