@@ -7,12 +7,13 @@ ENV_TEXT=$(
 # All user-specific configurations are here.
 
 ## For building:
-GRPID=$(id -g)
-USRID=$(id -u)
-GRP=$(id -gn)
+# Use the same USRID and GRPID as on the storage you will be mounting.
 # USR is used in the image name and must be lowercase.
 # It's fine if your username is not lowercase, jut make it lowercase.
 USR=$(id -un | tr "[:upper:]" "[:lower:]")
+USRID=$(id -u)
+GRPID=$(id -g)
+GRP=$(id -gn)
 # PASSWD is not secret,
 # it is only there to avoid running password-less sudo commands accidentally.
 PASSWD=$(id -un)
