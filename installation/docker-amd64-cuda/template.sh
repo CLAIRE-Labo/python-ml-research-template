@@ -114,7 +114,7 @@ build_generic() {
     The image uses the git commit as a tag to keep track of which dependencies where installed.
     If these change don't affect the build (e.g. README),
     feel free to just commit and ignore the rebuild."
-    echo "Force ignoring this error with the flag --ignore-uncommitted."
+    echo "Force ignoring this error with the flag ./template.sh --ignore-uncommitted build."
     exit 1
   fi
 
@@ -140,7 +140,7 @@ build_user() {
     The image uses the git commit as a tag to keep track of which dependencies where installed.
     If these change don't affect the build (e.g. README),
     feel free to just commit and ignore the rebuild."
-    echo "Force ignoring this error with the flag --ignore-uncommitted."
+    echo "Force ignoring this error with the flag ./template.sh --ignore-uncommitted build."
     exit 1
   fi
 
