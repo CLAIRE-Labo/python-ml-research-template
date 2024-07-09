@@ -6,7 +6,7 @@
 # In the end all variables exported should be present and the command given by the user should run with PID 1.
 
 # Do this if the entrypoint execs the command it receives (every entrypoint should do this).
-if [ "${BASE_ENTRYPOINT_EXECS}" -eq 1 ] && [ -n "${BASE_ENTRYPOINT}" ]; then
+if [ -n "${BASE_ENTRYPOINT_EXECS}" ] && [ "${BASE_ENTRYPOINT_EXECS}" -eq 1 ] && [ -n "${BASE_ENTRYPOINT}" ]; then
   echo "[TEMPLATE INFO] execing the base image's entrypoint ${BASE_ENTRYPOINT} which will then exec the template's entrypoint."
   exec "${BASE_ENTRYPOINT}" /opt/template-entrypoints/entrypoint.sh "$@"
 else

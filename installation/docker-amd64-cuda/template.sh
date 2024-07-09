@@ -225,7 +225,7 @@ list_env() {
   echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
   docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c \
   "echo '[TEMPLATE INFO] Running mamba list';\
-  if command -v mamba >/dev/null 2>&1; then mamba list; \
+  if command -v mamba >/dev/null 2>&1; then mamba list -n ${PROJECT_NAME}; \
   else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi;
   echo '[TEMPLATE INFO] Running pip list'; pip list"
 }
