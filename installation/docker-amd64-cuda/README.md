@@ -364,7 +364,7 @@ For the runtime image you can run commands directly in independent containers wi
 ./template.sh run python --version
 ./template.sh run python -m template_package_name.template_experiment some_arg=some_value
 # You can pass environment variables to the container with the `-e VAR=VALUE` flag before your command
-./template.sh -e FOO=10 run bash -c 'echo $FOO'
+./template.sh run -e FOO=10 bash -c 'echo $FOO'
 # E.g. open a tmux shell, then run containers there
 tmux
 ./template.sh run your_command
