@@ -205,22 +205,26 @@ and get examples from the `./template.sh` script.
 
 We provide the following guides for obtaining/building and running the environment:
 
-- To run the image locally with Docker & Docker Compose, follow the instructions
+- To run the image locally (or on a remote server with SSH access) with Docker & Docker Compose, follow the instructions
   to [obtain/build the environment](#obtainingbuilding-the-environment) then
   the instructions [run locally with Docker Compose](#running-locally-with-docker-compose).
 
-  The guide also provides instructions to do remote development on the Run:ai cluster.
+  Perform the steps on the machine where the code will run, i.e., your local machine or the remote server.
+
+  The guide also provides instructions to do remote development with VSCode, PyCharm, and Jupyter Lab.
 - To run on the EPFL Run:ai clusters, follow the instructions
   to [obtain/build the environment](#obtainingbuilding-the-environment)
   (perform them on your local machine)
   then refer to the `./EPFL-runai-setup/README.md`.
 
-  The guide also provides instructions to do remote development on the Run:ai cluster.
+  The guide also provides instructions to do remote development on the Run:ai cluster
+  with VSCode, PyCharm, and Jupyter Lab.
   Other managed cluster users can get inspiration from it too.
 - We also provide an image with the dependencies needed to run the environment
   that you can use with your favorite OCI-compatible container runtime.
   Follow the instructions
   in [Running with your favorite container runtime](#running-with-your-favorite-container-runtime) for the details.
+  We give an example of how to run it with Apptainer/Singularity.
 
 ## Obtaining/building the environment
 
@@ -353,7 +357,7 @@ runs the original entrypoint of your base image if it exists,
 and execs your command with PID 1.
 Only do so if you need to debug the entrypoint itself or if you have a custom use case.
 
-For the runtime image you can run commands directly in independent containers with.
+For the runtime image you can run commands directly in independent containers with
 ```bash
 # template_experiment is an actual script that you can run.
 ./template.sh run your_command
@@ -378,6 +382,19 @@ For the dev image you can start it and then exec programs in it, or from a tmux 
 You can pass environment variables that the entrypoint can use to facilitate your development experience.
 This is described in the following section.
 You should then return to the root README for the rest of the instructions to run our experiments.
+
+We also recommend that you keep two different copies of the repository, one for the development code
+and one for the runtime code so that you don't get containers running experiments reading code that
+you're simultaneously developing.
+You could for example
+
+```bash
+mv template-project-name template-project-name-tmp
+mkdir template-project-name
+mv template-project-name-tmp template-project-name/dev
+# Make sure to rerun your .env so that the new paths are correct.
+git clone <HTTPS/SSH> template-project-name/run
+```
 
 ### Development
 
