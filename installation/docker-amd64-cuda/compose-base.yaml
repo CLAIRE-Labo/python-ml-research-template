@@ -2,12 +2,13 @@ services:
   args-run-root:
     build:
       args:
-        BASE_IMAGE: ubuntu:22.04                # Ubuntu: https://hub.docker.com/_/ubuntu
-        CURL_IMAGE: curlimages/curl:8.2.1       # https://hub.docker.com/r/curlimages/curl/tags
+        # Pytorch 2.4.0a0+f70bd71a48, NVIDIA CUDA 12.5.0.23, Python 3.10.
+        # https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel-24-06.html
+        # https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch
+        BASE_IMAGE: nvcr.io/nvidia/pytorch:24.06-py3
         GIT_IMAGE: alpine/git:2.40.1            # https://hub.docker.com/r/alpine/git/tags
-        CONDA_URL: https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Miniforge3-23.3.1-1-Linux-x86_64.sh
-        # Change the link when changing the platform or updating to a new version.
-        # https://conda-forge.org/miniforge/
-        CONDA_INSTALL_PATH: /opt/conda
-        # Should be the same between stages not to brake linking.
-        # https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#bb7b
+        # You can find the entrypoint by running `docker inspect BASE_IMAGE | grep -A 3 Entrypoint`
+        # If there is no entrypoint, you can leave it empty.
+        BASE_ENTRYPOINT: /opt/nvidia/nvidia_entrypoint.sh
+        # 1 normally, 0 if the entrypoint does not exec its arguments, in rare cases.
+        BASE_ENTRYPOINT_EXECS: 1
