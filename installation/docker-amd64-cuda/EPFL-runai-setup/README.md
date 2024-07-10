@@ -373,9 +373,11 @@ All the directories will be created automatically.
     - `PYCHARM_IDE_AT`: don't include it as IDE is not installed yet.
 2. Enable port forwarding for the SSH port.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
-   install the IDE in your `${JETBRAINS_SERVER_AT}/dist` not in its default location
-   (use the small "installation options..." link).
-   For the project directory, it should be in the same location as your PVC (${PROJECT_ROOT_AT}).
+   install the IDE in your `${JETBRAINS_SERVER_AT}/dist`
+   (something like `/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server/dist`)
+   not in its default location **(use the small "installation options..." link)**.
+   For the project directory, it should be in the same location as your PVC (`${PROJECT_ROOT_AT}`.
+   something like `/claire-rcp-scratch/home/moalla/template-project-name/dev`).
 
 When in the container, locate the name of the PyCharm IDE installed.
 It will be at

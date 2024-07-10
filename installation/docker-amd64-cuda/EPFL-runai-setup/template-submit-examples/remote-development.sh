@@ -16,6 +16,7 @@ runai submit \
   -e SSH_SERVER=1 \
   -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
 
 # Option 2 (preferred). PyCharm launched from the remote server.
@@ -30,6 +31,7 @@ runai submit \
   -e PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4 \
   -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-config \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
 
 ## The new bits here are:
@@ -46,6 +48,7 @@ runai submit \
   -e SSH_SERVER=1 \
   -e VSCODE_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
 
 ## The new bits here are:
@@ -61,6 +64,7 @@ runai submit \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -e JUPYTER_SERVER=1 \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
 
 ## The new bits here are:
