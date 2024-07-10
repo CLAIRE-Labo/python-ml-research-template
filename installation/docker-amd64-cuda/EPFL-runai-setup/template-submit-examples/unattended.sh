@@ -2,7 +2,9 @@ runai submit \
   --name example-unattended \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-run-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/run \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/run \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- python -m template_package_name.template_experiment some_arg=2
 
 # template_experiment is an actual script that you can run.

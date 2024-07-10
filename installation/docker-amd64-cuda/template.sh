@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 set -e
 
 ENV_TEXT=$(
@@ -7,12 +7,13 @@ ENV_TEXT=$(
 # All user-specific configurations are here.
 
 ## For building:
-GRPID=$(id -g)
-USRID=$(id -u)
-GRP=$(id -gn)
+# Use the same USRID and GRPID as on the storage you will be mounting.
 # USR is used in the image name and must be lowercase.
 # It's fine if your username is not lowercase, jut make it lowercase.
 USR=$(id -un | tr "[:upper:]" "[:lower:]")
+USRID=$(id -u)
+GRPID=$(id -g)
+GRP=$(id -gn)
 # PASSWD is not secret,
 # it is only there to avoid running password-less sudo commands accidentally.
 PASSWD=$(id -un)
@@ -23,9 +24,12 @@ LAB_NAME=$(id -un | tr "[:upper:]" "[:lower:]")
 #### For running locally
 # You can find the acceleration options in the compose.yaml file
 # by looking at the services with names dev-local-ACCELERATION.
-PROJECT_ROOT_AT=/project/template-project-name
+PROJECT_ROOT_AT=$(realpath "$(pwd)"/../..)
 ACCELERATION=cuda
 WANDB_API_KEY=
+# PyCharm-related. Fill after installing the IDE manually the first time.
+PYCHARM_IDE_AT=
+
 
 ####################
 # Project-specific environment variables.
@@ -35,10 +39,9 @@ PROJECT_NAME=template-project-name
 PACKAGE_NAME=template_package_name
 IMAGE_NAME=\${LAB_NAME}/\${USR}/\${PROJECT_NAME}
 IMAGE_PLATFORM=amd64-cuda
-# The image name also includes the USR
-# to avoid conflicts between users using the same build machine
-# Or sharing repositories. (Duplicate images with different names will still be stored only once.)
-# The platform is in the image tag to to make it explicit for reproducibility.
+# The image name includes the USR to separate the images in an image registry.
+# Its tag includes the platform for registries that don't hand multi-platform images for the same tag.
+# You can also add a suffix to the platform e.g. -jax or -pytorch if you use different images for different environments/models etc.
 
 EOF
 )
@@ -64,20 +67,7 @@ check() {
     exit 1
   fi
   source "${ENV_FILE}"
-  COMPOSE_PROJECT="${PROJECT_NAME}-${USR}"
-
-  # Check that the files in the installation/ directory are all committed to git.
-  # The image uses the git commit as a tag to know which dependencies where installed.
-  # Error if there are uncommitted changes.
-  if [[ $(git status --porcelain | grep  "installation/" | grep -v -E "README|template.sh" -c)\
-    -ge 1 ]]; then
-    echo "[TEMPLATE ERROR] There are uncommitted changes in the installation/ directory.
-    Please commit them before building your generic and user image.
-    The image uses the git commit as a tag to keep track of which dependencies where installed.
-    If these change don't affect the build (e.g. README),
-    feel free to just commit and ignore the rebuild."
-    exit 1
-  fi
+  COMPOSE_PROJECT="${PROJECT_NAME}-${IMAGE_PLATFORM}-${USR}"
 }
 
 edit_from_base() {
@@ -114,6 +104,27 @@ pull_generic() {
 }
 
 build_generic() {
+  # Check that the files in the installation/ directory are all committed to git if running the build command.
+  # The image uses the git commit as a tag to know which dependencies where installed.
+  # Error if there are uncommitted changes.
+  case "$1" in
+    --ignore-uncommitted)
+      IGNORE_UNCOMMITTED=1
+      shift
+      ;;
+  esac
+
+  if [[ ${IGNORE_UNCOMMITTED} -ne 1 ]] && \
+    [[ $(git status --porcelain | grep  "installation/" | grep -v -E "README" -c) -ge 1 ]]; then
+    echo "[TEMPLATE ERROR] There are uncommitted changes in the installation/ directory.
+    Please commit them before building your generic and user image.
+    The image uses the git commit as a tag to keep track of which dependencies where installed.
+    If these change don't affect the build (e.g. README),
+    feel free to just commit and ignore the rebuild."
+    echo "Force ignoring this error with the flag ./template.sh build --ignore-uncommitted."
+    exit 1
+  fi
+
   # Build the generic runtime and dev images and tag them with the current git commit.
   check
   docker compose -p "${COMPOSE_PROJECT}" build image-run-root
@@ -126,6 +137,27 @@ build_generic() {
 }
 
 build_user() {
+  # Check that the files in the installation/ directory are all committed to git if running the build command.
+  # The image uses the git commit as a tag to know which dependencies where installed.
+  # Error if there are uncommitted changes.
+  case "$1" in
+    --ignore-uncommitted)
+      IGNORE_UNCOMMITTED=1
+      shift
+      ;;
+  esac
+
+  if [[ ${IGNORE_UNCOMMITTED} -ne 1 ]] && \
+    [[ $(git status --porcelain | grep  "installation/" | grep -v -E "README" -c) -ge 1 ]]; then
+    echo "[TEMPLATE ERROR] There are uncommitted changes in the installation/ directory.
+    Please commit them before building your generic and user image.
+    The image uses the git commit as a tag to keep track of which dependencies where installed.
+    If these change don't affect the build (e.g. README),
+    feel free to just commit and ignore the rebuild."
+    echo "Force ignoring this error with the flag ./template.sh build --ignore-uncommitted."
+    exit 1
+  fi
+
   # Build the user runtime and dev images and tag them with the current git commit.
   check
   docker compose -p "${COMPOSE_PROJECT}" build image-run-user
@@ -141,8 +173,8 @@ build_user() {
 }
 
 build() {
-  build_generic
-  build_user
+  build_generic "$@"
+  build_user "$@"
 }
 
 push_usr_or_root() {
@@ -202,13 +234,22 @@ push() {
 list_env() {
   # List the conda environment.
   check
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c "if command -v mamba >/dev/null 2>&1; then mamba list; else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi"
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" pip list
+  echo "[TEMPLATE INFO] Listing the dependencies in an empty container (nothing mounted)."
+  echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
+  echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
+  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c \
+  "echo '[TEMPLATE INFO] Running mamba list';\
+  if command -v mamba >/dev/null 2>&1; then mamba list -n ${PROJECT_NAME}; \
+  else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi;
+  echo '[TEMPLATE INFO] Running pip list'; pip list"
 }
 
 empty_interactive() {
   # Start an interactive shell in an empty container.
   check
+  echo "[TEMPLATE INFO] Starting an interactive shell in an empty container (nothing mounted)."
+  echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
+  echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
   docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
 }
 
@@ -218,6 +259,13 @@ run() {
   # ./template.sh run -e VAR1=VAL1 -e VAR2=VAL2 ... python -c "print('hello world')"
   check
   local env_vars=()
+  local detach=()
+
+  # Catch detach flag
+  if [[ "$1" == "-d" ]]; then
+    shift
+    detach+=("-d")
+  fi
 
   # Collect environment variables and commands dynamically
   while [[ "$1" == "-e" ]]; do
@@ -226,7 +274,7 @@ run() {
   done
 
   # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
 }
 
 dev() {
@@ -234,7 +282,20 @@ dev() {
   # Usage:
   # ./template.sh dev -e VAR1=VAL1 -e VAR2=VAL2 -e SSH_SERVER=1 ... sleep infinity"
   check
+
+  # Create the placeholder directories for remote development.
+  touch ${HOME}/.template-gitconfig
+  mkdir -p ${HOME}/.template-dev-vscode-server
+  mkdir -p ${HOME}/.template-dev-jetbrains-server
+
   local env_vars=()
+  local detach=()
+
+  # Catch detach flag
+  if [[ "$1" == "-d" ]]; then
+    shift
+    detach+=("-d")
+  fi
 
   # Collect environment variables and commands dynamically
   while [[ "$1" == "-e" ]]; do
@@ -243,7 +304,7 @@ dev() {
   done
 
   # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
+  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
 }
 
 get_runai_scripts() {
@@ -284,5 +345,12 @@ usage() {
 if [ $# -eq 0 ]; then
     usage
 else
-    "$@"
+  # run the command
+  case "$1" in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  esac
+  "$@"
 fi

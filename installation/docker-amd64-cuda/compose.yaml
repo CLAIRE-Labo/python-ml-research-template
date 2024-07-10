@@ -52,13 +52,30 @@ services:
     stdin_open: true
     volumes:
       - ../..:${PROJECT_ROOT_AT}
+      # Here you can mount other volumes and symlink directories in data and outputs to them.
+    working_dir: ${PROJECT_ROOT_AT}
     environment:
       PROJECT_ROOT_AT: ${PROJECT_ROOT_AT}
       WANDB_API_KEY: ${WANDB_API_KEY}
-    ipc: host                 # Edit as needed (NGC default recommendations).
-    ulimits:                  # Edit as needed (NGC default recommendations).
+    ipc: host                 # Edit as needed (NGC default recommendations, see /opt/nvidia/entrypoint.d/70-shm-check.sh).
+    ulimits:                  # Edit as needed (NGC default recommendations, see /opt/nvidia/entrypoint.d/70-shm-check.sh).
       memlock: -1
       stack: 67108864
+    network_mode: host            # Edit as needed. Default to avoid extra complecity from networking.
+
+  dev-local-cpu: # Service to develop locally with CPU only.
+    extends:
+      service: run-local-cpu
+    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}
+    volumes:
+      # To persist IDE settings and cache.
+      - ${HOME}/.template-gitconfig:/home/${USR}/.gitconfig
+      - ${HOME}/.template-dev-vscode-server:/home/${USR}/.dev-vscode-server
+      - ${HOME}/.template-dev-jetbrains-server:/home/${USR}/.jetbrains-server
+    environment:
+      PYCHARM_IDE_AT: ${PYCHARM_IDE_AT}
+      JETBRAINS_SERVER_AT: /home/${USR}/.jetbrains-server
+      VSCODE_SERVER_AT: /home/${USR}/.dev-vscode-server
 
   run-local-cuda: # Service to run the image locally with NVIDIA GPU.
     extends:
@@ -70,14 +87,12 @@ services:
             - driver: nvidia
               capabilities: [ gpu ]
 
-  dev-local-cpu: # Service to develop locally with CPU only.
-    extends:
-      service: run-local-cpu
-    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}
-    network_mode: host       # For easier remote development.
-
   dev-local-cuda: # Service to develop locally with NVIDIA GPU.
     extends:
-      service: run-local-cuda
-    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}
-    network_mode: host       # For easier remote development.
+      service: dev-local-cpu
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [ gpu ]

@@ -1,6 +1,7 @@
 ## See README for additional features like
-# -e GIT_CONFIG_AT=<>
 # -e WANDB_API_KEY_FILE_AT=<>
+
+## Go to the end of the file for useful commands and troubleshooting tips.
 
 ## PyCharm example:
 
@@ -10,9 +11,12 @@ runai submit \
   --interactive \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e PYCHARM_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm-config \
+  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server \
+  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
 
 # Option 2 (preferred). PyCharm launched from the remote server.
@@ -21,10 +25,13 @@ runai submit \
   --interactive \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e PYCHARM_IDE_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm \
-  -e PYCHARM_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/pycharm-config \
+  -e PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4 \
+  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server \
+  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
 
 ## The new bits here are:
@@ -36,13 +43,16 @@ runai submit \
   --interactive \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e VSCODE_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
+  -e VSCODE_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
+  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
 
 ## The new bits here are:
-# -e VSCODE_CONFIG_AT=<> will be mapped to ~/.vscode-server in the container
+# -e VSCODE_SERVER_AT=<> will be mapped to ~/.vscode-server in the container
 
 ## Jupyter Lab example:
 runai submit \
@@ -50,8 +60,11 @@ runai submit \
   --interactive \
   --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
+  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
+  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -e JUPYTER_SERVER=1 \
+  -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
 
 ## The new bits here are:

@@ -1,14 +1,7 @@
 # `apt` development requirements file.
+# Installed in addition to the runtime requirements file.
 # These dependencies must not be required to run your code in a non-interactive session.
 # They will not be available in the runtime image.
 # They should only help in the interactive development images.
-openssh-server  # Required remote development in (most) shared clusters.
-ca-certificates # Recommended.
+openssh-server  # Required for remote development with most IDEs.
 sudo            # Recommended.
-git             # Recommended.
-htop            # Recommended.
-curl            # Recommended.
-wget            # Recommended.
-vim             # Recommended.
-tmux            # Recommended.
-tree            # Recommended.

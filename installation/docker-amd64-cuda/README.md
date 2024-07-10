@@ -23,7 +23,8 @@ for your future users (and yourself).
    The default platform is Linux (fixed) on AMD64 CPUs `amd64` (can be changed to e.g. `arm64`)
    with support for NVIDIA GPUs.
    (reflected in the name of the directory `docker-amd64-cuda` by default).
-   To edit it, run
+   If this is good for you, you can skip this part.
+   Otherwise, to edit it, run
    ```bash
    # When in the PROJECT_ROOT directory.
    # For examples run:
@@ -41,13 +42,13 @@ for your future users (and yourself).
    (in some cases, may just get away with adding a line to the build platforms,
    and in others may need separate Dockerfiles and environment files.
    Test them, and ensure your results/conclusions hold across platforms.)
-2. The remaining commands will be run from this `installation/docker-amd64-cuda` directory.
+2. Run the rest of the commands from this `installation/docker-amd64-cuda` directory.
    ```bash
    cd installation/docker-amd64-cuda
    ```
 3. Choose whether you will start your image from an existing image already having a Python environment
    (recommended)(e.g., the [NGC images](https://catalog.ngc.nvidia.com/containers) which have
-   well-configured hardware acceleration dependencies)
+   well-configured hardware-acceleration dependencies)
    or from scratch (Ubuntu image and new conda environment):
     - (Recommended) The `from-python` installation assumes that you base your image from an image which
       already has a Python environment and that this environment is well configured
@@ -204,20 +205,26 @@ and get examples from the `./template.sh` script.
 
 We provide the following guides for obtaining/building and running the environment:
 
-- To run the image locally with Docker & Docker Compose, follow the instructions
+- To run the image locally (or on a remote server with SSH access) with Docker & Docker Compose, follow the instructions
   to [obtain/build the environment](#obtainingbuilding-the-environment) then
   the instructions [run locally with Docker Compose](#running-locally-with-docker-compose).
+
+  Perform the steps on the machine where the code will run, i.e., your local machine or the remote server.
+
+  The guide also provides instructions to do remote development with VSCode, PyCharm, and Jupyter Lab.
 - To run on the EPFL Run:ai clusters, follow the instructions
   to [obtain/build the environment](#obtainingbuilding-the-environment)
   (perform them on your local machine)
   then refer to the `./EPFL-runai-setup/README.md`.
 
-  The guide also provides instructions to do remote development on the Run:ai cluster.
+  The guide also provides instructions to do remote development on the Run:ai cluster
+  with VSCode, PyCharm, and Jupyter Lab.
   Other managed cluster users can get inspiration from it too.
 - We also provide an image with the dependencies needed to run the environment
   that you can use with your favorite OCI-compatible container runtime.
   Follow the instructions
   in [Running with your favorite container runtime](#running-with-your-favorite-container-runtime) for the details.
+  We give an example of how to run it with Apptainer/Singularity.
 
 ## Obtaining/building the environment
 
@@ -262,7 +269,7 @@ cd installation/docker-amd64-cuda
       (**EPFL Note:** _These should match the permissions on your lab's shared storage when mounting from there
       and running on some shared infrastructure, like HaaS setup with LDAP login or Run:ai.
       They will typically be your GASPAR credentials.
-      CLAIRE members should use the `claire-storage` group._)
+      CLAIRE members should use the `claire-storage` group, refer to the compute doc on Notion._)
     - `LAB_NAME` will be the first element in name of the local images you get.
 
       (**EPFL Note:** _If pushing to the IC or RCP registries this should be the name of your lab's project
@@ -314,13 +321,13 @@ otherwise get back to the instructions of deployment option you're following.
 > [!IMPORTANT]
 > **TEMPLATE TODO:** Adapt the compose.yaml file to your local deployment needs.
 > - Add the necessary container options (ipc=host, network, additional mounts, etc)
-    > to the run-local and dev-local services in the compose.yaml file.
+>   to the run-local and dev-local services in the compose.yaml file.
 >
 > - If you change the hardware acceleration:
-> 1. change the `compose.yaml` file to adapt the
-     > `run-local-cuda` and `dev-local-cuda` to the new hardware acceleration.
-> 2. change the supported values of the `ACCELERATION` listed below.
-> 3. change the prerequisites for the hardware acceleration.
+>   1. change the `compose.yaml` file to adapt the
+>      `run-local-cuda` and `dev-local-cuda` to the new hardware acceleration.
+>   2. change the supported values of the `ACCELERATION` listed below.
+>   3. change the prerequisites for the hardware acceleration.
 
 **Prerequisites**
 
@@ -329,23 +336,14 @@ Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 * `docker` (A Docker Engine `docker version` >= v23). [Install here.](https://docs.docker.com/engine/)
 * `docker compose` (`docker compose version` >= v2). [Install here.](https://docs.docker.com/compose/install/)
 * [CUDA] [Nvidia CUDA Driver](https://www.nvidia.com/download/index.aspx) (Only the driver. No CUDA toolkit, etc.)
-* [CUDA] `nvidia-docker` (the NVIDIA Container
-  Toolkit). [Install here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+* [CUDA] The NVIDIA Container Toolkit. [Install here.](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 
 **Run**
 
 Edit the `.env` file to specify which hardware acceleration to use with the `ACCELERATION` variable.
 Supported values are `cpu` and `cuda`.
 
-Then you can run jobs in independent containers running the runtime or the development image with
-
-```bash
-# You can for example open tmux shells and run your experiments in them.
-# template_experiment is an actual script that you can run.
-./template.sh run your_command
-./template.sh run python --version
-./template.sh run python -m template_package_name.template_experiment some_arg=some_value
-```
+Then you can run jobs in independent containers running the runtime or the development image.
 
 These containers start with the entrypoint and then run the command you specified.
 By default, they are automatically removed after they exit.
@@ -359,48 +357,171 @@ runs the original entrypoint of your base image if it exists,
 and execs your command with PID 1.
 Only do so if you need to debug the entrypoint itself or if you have a custom use case.
 
-You can pass environment variables to the container with the `-e VAR=VALUE` flag before your command
-
+For the runtime image you can run commands directly in independent containers with
 ```bash
-./template.sh run -e FOO=1 env
-./template.sh dev zsh
+# template_experiment is an actual script that you can run.
+./template.sh run your_command
+./template.sh run python --version
+./template.sh run python -m template_package_name.template_experiment some_arg=some_value
+# You can pass environment variables to the container with the `-e VAR=VALUE` flag before your command
+./template.sh run -e FOO=10 bash -c 'echo $FOO'
+# E.g. open a tmux shell, then run containers there
+tmux
+./template.sh run your_command
+# Detach from the tmux.
 ```
 
-In particular, you can pass environment variables that the entrypoint can use to facilitate your development experience.
-This is described in the following section.
+For the dev image you can start it and then exec programs in it, or from a tmux shell
+```bash
+# To get a shell
+./template.sh dev
+# To open a container a let it be (remember to stop it)
+./template.sh dev -d
+```
+
+You can check how `./template.sh run` is running `docker-compose` commands if you want more control over the containers.
+You can pass environment variables that the entrypoint can use to facilitate your development experience.
+This is described in the following sections.
+
 You should then return to the root README for the rest of the instructions to run our experiments.
+
+We also recommend that you keep two different copies of the repository, one for the development code
+and one for the runtime code so that you don't get containers running experiments reading code that
+you're simultaneously developing.
+You could for example
+
+```bash
+mv template-project-name template-project-name-tmp
+mkdir template-project-name
+mv template-project-name-tmp template-project-name/dev
+# Make sure to rerun your .env so that the new paths are correct.
+git clone <HTTPS/SSH> template-project-name/run
+```
 
 ### Development
 
-For remote development with this Docker Compose setup, you can have your IDE
-running on the machine where you run the Docker Compose services (not inside the container),
-e.g., Pycharm Remote Development (Gateway) or VSCode Remote Development.
-Then you would use the remote development features of this IDE to connect to the container (double remote
-development)
-through Docker Compose with the `dev-local-${ACCELERATION}` service, if the IDE allows,
-which has the mount set up to the code directory.
-Otherwise, through the image directly and you'll have to add the mounts yourself
-(look at how this is done in `compose.yaml`).
-(A current limitation is that IDEs will typically create a new container each time you run/debug a script,
-and each container will install the project which can take a few seconds.
-We welcome contributions to improve this.
-To avoid this delay you pass the env variable `SKIP_INSTALL_PROJECT=1` if your IDE is already tweaking the PYTHONPATH of the
-container behind the scenes.).
+We support Pycharm Remote Development (Gateway), VSCode Remote Development, and Jupyter Lab.
+For remote development, the template will open an SSH server in a dev container
+that you can then use to connect your IDE to and do remote development inside with your usual debugging tools.
 
-You should set the working directory of scripts ran from your IDE to `/project/template-project-name`.
-
-To use Jupyter Lab you can have the server running directly in the container
-and forward the ports to your local machine as follows:
+#### VS Code and PyCharm Professional Remote Development
 
 ```bash
-# In a separate shell start the Jupyter Lab server (better use tmux).
-# And get the link to the server.
-# The container is using your host's network, you can change JUPYTER_PORT if it's already used.
-./template.sh dev -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8888 zsh
-# Forward the ports to your local machine.
-# From your local machine
-ssh -N -L 8888:localhost:8888 <USER@HOST> # or anything specified in your ssh config.
-# Connect to the server with at http://localhost:8888/?token=...
+# Start the dev container and an SSH server in it. Change the port if it's already used by another project.
+./template.sh dev -d -e SSH_SERVER=1 -e SSH_CONTAINER_PORT=2223
+
+# If the container is on your local machine you're good to go.
+
+# If the container is on a remote machine, you should forward the ports to your local machine.
+# Run the following on your local machine.
+# ssh -N -L port-on-local-machine:container-ip:container-port <USER@HOST>
+ssh -N -L 2223:localhost:2223 <USER@HOST> # or anything specified in your ssh config.
+```
+
+Add your forwarded server to your local machine's SSH config file.
+```bash
+# Add the following to your SSH config file (~/.ssh/config)
+# If the container is on your local machine, without port forwarding
+# Replace localhost by the address of the container and Port by 22.
+Host local2223
+	HostName localhost
+	User <same-username-as-.env>
+	Port 2223
+	StrictHostKeyChecking no
+	UserKnownHostsFile=/dev/null
+	ForwardAgent yes
+```
+
+In case of issues you can check the logs of the container with
+```bash
+# A container ID is outputted when you start the container.
+docker logs -f <container-ID>
+```
+
+**Notes**
+
+Directories for storing the IDE configurations, extensions, etc.
+are mounted to the container to be persisted across development sessions.
+You can find them in the `docker-compose.yaml` file.
+Each project (defined by its `PROJECT_ROOT_AT` path) will have its own cache directory to avoid conflicts
+between containers.
+
+**VS Code**
+
+The idea is to connect to an SSH remote server (the container) as described [here](https://code.visualstudio.com/docs/remote/ssh).
+
+Install the [Remote Development extension in VSCode](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh).
+Then connect to the remote server following the steps [here](https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host).
+
+Open the directory of your project which is mounted in the same location as in your local machine or remote server.
+
+**PyCharm**
+
+The idea is to run the IDE inside the SSH remote server (the container) as described [here](https://www.jetbrains.com/help/pycharm/remote-development-overview.html)
+
+The first time connecting you will have to install the IDE in the container in a mounted directory
+so that it is stored on your machine.
+After that, or if you already have the IDE stored from another project,
+the template will start the IDE mounted in the container at the container creation,
+and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
+
+The first time,
+follow the steps [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) to install the IDE,
+and install it in `/home/YOUR-USERNAME/.jetbrains-server/dist`, not in its default location
+(small "installation options..." link).
+For the project directory, it should be mounted in the container at the same location as in your local machine.
+
+In the container, locate the name of the PyCharm IDE installed.
+It will be at
+```bash
+ls ${HOME}/.jetbrains-server/dist
+# Outputs something like e632f2156c14a_pycharm-professional-2024.1.4
+```
+Copy the name of this directory to your `.env` file as the value of the `PYCHARM_IDE_AT` variable
+so that the template can start the IDE for you next time.
+```bash
+PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
+```
+
+The next time you start the development container, the IDE will start at the container start,
+and you will find it in your JetBrains Gateway list of projects.
+If it's a new host (e.g. one for a simultaneous container on port 2224), you can add it,
+and it will detect that the IDE is already installed.
+
+_Configuration_:
+
+* PyCharm's default terminal is bash. Change it to zsh in the Settings -> Tools -> Terminal.
+* When running Run/Debug configurations, set your working directory the project root (`$PROJECT_ROOT_AT`), not the script's directory.
+* Your interpreter will be
+  * the system Python `/usr/bin/python` with the `from-python` option.
+  * the Python in your conda environment with the `from-scratch` option, with the conda binary found at `/opt/conda/condabin/conda`.
+
+
+
+#### Jupyter Lab
+
+With Jupyter Lab you should have the server running directly in the container
+and then forward the ports to your local machine as follows:
+
+```bash
+# Start the jupyter server. Change the port if it's already used by another project.
+./template.sh dev -d -e JUPYTER_SERVER=1 -e JUPYTER_PORT=8887
+# Outputs a container ID.
+# Get its logs to get the token.
+docker logs -f <container-ID>
+# The last line will be something like
+# http://hostname:8887/?token=<TOKEN>
+# Wait a bit if the server is not ready yet.
+# Ctrl-C to quit the logs.
+
+# If the container is on your local machine open the URL
+# http://localhost:8887/?token=<TOKEN> on your local machine.
+
+# If the container is on a remote machine, you should forward the ports to your local machine.
+# Run the following on your local machine.
+# ssh -N -L port-on-local-machine:container-ip:container-port <USER@HOST>
+ssh -N -L 8887:localhost:8887 <USER@HOST> # or anything specified in your ssh config.
+# Connect to the server with this URL on your local machine http://localhost:8887/?token=TOKEN
 ```
 
 ## Running with your favorite container runtime
@@ -423,6 +544,7 @@ environment variable `PROJECT_ROOT_AT`.
 E.g., you can mount it at `/project/template-project-name` and specify `PROJECT_ROOT_AT=/project/template-project-name`.
 The entrypoint can then take any command to run in the container and will run it with PID 1.
 (If you don't specify the `PROJECT_ROOT_AT`, the entrypoint will skip the project installation and warn you about it.)
+It also expects the working directory to be set to `$PROJECT_ROOT_AT`.
 
 You can refer to the `run-local-*` services in the `compose.yaml` file and to the `EPFL-runai-setup/README.md` file
 for an idea of how this would work on a Kubernetes cluster interfaced with Run:ai.
@@ -438,12 +560,13 @@ export PROJECT_ROOT_AT=/project/template-project-name
 apptainer run \
     -c \
     -B $(pwd):${PROJECT_ROOT_AT} \
+    --cwd ${PROJECT_ROOT_AT} \
     --env PROJECT_ROOT_AT=${PROJECT_ROOT_AT} \
     --env WANDB_API_KEY="" \
     --nv template-project-name_amd64-cuda-dev-latest-root.sif
 # --env PROJECT_ROOT_AT is used by the entrypoint to install the project
 # *.sif is the downloaded image.
-# -c to not mount all home to avoid spoiling reproducibility
+# -c to not mount all the home drectory to avoid spoiling reproducibility
 # --nv to use NVIDIA GPUs
 ```
 

@@ -2,4 +2,12 @@
 # These dependencies are required to run your code.
 zsh                 # Required.
 openssl             # Required.
+ca-certificates     # Useful.
 htop                # Useful.
+git                 # Useful.
+htop                # Useful.
+curl                # Useful.
+wget                # Useful.
+vim                 # Useful.
+tmux                # Useful.
+tree                # Useful.

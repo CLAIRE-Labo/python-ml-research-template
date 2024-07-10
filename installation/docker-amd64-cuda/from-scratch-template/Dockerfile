@@ -149,7 +149,7 @@ FROM runtime-apt-pkgs AS runtime-deps
 # A directory to record all the dependency files used at multiple stages.
 # This is useful for a later inspection or debugging.
 ENV DEPENDENCIES_DIR=/opt/template-dependencies
-RUN mkdir -m 777 ${DEPENDENCIES_DIR}
+RUN mkdir ${DEPENDENCIES_DIR}
 COPY dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
 COPY dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
 COPY dependencies/environment.yml ${DEPENDENCIES_DIR}/environment.yml
@@ -163,6 +163,9 @@ ENV PATH=${CONDA_INSTALL_PATH}/condabin:${PATH}
 COPY --link --from=build-conda-env --chmod=777 ${CONDA_INSTALL_PATH} ${CONDA_INSTALL_PATH}
 COPY --link --from=build-conda-env ${CONDA_INSTALL_PATH}/environment-raw-after-env-create.yml \
     ${DEPENDENCIES_DIR}/environment-raw-after-env-create.yml
+
+# Add conda env to path.
+ENV PATH=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/bin:${PATH}
 
 # Optional optimizations.
 # Enable Intel MKL optimizations on AMD CPUs.
@@ -189,10 +192,17 @@ ENV HYDRA_FULL_ERROR=1
 # A final record of the depedenencies from mamba.
 RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-final.yml
 
+# Initialize conda for login and interactive shells, for a better development experience.
+# Although the environment is already in the PATH.
+RUN mamba init --system bash
+RUN { echo "mamba activate ${PROJECT_NAME}"; \
+    } >> /etc/profile.d/conda.sh
+RUN cat /etc/profile.d/conda.sh >> /etc/bash.bashrc
+RUN cat /etc/profile.d/conda.sh >> /etc/zsh/zprofile
+RUN cat /etc/profile.d/conda.sh >> /etc/zsh/zshrc
+
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
-ENV GLOBAL_ZSHRC=/etc/zsh/zshrc
-
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
 ARG ZSHS_PATH=${ZSH_ENHANCE_DIR}/zsh-syntax-highlighting
@@ -210,18 +220,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "alias wns='watch nvidia-smi'"; \
         echo "alias hist='history 1'"; \
         echo "alias update-env-file='source \${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/dependencies/update-env-file.sh'"; \
-        echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
-    } >> ${GLOBAL_ZSHRC}
-
-# Initialize conda for interactive shells, the entrypoint is run as an interactive shell.
-## Write it in /root/.zshrc (which is empty before) and copy to the global zshrc.
-RUN /bin/zsh -i -c "mamba init zsh" && \
-    cat /root/.zshrc >> ${GLOBAL_ZSHRC} && \
-    rm /root/.zshrc && \
-    echo "mamba activate ${PROJECT_NAME}" >> ${GLOBAL_ZSHRC}
-
-# A place to put the project if needed.
-RUN mkdir -m 777 /project
+    } >> /etc/zsh/zshrc
 
 # Entrypoints.
 # The entrypoint is run in an interactive shell so that the conda environment is activated before.
@@ -229,8 +228,8 @@ RUN mkdir -m 777 /project
 # and testing that you correctly mounted the project code.
 # It also performs some other important setup depending on the deployment platform.
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
-COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
-ENTRYPOINT ["/bin/zsh", "-i", "/opt/template-entrypoints/entrypoint.sh"]
+COPY --link entrypoints ${ENTRYPOINTS_ROOT}
+ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################

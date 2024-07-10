@@ -12,7 +12,7 @@ runai submit \
 # 1.The command to mount your pcv.
 # --pvc your_pvc_name:/where_to_mount_your_pvc (you can mount it anywhere)
 # we recommend always mounting it inside the / directory always with the same name.
-# 2. the environment variables that the configure the entrypoint.
+# 2. the environment variables that configure the entrypoint.
 # -e SSH_SERVER=1 will make the entrypoint start an ssh server.
 
 # Also note that here we are using the dev image (dev-latest-moalla)
@@ -21,6 +21,6 @@ runai submit \
 ## Useful commands.
 # runai describe job example-first-steps
 # runai logs example-first-steps
-# kubectl port-forward example-first-steps-0-0  2222:22
+# kubectl port-forward example-first-steps-0-0  2222:2223
 # If you setup your ssh config you can then
-# ssh runai
+# ssh local2222

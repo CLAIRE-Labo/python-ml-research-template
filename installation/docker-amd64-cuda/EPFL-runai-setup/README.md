@@ -33,14 +33,14 @@ The simple checks below will be enough.
 
 **Run:ai**:
 
-1. You should have access to a Run:ai project and have minimum knowledge of the Run:ai platform, e.g.,
+1. You should have access to a Run:ai project and have some knowledge of the Run:ai platform, e.g.,
    know the commands to submit jobs and check their status.
 2. You should have one or more PVC(s) (Persistent Volume Claim) connecting some persistent storage
    to your Run:ai jobs, typically your lab's shared storage.
    (E.g. `runai-claire-gaspar-scratch`, you can run `kubectl get pvc` to list them).
 3. You should have access to a project on the [IC](https://ic-registry.epfl.ch/) or [RCP](https://registry.rcp.epfl.ch/)
    image registries
-   and should be logged in (`docker login <registry>`).
+   and should be logged in to them (`docker login <registry>`).
 
 EPIC provides an introduction to these tools [here](https://epic-guide.github.io/tools/ic-compute-storage).
 We also have a guide at CLAIRE which you can get inspiration from
@@ -92,14 +92,15 @@ We strongly suggest having two instances of your project repository on your PVCs
 2. One for running unattended jobs, which is always referring to a commit at a working state of the code.
 
 You can still have the outputs and data directories of those two instances shared.
-This can be done by creating symlinks between them, the way you can read data from another PVC,
+This can be done by creating symlinks between them, in the same the way you can read data from another PVC,
 say a shared PVC that has model weights, etc. All of this is described in the
 `data/README.md` and `outputs/README.md` files of the template and can be done later.
 
 Follow the steps below to clone your repository in your PVCs.
 
 If you have access to the storage underlying your PVC, you can skip step 1 and 2.
-(E.g., CLAIRE members can use the `claire-build-machine` for this to access `claire-rcp-scratch`).
+(E.g., CLAIRE members can use the `claire-build-machine` for this to access `claire-rcp-scratch`.
+RCP also provides a shared jump host `haas001.rcp.epfl.ch`).
 Otherwise, the template covers a deployment option that simply opens an ssh server
 on your container without setting up the project,
 forwards your ssh keys, and allows you to clone your repository on the container.
@@ -110,13 +111,18 @@ forwards your ssh keys, and allows you to clone your repository on the container
    ```text
     $ runai logs example-first-steps
    ...
+    [TEMPLATE INFO] Execing the template's entrypoint.
     [TEMPLATE INFO] Running entrypoint.sh
     [TEMPLATE WARNING] PROJECT_ROOT_AT is not set.
-    [TEMPLATE WARNING] It is expected to point to the location of your mounted  project.
-    [TEMPLATE WARNING] It has been defaulted to /workspace
+    [TEMPLATE WARNING] It is expected to point to the location of your mounted project if you plan to run you code.
+    [TEMPLATE WARNING] Ignore if you only need the development environment.
+    [TEMPLATE WARNING] PROJECT_ROOT_AT has been defaulted to /
     [TEMPLATE WARNING] The project installation will be skipped.
-    [TEMPLATE INFO] The next commands (and all interactive shells) will be run from /workspace.
+    [TEMPLATE INFO] Expecting workdir to be /.
     [TEMPLATE INFO] Skipping the installation of the project.
+    [TEMPLATE INFO] Environment variables have been written to /home/moalla/.docker-env-vars.
+    [TEMPLATE_INFO] And will be sourced in login shells to preserve environment variables in ssh connections.
+    [TEMPLATE INFO] If you change one at runtime and want it to be preserved in subsequence shell invocations, you need to write it to /home/moalla/.docker-env-vars as well.
     [TEMPLATE INFO] Configuring ssh server.
     [TEMPLATE INFO] Starting ssh server.
     [TEMPLATE INFO] Executing the command sleep infinity
@@ -151,12 +157,13 @@ When the container starts, its entrypoint does the following:
 
 - It runs the entrypoint of the base image if you specified it in the `compose-base.yaml` file.
 - It expects you specify `PROJECT_ROOT_AT=<location to your project in the PVC>`.
-  and will make `PROJECT_ROOT_AT` the working directory for the next commands and any interactive shell.
+  and `PROJECT_ROOT_AT` to be the working directory of the container.
   Otherwise, it will issue a warning and set it to the default working directory of the container.
-- It then tries to install the project in editable mode, assuming that it is in the working directory.
+- It then tries to install the project in editable mode.
   This is a lightweight installation that allows to avoid all the hacky import path manipulations.
   (This will be skipped if `PROJECT_ROOT_AT` has not been specified or if you specify `SKIP_INSTALL_PROJECT=1`.)
-- It also handles all the remote development setups (VS Code, Jupyter, ...) that you specify with environment variables.
+- It also handles all the remote development setups (VS Code, PyCharm, Jupyter, ...)
+  that you specify with environment variables.
   These are described in the later sections of this README.
 - Finally, it executes a provided command (e.g. `sleep infinity`), otherwise by default will run a shell and stop.
   It runs this command with PID 1 so that it can receive signals from the cluster and gracefully stop when preempted.
@@ -170,21 +177,19 @@ You should expect to see something like:
 ```text
 $ runai logs example-minimal
 ...
-[TEMPLATE INFO] Running entrypoint.sh
 [TEMPLATE INFO] PROJECT_ROOT_AT is set to /claire-rcp-scratch/home/moalla/template-project-name/dev.
-[TEMPLATE INFO] The next commands (and all interactive shells) will be run from /claire-rcp-scratch/home/moalla/template-project-name/dev.
+[TEMPLATE INFO] Expecting workdir to be /claire-rcp-scratch/home/moalla/template-project-name/dev.
 [TEMPLATE INFO] Installing the project with pip.
 [TEMPLATE INFO] Expecting /claire-rcp-scratch/home/moalla/template-project-name/dev to be a Python project.
 [TEMPLATE INFO] To skip this installation use the env variable SKIP_INSTALL_PROJECT=1.
-...
 Obtaining file:///claire-rcp-scratch/home/moalla/template-project-name/dev
-...
-Building wheels for collected packages: template-project-name
-...
+  Installing build dependencies: started
+  ...
+  Building editable for template-project-name (pyproject.toml): started
+  ...
 Successfully built template-project-name
 Installing collected packages: template-project-name
 Successfully installed template-project-name-0.0.1
-...
 [TEMPLATE INFO] Testing that the package can be imported.
 [TEMPLATE INFO] Package imported successfully.
 [TEMPLATE INFO] Executing the command sleep infinity
@@ -249,16 +254,16 @@ Your job will open an ssh server when you set the environment variable `SSH_SERV
 This is necessary for some remote IDEs like PyCharm to work and can be beneficial
 for other things like ssh key forwarding.
 
-The ssh server is configured to run on port 22 of the container.
+The ssh server is configured to run on port 2223 of the container.
 You can forward a local port on your machine to this port on the container.
 
 When your container is up, run
 
 ```bash
-# Here 2222 on the local machine is forwarded to 22 on the pod.
+# Here 2222 on the local machine is forwarded to 2223 on the pod.
 # You can change the local port number to another port number.
 kubectl get pods
-kubectl port-forward <pod-name> 2222:22
+kubectl port-forward <pod-name> 2222:2223
 ```
 
 You can then ssh to your container by ssh-ing to that port on your local machine.
@@ -289,13 +294,15 @@ GitHub provides a guide for that
 and for the ssh config file you can use the following:
 
 ```bash
-Host runai
+Host local2222
 	HostName 127.0.0.1
 	User <username>
 	Port 2222
 	StrictHostKeyChecking no
 	UserKnownHostsFile=/dev/null
 	ForwardAgent yes
+# If you open multiple projects at the same time, you can forward each of them to a different port.
+# And have two entries in your ssh config file.
 ```
 
 The `StrictHostKeyChecking no` and `UserKnownHostsFile=/dev/null` allow bypass checking the identity
@@ -303,16 +310,16 @@ of the host [(ref)](https://linuxcommando.blogspot.com/2008/10/how-to-disable-ss
 which keeps changing every time a job is scheduled,
 so that you don't have to reset it each time.
 
-With this config you can then simply connect to your container with `ssh runai` when the port 2222 is forwarded.
+With this config you can then simply connect to your container with `ssh local2222` when the port 2222 is forwarded.
 
 **Limitations**
 
 Note that an ssh connection to the container is not like executing a shell on the container.
 In particular, the following limitations apply:
 
-- environment variables in the image sent to the entrypoint of the container or any command exec'ed in it
+- environment variables in the image sent to the entrypoint of the container and any command exec'ed in it
   are not available in ssh connections.
-  There is a workaround for that in `entrypoints/remote-development-steup.sh` when opening an ssh server
+  There is a workaround for that in `entrypoints/remote-development-setup.sh` when opening an ssh server
   which should work for most cases, but you may still want to adapt it to your needs.
 
 ### Git config
@@ -336,87 +343,74 @@ EOL
 Then specify something like `-e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig`
 in your `runai submit` command.
 
-### PyCharm
+### PyCharm Professional
 
 We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remote-development-overview.html)
 feature of PyCharm that runs a remote IDE in the container.
-We prefer this method to using the container as
-a [remote interpreter](https://www.jetbrains.com/help/pycharm/configuring-remote-interpreters-via-ssh.html), as with the
-latter, the code will have to be kept in sync between the container and your local machine,
-creating a mismatch with the non-interactive way of running the template.
 
-There are two main ways to use PyCharm Remote development with an ssh server (here, our container):
-
-1. Using the JetBrains Gateway client to install the IDE in the server and connect to it.
-2. The server has access to remote IDE binaries, starts the IDE on its own, and gives you a link to use with
-   Gateway to directly connect to it.
-
-The template supports both options.
-We suggest using option 1 when you don't have access to the PyCharm remote IDE binaries for the first time.
-Then settle with option 2 as it makes using Run:ai as your daily driver feel like just opening a local IDE.
-
-For both options you will set your project directory on PyCharm
-to be the same as the one specified in the `PROJECT_ROOT_AT`.
+The first time connecting you will have to install the IDE in the server in a location mounted from your PVC so
+that is stored for future use.
+After that, or if you already have the IDE stored in your PVC from a previous project,
+the template will start the IDE on its own at the container creation,
+and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
 
 **Preliminaries: saving the project IDE configuration**
 
-The remote IDE stores its configuration (e.g., the interpreters you set up, memory requirements, etc.)
-in `~/.config/JetBrains/RemoteDev-PY/...` and its cache in `~/.cache/JetBrains/RemoteDev-PY/...`.
-Every project location will have its own configuration and cache there.
+The remote IDE stores its configuration and cache (e.g., the interpreters you set up, memory requirements, etc.)
+in `~/.config/JetBrains/RemoteDev-PY/...`, `~/.cache/JetBrains/RemoteDev-PY/...`, and other directories.
 
-To have it preserved between different dev containers, you should create a placeholder
-directory in your PVC and the template will handle sym-linking it when the container starts.
-You can put this directory in a place where you keep the remote development tools in your PVC.
-(You can use the `minimal.sh` example to access your PVC.)
+To have it preserved between different dev containers, you should specify the `JETBRAINS_SERVER_AT` env variable
+with your submit command as shown in the examples in `submit-scripts/remote-development.sh`.
+The template will use it to store the IDE configuration and cache in a separate directory
+per project (defined by its $PROJECT_ROOT_AT).
+All the directories will be created automatically.
 
-```
-/claire-rcp-scrach/home/moalla/template-project-name
-├── ...               # Other remote development tools.
-└── pycharm-config    # To contain the config and cache of the IDE.
-```
-
-You should then specify the `PYCHARM_CONFIG_AT` env variable with your submit command to maintain
-your IDE and project configurations.
-
-**Option 1:**
+**First time only (if you don't have the IDE stored from another project), or if you want to update the IDE.**
 
 1. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
    variables
-    - `PYCHARM_CONFIG_AT` by setting to the `pycharm-config` described above.
-    - `PYCHARM_IDE_AT` by deleting it as the IDE will be installed after the container is run.
+    - `JETBRAINS_SERVER_AT`: set it to the `jetbrains-server` directory described above.
+    - `PYCHARM_IDE_AT`: don't include it as IDE is not installed yet.
 2. Enable port forwarding for the SSH port.
-3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway).
+3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
+   install the IDE in your `${JETBRAINS_SERVER_AT}/dist`
+   (something like `/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server/dist`)
+   not in its default location **(use the small "installation options..." link)**.
+   For the project directory, it should be in the same location as your PVC (`${PROJECT_ROOT_AT}`.
+   something like `/claire-rcp-scratch/home/moalla/template-project-name/dev`).
 
-You can then copy the directory containing the binaries `~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version>`
-to your PVC to use option 2.
-
+When in the container, locate the name of the PyCharm IDE installed.
+It will be at
 ```bash
-# Example
-cp -r ~/.cache/JetBrains/RemoteDev/dist/<some_pycharm_ide_version> /claire-rcp-scrach/home/moalla/remote-development/pycharm
+ls ${JETBRAINS_SERVER_AT}/dist
+# Outputs something like e632f2156c14a_pycharm-professional-2024.1.4
+```
+The name of this directory will be what you should set the `PYCHARM_IDE_AT` variable to in the next submissions
+so that it starts automatically.
+```bash
+PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 ```
 
-**Option 2:**
+**When you have the IDE in the PVC**
 You can find an example in `submit-scripts/remote-development.sh`.
 
-1. Same as option 1, but set the environment variable `PYCHARM_IDE_AT` to the directory containing the IDE binaries.
+1. Same as above, but set the environment variable `PYCHARM_IDE_AT` to the directory containing the IDE binaries.
    Your IDE will start running with your container.
-   It will print a link to the IDE in the container logs.
-
+2. Enable port forwarding for the SSH port.
+3. Open JetBrains Gateway, your project should already be present in the list of projects and be running.
+4. Otherwise, your container prints a link to the IDE that you can find it its logs.
    Get the logs with `runai logs <job-name>`.
    The link looks like:
 
    ```bash
-    Gateway link: jetbrains-gateway://connect#idePath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Fremote-development%2Fpycharm&projectPath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Ftemplate-project-name%2Fdev&host=127.0.0.1&port=2222&user=moalla&type=ssh&deploy=false&newUi=true
+    Gateway link: jetbrains-gateway://connect#idePath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Fremote-development%2Fpycharm&projectPath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Ftemplate-project-name%2Fdev&host=127.0.0.1&port=2223&user=moalla&type=ssh&deploy=false&newUi=true
     ```
-2. Enable port forwarding for the SSH port.
-3. Use the Gateway link to connect to the remote IDE from a local JetBrains Gateway client as
-   described [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#use_idea).
-   Alternatively, you will also directly find the host on your list of Gateway connections.
+   Use it in Gateway to connect to the IDE.
 
 **Configuration**:
 
 * PyCharm's default terminal is bash. Change it to zsh in the Settings -> Tools -> Terminal.
-* When running Run/Debug configurations, set your working directory the `PROJECT_ROOT_AT`, not the script's directory.
+* When running Run/Debug configurations, set your working directory the project root (`$PROJECT_ROOT_AT`), not the script's directory.
 * Your interpreter will be
   * the system Python `/usr/bin/python` with the `from-python` option.
   * the Python in your conda environment with the `from-scratch` option, with the conda binary found at `/opt/conda/condabin/conda`.
@@ -433,25 +427,18 @@ You can find an example in `submit-scripts/remote-development.sh`.
 
 ### VSCode
 
-We support the [Remote Development using SSH ](https://code.visualstudio.com/docs/remote/ssh) feature of
-VS code that runs a remote IDE in the container.
+We support the [Remote Development using SSH ](https://code.visualstudio.com/docs/remote/ssh)
+feature of VS code that runs a remote IDE in the container via SSH.
 
 **Preliminaries: saving the IDE configuration**
 
 The remote IDE stores its configuration (e.g., the extensions you set up) in `~/.vscode-server`.
-To have it preserved between different dev containers, you should create a placeholder
-directory in your PVC and the template will handle sym-linking it when the container starts.
-You can put this directory in a place where you keep the remote development tools in your PVC.
-(You can use the `minimal.sh` example to access your PVC.)
-
-```
-/claire-rcp-scratch/home/moalla/remote-development
-├── ...            # Other remote development tools.
-└── vscode-server  # To contain the IDE .vscode-server for the project.
-```
-
-You should then specify the `VSCODE_CONFIG_AT` env variable with your submit command to preserve
-your IDE configuration.
+To have it preserved between different dev containers, you should specify the
+`VSCODE_SERVER_AT` env variable with your submit command
+as shown in the examples in `submit-scripts/remote-development.sh`.
+The template will use it to store the IDE configuration and cache in a separate directory
+per project (defined by its $PROJECT_ROOT_AT).
+All the directories will be created automatically.
 
 **ssh configuration**
 
@@ -463,7 +450,7 @@ to set up your ssh config file for runai jobs.
 
 1. In your `runai submit` command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
-    - preserving your config `VSCODE_CONFIG_AT`.
+    - preserving your config `VSCODE_SERVER_AT`.
 2. Enable port forwarding for the SSH connection.
 3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
    extension on your local VS Code.
@@ -501,15 +488,15 @@ To do so, you need to:
     To access the server, open this file in a browser:
         ...
     Or copy and paste this URL:
-        http://hostname:8888/?token=1098cadee3ac0c48e0b0a3bf012f8f06bb0d56a6cde7d128
+        http://hostname:8887/?token=1098cadee3ac0c48e0b0a3bf012f8f06bb0d56a6cde7d128
    ```
 
-2. Forward the port `8888` on your local machine to the port `8888` on the container.
+2. Forward the port `8887` on your local machine to the port `8887` on the container.
    ```bash
-   kubectl port-forward <pod-name> 8888:8888
+   kubectl port-forward <pod-name> 8887:8887
    ```
 
-3. Open the link in your browser, replacing hostname with localhost.
+3. Open the link in your browser, replacing `hostname` with `localhost`.
 
 **Note:**
 

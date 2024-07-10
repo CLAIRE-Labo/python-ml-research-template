@@ -147,7 +147,6 @@ RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-final.txt
 
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
-ENV GLOBAL_ZSHRC=/etc/zsh/zshrc
 
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
@@ -165,11 +164,8 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "alias wns='watch nvidia-smi'"; \
         echo "alias hist='history 1'"; \
         echo "alias update-env-file='source \${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/dependencies/update-env-file.sh'"; \
-        echo "if [ -n \"\${PROJECT_ROOT_AT}\" ]; then cd \${PROJECT_ROOT_AT}; fi"; \
-    } >> ${GLOBAL_ZSHRC}
+    } >> /etc/zsh/zshrc
 
-# A place to put the project if needed.
-RUN mkdir -m 777 /project
 
 # Entrypoints.
 # Don't overwrite the entrypoint, it is installing the project
@@ -177,10 +173,12 @@ RUN mkdir -m 777 /project
 # It also performs some other important setup depending on the deployment platform.
 
 ARG BASE_ENTRYPOINT
+ARG BASE_ENTRYPOINT_EXECS
 ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
+ENV BASE_ENTRYPOINT_EXECS=${BASE_ENTRYPOINT_EXECS}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
-ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh" ]
+ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################
