@@ -29,7 +29,7 @@ runai submit \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
   -e PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4 \
-  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-config \
+  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server \
   -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
   -g 1 --cpu-limit 16 --memory-limit 64G \
   -- sleep infinity
