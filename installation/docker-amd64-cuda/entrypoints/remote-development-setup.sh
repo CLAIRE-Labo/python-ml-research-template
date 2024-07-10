@@ -3,7 +3,7 @@
 # Workaround using symlinks when clusters do not allow to mount specific directories or files.
 
 if [ -n "${GIT_CONFIG_AT}" ]; then
-  mkdir -p "${GIT_CONFIG_AT}"/..
+  mkdir -p $(dirname "${GIT_CONFIG_AT}")
   touch "${GIT_CONFIG_AT}"
   ln -s "${GIT_CONFIG_AT}" "${HOME}/.gitconfig"
   echo "[TEMPLATE INFO] Sym-linked Git config to ${GIT_CONFIG_AT}."
