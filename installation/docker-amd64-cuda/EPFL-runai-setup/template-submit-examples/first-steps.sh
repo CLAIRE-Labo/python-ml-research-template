@@ -1,7 +1,7 @@
 runai submit \
   --name example-first-steps \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   -e SSH_SERVER=1 \
   -- sleep infinity
@@ -14,9 +14,6 @@ runai submit \
 # we recommend always mounting it inside the / directory always with the same name.
 # 2. the environment variables that configure the entrypoint.
 # -e SSH_SERVER=1 will make the entrypoint start an ssh server.
-
-# Also note that here we are using the dev image (dev-latest-moalla)
-# which contains the dependencies to open the ssh server.
 
 ## Useful commands.
 # runai describe job example-first-steps

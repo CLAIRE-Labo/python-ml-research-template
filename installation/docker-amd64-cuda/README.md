@@ -91,19 +91,19 @@ for your future users (and yourself).
 
    If you change the dependency files commit so that you can track what worked and what didn't.
 6. Build the environment following the instructions to [build the environment](#obtainingbuilding-the-environment).
-   (Obviously, you'll have to build the generic images not pull them.)
+   (Obviously, you'll have to build the generic image not pull it.)
 7. Follow the instructions to [run the environment](#the-environment) with your target
    deployment option.
    If everything goes well (we suggested checking that all your dependencies are there
    and importing the complex ones), pin your dependencies following the
    instructions to [freeze the environment](#freeze-the-environment).
-8. Push your generic images (run and dev with the root user) to some registry if not done already.
+8. Push your generic image (the one with the root user) to some registry if not done already.
    This will be handy for you, for sharing it with your teammates, and when you open-source your project later.
-    1. Find a public (or private for teammates) repository to push your generic images.
+    1. Find a public (or private for teammates) repository to push your generic image.
        E.g., your personal Docker Hub registry has free unlimited public repositories.
-    2. Push the generic images to the registry you chose.
+    2. Push the generic image to the registry you chose.
        ```bash
-       # Don't include the tag. All relevant tags will be pushed.
+       # Don't include the tag. All relevant tags will be pushed (i.e. latest and commit-tagged).
        ./template.sh push_generic FULL_IMAGE_NAME_WITH_REGISTRY
        ```
     3. Add this link to the TODO ADD PULL_IMAGE_NAME in
@@ -124,7 +124,7 @@ for your future users (and yourself).
 
 The setup is based on Docker and Docker Compose and is adapted from
 the [Cresset template](https://github.com/cresset-template/cresset).
-It is composed of Dockerfiles to build the image containing the runtime and development environments,
+It is composed of Dockerfiles to build the image containing the runtime environment,
 and Docker Compose files to set build arguments in the Dockerfile and run it locally.
 
 Most of these files are templates that should suit most use cases.
@@ -146,14 +146,12 @@ docker-amd64-cuda/
 ├── dependencies/
 │   ├── environment.yml              # If chose the `from-scratch` option. Conda and pip dependencies.
 │   ├── requirements.txt             # If chose the `from-python` option. pip dependencies.
-│   ├── apt-build.txt                # System dependencies (from apt) for building the conda environment, and potentially other software.
+│   ├── apt-build.txt                # System dependencies (from apt) for building python dependencies or other software.
 │   ├── apt-runtime.txt              # System dependencies (from apt) needed to run your code.
-│   ├── apt-dev.txt                  # System dependencies (from apt) needed to develop in a container e.g. vim.
 │   └── update-env-file.sh           # Template file. A utility script to update the environment files.
 ├── entrypoints/
 │   ├── entrypoint.sh                # The main entrypoint that install the project and triggers other entrypoints.
-│   ├── pre-entrypoint.sh            # If the base images includes an entrypoint, this runs it before the main entrypoint.
-│   ├── dummy.sh                     # A dummy entrypoint useful in some cases.
+│   ├── pre-entrypoint.sh            # Runs the base entrypoint of the base image if it has one.
 │   ├── logins-setup.sh              # Manages logging into services like wandb.
 │   └── remote-development-setup.sh  # Contains utilities for setting up remote development with VSCode, PyCharm, Jupyter.
 └── EPFL-runai-setup/                # Template files to deploy on the EPFL Run:ai Kubernetes cluster.
@@ -174,13 +172,7 @@ Broadly, it has 3 main stages:
    at runtime.
 2. A stage to install runtime dependencies and copy dependencies from the previous stage.
    Runtime dependencies are typically lighter than build-time dependencies.
-3. A stage extending the runtime stage with development dependencies.
-   These dependencies and utilities (e.g., vim, pretty shell, SSH server, etc.) are not needed at runtime
-   but are useful when developing in the container.
-
-The two last stages can be built without a user (the user will be root), or extended to include a user
-(specified in your `.env` file later).
-This is done in the `Dockerfile-user` file.
+3. A stage to create the user. This is done in the `Dockerfile-user` file.
 
 ### Details on the Docker Compose files
 
@@ -200,7 +192,7 @@ and get examples from the `./template.sh` script.
 
 > [!IMPORTANT]
 > **TEMPLATE TODO:**
-> When open-sourcing your project, share the generic images you built on a public registry.
+> When open-sourcing your project, share the generic image you built on a public registry.
 > Otherwise, delete the last bullet below in the guides for running the environment.
 
 We provide the following guides for obtaining/building and running the environment:
@@ -230,7 +222,7 @@ We provide the following guides for obtaining/building and running the environme
 
 > [!IMPORTANT]
 > **TEMPLATE TODO:**
-> After pushing your generic images, provide the image name on your private registry to your teammates,
+> After pushing your generic image, provide the image name on your private registry to your teammates,
 > or later on a public registry if you open-source your project.
 > Add it below in the TODO ADD PULL_IMAGE_NAME.
 
@@ -278,14 +270,12 @@ cd installation/docker-amd64-cuda
     - You can ignore the rest of the variables after `## For running locally`.
       These don't influence the build, they will be used later to run your image.
 
-2. Pull or build the generic images.
-   These are the runtime (`run`) and development (`dev`) images with root as user.
-   The runtime images will be used to run the code in an unattended way.
-   The dev image has additional utilities that facilitate development in the container.
-   They will be named according to the image name in your `.env`.
-   They will be tagged with `<platform>-run-latest-root` and `<platform>-dev-latest-root` and if you're building them,
-   they will also be tagged with the latest git commit hash `<platform>-run-<sha>-root` and `<platform>-dev-<sha>-root`.
-    - Pull the generic images if they're available.
+2. Pull or build the generic image.
+   This is the image with root as user.
+   It will be named according to the image name in your `.env`.
+   It will be tagged with `<platform>-root-latest` and if you're building it,
+   it will also be tagged with the latest git commit hash `<platform>-root-<sha>` and `<platform>-root-<sha>`.
+    - Pull the generic image if it's available.
       ```bash
       # Pull the generic image if available.
       ./template.sh pull_generic TODO ADD PULL_IMAGE_NAME (private or public).
@@ -305,13 +295,13 @@ cd installation/docker-amd64-cuda
     ./template.sh empty_interactive
    ```
 
-4. Build the images configured for your user.
+4. Build the image configured for your user.
    ```bash
    ./template.sh build_user
    ```
-   This will build a user layer on top of each generic image
-   and tag them `*-${USR}` instead of `*-root`.
-   These will be the images that you actually run and deploy to match the permissions on your mounted storage.
+   This will build a user layer on top of the generic image
+   and tag it with `*-${USR}` instead of `*-root`.
+   This will be the image that you actually run and deploy to match the permissions on your mounted storage.
 
 For the local deployment option with Docker Compose, follow the instructions below,
 otherwise get back to the instructions of deployment option you're following.
@@ -343,7 +333,7 @@ Steps prefixed with [CUDA] are only required to use NVIDIA GPUs.
 Edit the `.env` file to specify which hardware acceleration to use with the `ACCELERATION` variable.
 Supported values are `cpu` and `cuda`.
 
-Then you can run jobs in independent containers running the runtime or the development image.
+Then you can run jobs in independent containers running the runtime image.
 
 These containers start with the entrypoint and then run the command you specified.
 By default, they are automatically removed after they exit.
@@ -357,7 +347,7 @@ runs the original entrypoint of your base image if it exists,
 and execs your command with PID 1.
 Only do so if you need to debug the entrypoint itself or if you have a custom use case.
 
-For the runtime image you can run commands directly in independent containers with
+For the runtime service you can run commands directly in independent containers with
 ```bash
 # template_experiment is an actual script that you can run.
 ./template.sh run your_command
@@ -371,9 +361,9 @@ tmux
 # Detach from the tmux.
 ```
 
-For the dev image you can start it and then exec programs in it, or from a tmux shell
+For the development service you can start it and then exec programs in it, or from a tmux shell
 ```bash
-# To get a shell
+# To get a shell and run commands in the container
 ./template.sh dev
 # To open a container a let it be (remember to stop it)
 ./template.sh dev -d
@@ -432,7 +422,7 @@ Host local2223
 	ForwardAgent yes
 ```
 
-In case of issues you can check the logs of the container with
+In case of issues, you can check the logs of the container with
 ```bash
 # A container ID is outputted when you start the container.
 docker logs -f <container-ID>
@@ -530,12 +520,12 @@ ssh -N -L 8887:localhost:8887 <USER@HOST> # or anything specified in your ssh co
 > **TEMPLATE TODO:**
 > Provide the images and fill the TODO link and PULL_IMAGE_NAME, or delete this section.
 
-An image with the runtime environment and an image with the development environment (includes shell utilities)
-both running as root (but with a configured zshell for users specified at runtime as well)
+An image with the runtime environment running as root
+(but with a configured zshell for users specified at runtime as well)
 is available at TODO: LINK TO PUBLIC IMAGE.
 
-The tags are `amd64-cuda-run-latest-root` and `amd64-cuda-dev-latest-root` for the runtime and development images
-respectively.
+The tag is `amd64-cuda-root-latest` for the latest version and `amd64-cuda-root-SHA` for specific commits
+referring to previous builds.
 You can use your favorite container runtime to run these images.
 
 They have an entrypoint which installs the project with pip
@@ -545,15 +535,15 @@ E.g., you can mount it at `/project/template-project-name` and specify `PROJECT_
 The entrypoint can then take any command to run in the container and will run it with PID 1.
 (If you don't specify the `PROJECT_ROOT_AT`, the entrypoint will skip the project installation and warn you about it.)
 It also expects the working directory to be set to `$PROJECT_ROOT_AT`.
-
-You can refer to the `run-local-*` services in the `compose.yaml` file and to the `EPFL-runai-setup/README.md` file
-for an idea of how this would work on a Kubernetes cluster interfaced with Run:ai.
+We typically mount the project at the same location as the project root on the host.
+You can refer to the `run-local-*` services in the `compose.yaml` file or to the `EPFL-runai-setup/README.md` file
+for an idea of how this would work locally with Docker or on a Kubernetes cluster interfaced with Run:ai.
 
 For example, on an HPC system with Apptainer/Singularity you could do
 ```bash
 # After cloning the project, inside the PROJECT_ROOT on your system.
 # E.g. apptainer pull docker://registry-1.docker.io/library/ubuntu:latest
-apptainer pull PULL_IMAGE_NAME:amd64-cuda-dev-latest-root
+apptainer pull PULL_IMAGE_NAME:amd64-cuda-root-latest
 
 # Location to mount the project, also used by the entrypoint
 export PROJECT_ROOT_AT=/project/template-project-name
@@ -563,10 +553,10 @@ apptainer run \
     --cwd ${PROJECT_ROOT_AT} \
     --env PROJECT_ROOT_AT=${PROJECT_ROOT_AT} \
     --env WANDB_API_KEY="" \
-    --nv template-project-name_amd64-cuda-dev-latest-root.sif
+    --nv template-project-name_amd64-cuda-root-latest.sif
 # --env PROJECT_ROOT_AT is used by the entrypoint to install the project
 # *.sif is the downloaded image.
-# -c to not mount all the home drectory to avoid spoiling reproducibility
+# -c to not mount all the home directory to avoid spoiling reproducibility
 # --nv to use NVIDIA GPUs
 ```
 
@@ -603,11 +593,11 @@ We describe how to do so in the Freeze the Environment section.
 ### Manual editing (before/while building)
 
 - To add `apt` dependencies, edit the `dependencies/apt-*.txt` files.
-  `apt` dependencies are separated into three files to help with multi-stage builds and keep final images small.
+  `apt` dependencies are separated into two files to help with multi-stage builds and keep final images small.
     - In `apt-build.txt` put the dependencies needed to build the environment, e.g., compilers, build tools, etc.
       We provide a set of minimal dependencies as an example.
-    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g., image processing libraries.
-    - In `apt-dev.txt` put the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
+    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g., image processing libraries,
+      and the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
 
   If you're not familiar with which dependencies are needed for each stage, you can start with the minimal set we
   give, and when you encounter errors during the image build, add the missing dependencies to the stage where the error
@@ -700,12 +690,11 @@ We describe how to do so in the Freeze the Environment section.
 ### Manual editing (before/while building)
 
 - To edit the `apt` dependencies, edit the `dependencies/apt-*.txt` files.
-  `apt` dependencies are separated into three files to help with multi-stage builds and keep final images small.
+  `apt` dependencies are separated into two files to help with multi-stage builds and keep final images small.
     - In `apt-build.txt` put the dependencies needed to build the environment, e.g., compilers, build tools, etc.
       We provide a set of minimal dependencies as an example.
-    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g., image processing libraries when not
-      available in conda, etc.
-    - In `apt-dev.txt` put the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
+    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g., image processing libraries,
+      and the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
 
   If you're not familiar with which dependencies are needed for each stage, you can start with the minimal set we
   give.
@@ -824,8 +813,8 @@ Your build will then stop at the line before the failing line.
 You can open a shell in that layer and debug the issue.
 
 ```bash
-# IMAGE_NAME can be found in the .env file.
-docker run --rm -it --entrypoint /bin/bash ${IMAGE_NAME}:run-latest-root
+# IMAGE_NAME and IMAGE_PLATFORM can be found in your .env file.
+docker run --rm -it --entrypoint /bin/bash ${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest
 ```
 
 ### My image doesn't build with my initial dependencies.

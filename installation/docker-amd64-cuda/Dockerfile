@@ -112,6 +112,8 @@ COPY dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
 COPY dependencies/requirements.txt ${DEPENDENCIES_DIR}/requirements.txt
 
 # Install pip packages.
+# Doing this in the runtime assuming it builds on a base images that has enough build dependencies.
+# Maybe consider doing this in the build stage.
 ARG PIP_REQS_FILE=/tmp/dependencies/requirements.txt
 COPY --link dependencies/requirements.txt ${PIP_REQS_FILE}
 RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-before-pip-install-r.txt
@@ -182,33 +184,6 @@ ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################
-# 3. Stages for setting up the user and the development environment.
+# 3. Stages for setting up the user environment.
 # Continued in the Dockerfile-user file.
 ########################################################################
-
-########################################################################
-# Generic layer for development
-
-FROM runtime-generic AS development-generic
-
-# Install development packages.
-
-# Enable caching for `apt` packages in Docker.
-# https://docs.docker.com/engine/reference/builder/#run---mounttypecache
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
-    /etc/apt/apt.conf.d/keep-cache
-
-ARG DEBIAN_FRONTEND=noninteractive
-ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
-COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
-
-# sed is only used as a hack to remove comments from the file apt-dev.txt.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
-    --mount=type=cache,target=/var/lib/apt,sharing=private \
-    apt update && \
-    sed -e 's/#.*//g' -e 's/\r//g' ${DEV_DEPENDENCIES_FILE} | \
-    xargs -t apt-get install -y --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
-
-COPY dependencies/apt-dev.txt ${DEPENDENCIES_DIR}/apt-dev.txt

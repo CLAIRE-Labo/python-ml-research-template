@@ -1,6 +1,6 @@
 runai submit \
   --name example-unattended \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-run-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/run \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/run \

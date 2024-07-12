@@ -2,8 +2,8 @@
 
 ## Overview
 
-At this point, you should have runtime and development images that can be deployed on multiple platforms.
-This guide will show you how to deploy your images on the EPFL IC and RCP Run:ai clusters and use them for:
+At this point, you should have the runtime image that can be deployed on multiple platforms.
+This guide will show you how to deploy your image on the EPFL IC and RCP Run:ai clusters and use it for:
 
 1. Remote development. (At CLAIRE, we use the Run:ai platform as our daily driver.)
 2. Running unattended jobs.
@@ -16,7 +16,7 @@ instructions in the `installation/docker-amd64-cuda/README.md` file.
 
 **Docker image**:
 
-You should be able to run your Docker images locally
+You should be able to run your Docker image locally
 (e.g., on the machine you built it, or for CLAIRE with the remote Docker Engine on our `claire-build-machine`).
 It will be hard to debug your image on Run:ai if you can't even run it locally.
 The simple checks below will be enough.
@@ -61,14 +61,12 @@ They will be in `.EPFL-runai-setup/submit-scripts`.
 
 ### Push your image to the RCP or IC Docker registry
 
-The following will push the generic and user-configured runtime and development images.
+The following will push the generic and user-configured runtime images.
 
-- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-run-latest-root`
-- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-dev-latest-root`
-- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-run-latest-USR`
-- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-dev-latest-USR`
+- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-root-latest`
+- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-USR-latest`
 
-It will also push them with the git commit hash as a tag if no new commit was made since the last build.
+It will also push them with the git commit hash as a tag if the build is at the latest commit.
 You can rebuild the images with `./template.sh build` to tag them with the latest commit hash.
 
 ```bash

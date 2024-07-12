@@ -9,7 +9,7 @@
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
@@ -23,7 +23,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
@@ -41,7 +41,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
@@ -58,7 +58,7 @@ runai submit \
 runai submit \
   --name example-remote-development \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-dev-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
