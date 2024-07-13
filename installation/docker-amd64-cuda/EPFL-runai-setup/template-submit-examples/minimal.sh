@@ -1,7 +1,7 @@
 runai submit \
   --name example-minimal \
   --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-run-latest-moalla \
+  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
@@ -19,10 +19,6 @@ runai submit \
 # -e PROJECT_ROOT_AT=<location of your project in your mounted PVC> .
 # 3.The working directory set to the PROJECT_ROOT_AT.
 # --working-dir same as PROJECT_ROOT_AT.
-
-# Note that here we are using the run image (run-latest-moalla)
-# There is no need to use the dev images when not planning to develop in the container.
-# The run image is typically smaller and can be scaled to run multiple jobs.
 
 ## Useful commands.
 # runai describe job example-minimal

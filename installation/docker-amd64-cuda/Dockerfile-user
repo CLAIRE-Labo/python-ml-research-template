@@ -10,7 +10,7 @@ ARG IMAGE_PLATFORM
 # Explicitly create a user for Docker Engine interfaces
 # which do no support selecting the user at runtime; this is the case for Run:ai.
 
-FROM ${GENERIC_IMAGE}:${IMAGE_PLATFORM}-run-latest-root AS runtime-user
+FROM ${GENERIC_IMAGE}:${IMAGE_PLATFORM}-root-latest AS runtime-user
 
 ARG GRPID
 ARG USRID
@@ -30,7 +30,7 @@ RUN touch /home/${USR}/.zshrc
 ########################################################################
 # Final development layer for the user.
 
-FROM ${GENERIC_IMAGE}:${IMAGE_PLATFORM}-dev-latest-root AS development-user
+FROM ${GENERIC_IMAGE}:${IMAGE_PLATFORM}-root-latest AS development-user
 
 ARG GRPID
 ARG USRID

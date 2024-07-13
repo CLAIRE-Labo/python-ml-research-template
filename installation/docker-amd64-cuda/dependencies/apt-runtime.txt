@@ -2,6 +2,8 @@
 # These dependencies are required to run your code.
 zsh                 # Required.
 openssl             # Required.
+openssh-server      # Required for remote development with most IDEs.
+sudo                # Required to open ssh server.
 ca-certificates     # Useful.
 htop                # Useful.
 git                 # Useful.

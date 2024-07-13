@@ -1,5 +1,5 @@
 services:
-  args-run-root:
+  build-args:
     build:
       args:
         BASE_IMAGE: ubuntu:22.04                # Ubuntu: https://hub.docker.com/_/ubuntu

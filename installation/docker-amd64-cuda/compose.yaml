@@ -1,9 +1,9 @@
 services:
-  image-run-root:
+  image-root:
     extends:
       file: compose-base.yaml
-      service: args-run-root
-    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root
+      service: build-args
+    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest
     build:
       platforms:
         - "linux/amd64"
@@ -14,18 +14,10 @@ services:
         PROJECT_NAME: ${PROJECT_NAME}
         PACKAGE_NAME: ${PACKAGE_NAME}
 
-  image-dev-root:
+  image-user:
     extends:
-      service: image-run-root
-    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root
-    build:
-      dockerfile: Dockerfile
-      target: development-generic
-
-  image-run-user:
-    extends:
-      service: image-run-root
-    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR}
+      service: image-root
+    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-latest
     build:
       dockerfile: Dockerfile-user
       target: runtime-user
@@ -38,16 +30,9 @@ services:
         USR: ${USR}
         PASSWD: ${PASSWD}
 
-  image-dev-user: # Service to build the development image.
-    extends:
-      service: image-run-user
-    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}
-    build:
-      target: development-user
-
   run-local-cpu: # Service to run the image locally with CPU only.
     extends:
-      service: image-run-user
+      service: image-user
     tty: true
     stdin_open: true
     volumes:
@@ -66,7 +51,6 @@ services:
   dev-local-cpu: # Service to develop locally with CPU only.
     extends:
       service: run-local-cpu
-    image: ${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}
     volumes:
       # To persist IDE settings and cache.
       - ${HOME}/.template-gitconfig:/home/${USR}/.gitconfig

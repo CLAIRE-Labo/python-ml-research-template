@@ -96,11 +96,8 @@ pull_generic() {
     exit 1
   fi
 
-  docker pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root"
-  docker tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root"
-
-  docker pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
-  docker tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root" "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
+  docker pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  docker tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
 }
 
 build_generic() {
@@ -127,13 +124,11 @@ build_generic() {
 
   # Build the generic runtime and dev images and tag them with the current git commit.
   check
-  docker compose -p "${COMPOSE_PROJECT}" build image-run-root
-  docker compose -p "${COMPOSE_PROJECT}" build image-dev-root
+  docker compose -p "${COMPOSE_PROJECT}" build image-root
 
   # Tag the images with the current git commit.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-root"
-  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root" "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-root"
+  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT}"
 }
 
 build_user() {
@@ -160,15 +155,13 @@ build_user() {
 
   # Build the user runtime and dev images and tag them with the current git commit.
   check
-  docker compose -p "${COMPOSE_PROJECT}" build image-run-user
-  docker compose -p "${COMPOSE_PROJECT}" build image-dev-user
+  docker compose -p "${COMPOSE_PROJECT}" build image-user
 
   # If the generic image has the current git tag, then the user image has been build from that tag.
   GIT_COMMIT=$(git rev-parse --short HEAD)
   if [[ $(docker images --format '{{.Repository}}:${IMAGE_PLATFORM}-{{.Tag}}' |\
    grep -c "${GIT_COMMIT}") -ge 1 ]]; then
-    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR}" "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-${USR}"
-    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR}" "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-${USR}"
+    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-${GIT_COMMIT}"
   fi
 }
 
@@ -194,25 +187,17 @@ push_usr_or_root() {
     PUSH_IMAGE_NAME="registry.rcp.epfl.ch/${IMAGE_NAME}"
   fi
 
-  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR_OR_ROOT}" \
-  "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR_OR_ROOT}"
-  docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-${USR_OR_ROOT}"
-
-  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR_OR_ROOT}" \
-  "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR_OR_ROOT}"
-  docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-${USR_OR_ROOT}"
+  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest" \
+  "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest"
+  docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest"
 
   # If the image has a git tag push it as well.
   GIT_COMMIT=$(git rev-parse --short HEAD)
   if [[ $(docker images --format '{{.Repository}}:{{.Tag}}' |\
-  grep "${GIT_COMMIT}-${USR_OR_ROOT}" -c) -ge 1 ]]; then
-    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-${USR_OR_ROOT}" \
-      "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-${USR_OR_ROOT}"
-    docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-run-${GIT_COMMIT}-${USR_OR_ROOT}"
-
-    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-${USR_OR_ROOT}" \
-      "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-${USR_OR_ROOT}"
-    docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-dev-${GIT_COMMIT}-${USR_OR_ROOT}"
+  grep "${USR_OR_ROOT}-${GIT_COMMIT}" -c) -ge 1 ]]; then
+    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}" \
+      "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}"
+    docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}"
   fi
 }
 
@@ -237,7 +222,7 @@ list_env() {
   echo "[TEMPLATE INFO] Listing the dependencies in an empty container (nothing mounted)."
   echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
   echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-run-latest-root" zsh -c \
+  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" zsh -c \
   "echo '[TEMPLATE INFO] Running mamba list';\
   if command -v mamba >/dev/null 2>&1; then mamba list -n ${PROJECT_NAME}; \
   else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi;
@@ -250,7 +235,7 @@ empty_interactive() {
   echo "[TEMPLATE INFO] Starting an interactive shell in an empty container (nothing mounted)."
   echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
   echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
-  docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-dev-latest-root"
+  docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
 }
 
 run() {

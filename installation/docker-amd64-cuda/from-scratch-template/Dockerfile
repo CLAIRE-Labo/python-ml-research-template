@@ -233,33 +233,6 @@ ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh"]
 
 ########################################################################
-# 3. Stages for setting up the user and the development environment.
+# 3. Stages for setting up the user environment.
 # Continued in the Dockerfile-user file.
 ########################################################################
-
-########################################################################
-# Generic layer for development
-
-FROM runtime-generic AS development-generic
-
-# Install development packages.
-
-# Enable caching for `apt` packages in Docker.
-# https://docs.docker.com/engine/reference/builder/#run---mounttypecache
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
-    /etc/apt/apt.conf.d/keep-cache
-
-ARG DEBIAN_FRONTEND=noninteractive
-ARG DEV_DEPENDENCIES_FILE=/tmp/dependencies/apt-dev.txt
-COPY --link dependencies/apt-dev.txt ${DEV_DEPENDENCIES_FILE}
-
-# sed is only used as a hack to remove comments from the file apt-dev.txt.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
-    --mount=type=cache,target=/var/lib/apt,sharing=private \
-    apt update && \
-    sed -e 's/#.*//g' -e 's/\r//g' ${DEV_DEPENDENCIES_FILE} | \
-    xargs -t apt-get install -y --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
-
-COPY dependencies/apt-dev.txt ${DEPENDENCIES_DIR}/apt-dev.txt

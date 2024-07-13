@@ -1,5 +1,5 @@
 services:
-  args-run-root:
+  build-args:
     build:
       args:
         # Pytorch 2.4.0a0+f70bd71a48, NVIDIA CUDA 12.5.0.23, Python 3.10.
