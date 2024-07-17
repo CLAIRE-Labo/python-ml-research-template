@@ -211,7 +211,17 @@ We provide the following guides for obtaining/building and running the environme
 
   The guide also provides instructions to do remote development on the Run:ai cluster
   with VSCode, PyCharm, and Jupyter Lab.
-  Other managed cluster users can get inspiration from it too.
+  Other Run:ai cluster users can get inspiration from it too.
+- To run on the EPFL SCITAS clusters, follow the instructions
+  to [obtain/build the environment](#obtainingbuilding-the-environment)
+  (perform them on your local machine).
+  You don't need to build the user image,
+  and you can skip building the generic image if you're reusing an existing one for the project.
+  Then, refer to the `./EPFL-SCIITAS-setup/README.md`.
+
+  The guide also provides instructions to do remote development on the SCITAS cluster
+  with VSCode, PyCharm, and Jupyter Lab.
+  Other Slurm + enroot/Apptainer/Singularity cluster users can get inspiration from it too.
 - We also provide an image with the dependencies needed to run the environment
   that you can use with your favorite OCI-compatible container runtime.
   Follow the instructions
@@ -253,9 +263,10 @@ cd installation/docker-amd64-cuda
    ./template.sh env
    ```
    This creates a `.env` file with pre-filled values.
-    - The `USRID` and `GRPID` are used to give the container user read/write access to the volumes that will be mounted
-      when the container is run, containing the code of the project, the data, and where you'll write your outputs.
-      Edit them so that they match the user permissions on the mounted volumes.
+    - The `USRID` and `GRPID` are used to give the container user read/write access to the storage that will be mounted
+      when the container is run with a container setup that does not change the user namespace
+      (typically the case with rootful Docker and on the EPFL runai cluster).
+      Edit them so that they match the user permissions on the mounted volumes, otherwise you can leave them as is.
       (If you're deploying locally, i.e., where you're building, these values should be filled correctly by default.)
 
       (**EPFL Note:** _These should match the permissions on your lab's shared storage when mounting from there
@@ -295,13 +306,14 @@ cd installation/docker-amd64-cuda
     ./template.sh empty_interactive
    ```
 
-4. Build the image configured for your user.
+4. Build the image configured for your user. (Not needed to run in containers with new namespaces like for the SCITAS and CSCS clusters)
    ```bash
    ./template.sh build_user
    ```
    This will build a user layer on top of the generic image
    and tag it with `*-${USR}` instead of `*-root`.
-   This will be the image that you actually run and deploy to match the permissions on your mounted storage.
+   This will be the image that you run and deploy to match the permissions on your mounted storage in container
+   setups that maintain the user namespace (e.g., rootful Docker, the EPFL runai cluster).
 
 For the local deployment option with Docker Compose, follow the instructions below,
 otherwise get back to the instructions of deployment option you're following.
