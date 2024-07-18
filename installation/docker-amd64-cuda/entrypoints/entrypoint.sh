@@ -26,9 +26,8 @@ fi
 # Also ensures the code is mounted correctly.
 # Because setting the Python path the the project may not be enough.
 # https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
-if [ -n "${SKIP_INSTALL_PROJECT}" ] || [ -n "${SLURM_ENTRYPOINT_ONCE_PER_TASK}" ] && [ "${SLURM_LOCALID}" -eq 0 ]; then
+if [ -n "${SKIP_INSTALL_PROJECT}" ]; then
   # For debugging or other purposes.
-  # For Slurm, assuming container entrypoing is run only once per node, only run once per node
   # Also install only once per node.
   # Best practice is to install the project.
   echo "[TEMPLATE INFO] Skipping the installation of the project."
@@ -50,7 +49,13 @@ source "${ENTRYPOINTS_ROOT}"/logins-setup.sh
 
 # Remote development options (e.g., PyCharm or VS Code configuration, Jupyter etc).
 # Doesn't do anything if no option provided.
-source "${ENTRYPOINTS_ROOT}"/remote-development-setup.sh
+# Only do them once for SLURM.
+if [ -n "${SLURM_ONE_REMOTE_DEV}" ] && [ "${SLURM_PROCID}" -gt 0 ]; then
+  echo "[TEMPLATE INFO] Running the remote development entrypoint only once."
+  echo "[TEMPLATE INFO] Skipping remote development setup on SLURM_PROCID ${SLURM_PROCID}."
+else
+  source "${ENTRYPOINTS_ROOT}"/remote-development-setup.sh
+fi
 
 # Exec so that the child process receives the OS signals.
 # E.g., signals that the container will be preempted.
