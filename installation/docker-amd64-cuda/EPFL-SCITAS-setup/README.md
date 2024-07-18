@@ -38,17 +38,6 @@ CLAIRE lab members can refer to our internal documentation on using the SCITAS c
 
 ## First steps
 
-### Note about the examples
-
-The examples in this README were made with username `moalla` and lab-name `claire`.
-Adapt them accordingly to your username and lab name.
-Run
-```bash
-./template.sh get_scitas_scripts
-```
-to get a copy of the examples in this guide with your username, lab name, etc.
-They will be in `.EPFL-SCITAS-setup/submit-scripts`.
-
 ### Getting your image on the SCITAS clusters
 
 There are multiple ways to get the image on the SCITAS clusters.
@@ -162,19 +151,38 @@ ln -s $SCRATCH/template-project-name/outputs/dev $HOME/template-project-name/run
 
 The rest of the instructions should be performed on the cluster from the dev instance of the project.
 ```bash
+cd $HOME/template-project-name/dev/
+# Push what you did on your local machine so far (change project name etc) and pull it on the cluster.
+git pull
 cd template-project-name/dev/installation/docker-amd64-cuda
 ```
+
+### Note about the examples
+
+The examples in this README were made with username `moalla` and lab-name `claire`.
+Adapt them accordingly to your username and lab name.
+Run
+```bash
+./template.sh get_scitas_scripts
+```
+to get a copy of the examples in this guide with your username, lab name, etc.
+They will be in `.EPFL-SCITAS-setup/submit-scripts`.
 
 ### A quick test to understand how the template works
 
 Adapt the `submit-scripts/minimal.sh` with the name of your image and your cluster storage setup.
 
 The submission script gives two examples of how to run containers on SCITAS.
-Either with `apptainer` inside tasks or with [`enroot`](https://github.com/NVIDIA/enroo)
-and the [`pyxis`](https://github.com/NVIDIA/pyxis) plugin directly integrated in `srun`.
+Either with [`enroot`](https://github.com/NVIDIA/enroo)
+and the [`pyxis`](https://github.com/NVIDIA/pyxis) plugin directly integrated in `srun`,
+or with `apptainer` inside tasks as a separate command.
 We recommend using Pyxis+enroot as it allows more remote development tools to be used.
 
+Run the script to see how the template works.
 ```bash
+cd installation/docker-amd64-cuda/EPFL-SCITAS-setup/submit-scripts
+sbatch minimal.sh
+```
 
 When the container starts, its entrypoint does the following:
 
