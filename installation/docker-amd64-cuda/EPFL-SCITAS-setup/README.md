@@ -152,6 +152,7 @@ ln -s $SCRATCH/template-project-name/outputs/dev $HOME/template-project-name/run
 The rest of the instructions should be performed on the cluster from the dev instance of the project.
 ```bash
 cd $HOME/template-project-name/dev/
+# It may also be useful to open a remote code editor on a login node to view the project. (The remote development will happen in another IDE in the container.)
 # Push what you did on your local machine so far (change project name etc) and pull it on the cluster.
 git pull
 cd template-project-name/dev/installation/docker-amd64-cuda
@@ -159,10 +160,13 @@ cd template-project-name/dev/installation/docker-amd64-cuda
 
 ### Note about the examples
 
-The examples in this README were made with username `moalla` and lab-name `claire`.
+The example files were made with username `moalla` and lab-name `claire`.
 Adapt them accordingly to your username and lab name.
 Run
 ```bash
+# From the cluster this time.
+./template.sh env
+# Edit the .env file with yout lab name.
 ./template.sh get_scitas_scripts
 ```
 to get a copy of the examples in this guide with your username, lab name, etc.

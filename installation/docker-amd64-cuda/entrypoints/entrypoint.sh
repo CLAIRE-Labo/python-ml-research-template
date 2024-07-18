@@ -18,14 +18,18 @@ fi
 echo "[TEMPLATE INFO] Expecting workdir to be ${PROJECT_ROOT_AT}."
 
 if [ "$(pwd)" != "${PROJECT_ROOT_AT}" ]; then
-  echo "[TEMPLATE WARNING] The current directory $(pwd) is different from PROJECT_ROOT_AT."
+  echo "[TEMPLATE WARNING] The current/working directory $(pwd) is different from PROJECT_ROOT_AT."
   echo "[TEMPLATE WARNING] The template expects them to be the same."
 fi
 
 # Install the package in editable mode.
 # Also ensures the code is mounted correctly.
-if [ -n "${SKIP_INSTALL_PROJECT}" ]; then
+# Because setting the Python path the the project may not be enough.
+# https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
+if [ -n "${SKIP_INSTALL_PROJECT}" ] || [ -n "${SLURM_ENTRYPOINT_ONCE_PER_TASK}" ] && [ "${SLURM_LOCALID}" -eq 0 ]; then
   # For debugging or other purposes.
+  # For Slurm, assuming container entrypoing is run only once per node, only run once per node
+  # Also install only once per node.
   # Best practice is to install the project.
   echo "[TEMPLATE INFO] Skipping the installation of the project."
 else

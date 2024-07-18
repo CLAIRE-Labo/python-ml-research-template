@@ -34,7 +34,7 @@ if [ -n "${SSH_SERVER}" ]; then
   # This could be done without sudo if needed.
   # check if user is not root
  echo "[TEMPLATE INFO] Configuring ssh server."
-  if [ "${EUID}" -eq 0 ]; then
+  if [ "${EUID}" -eq 0 ] || [ "${NO_SUDO_NEEDED}" -eq 1 ]; then
     mkdir /var/run/sshd
     sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
     # Change the default port to ${SSH_CONTAINER_PORT}.

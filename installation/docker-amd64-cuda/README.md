@@ -398,6 +398,8 @@ mkdir template-project-name
 mv template-project-name-tmp template-project-name/dev
 # Make sure to rerun your .env so that the new paths are correct.
 git clone <HTTPS/SSH> template-project-name/run
+# Then you can follow the same steps for .../run to run your experiments.
+# Remember to generate and edit the .env file there as well.
 ```
 
 ### Development

@@ -1,14 +1,3 @@
-#!/bin/bash
-
-#SBATCH -J template-minimal
-#SBATCH -t 0:30:00
-#SBATCH --partition h100
-# Only for Kuma temporarily
-
-# From the compute node
-echo $SLURM_JOB_ID
-echo "Packages in the compute node"
-pip list
 
 # Change this to the path of your project (can be the /dev or /run copy)
 export PROJECT_ROOT_AT=$HOME/template-project-name/dev
@@ -25,10 +14,11 @@ srun -v \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \
-  --container-entrypoint \
+  --no-container-entrypoint \
   --container-writable \
   --container-env=FOO \
-  env
+  --jobid=2163 --overlap \
+  --pty /opt/template-entrypoints/pre-entrypoint.sh bash
 
 echo "done"
 

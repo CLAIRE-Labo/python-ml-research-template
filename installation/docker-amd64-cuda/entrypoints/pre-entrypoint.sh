@@ -5,6 +5,8 @@
 # (Otherwise, you should source it, assuming then run with the same shell, then exec /opt/template-entrypoints/entrypoint.sh.)
 # In the end all variables exported should be present and the command given by the user should run with PID 1.
 
+# Skip running the entrypoint
+
 # Do this if the entrypoint execs the command it receives (every entrypoint should do this).
 if [ -n "${BASE_ENTRYPOINT_EXECS}" ] && [ "${BASE_ENTRYPOINT_EXECS}" -eq 1 ] && [ -n "${BASE_ENTRYPOINT}" ]; then
   echo "[TEMPLATE INFO] execing the base image's entrypoint ${BASE_ENTRYPOINT} which will then exec the template's entrypoint."
