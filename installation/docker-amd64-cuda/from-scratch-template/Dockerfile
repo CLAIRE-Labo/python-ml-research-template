@@ -68,6 +68,17 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     rm -rf /var/lib/apt/lists/*
 
 ########################################################################
+# Hack to enable Intel MKL optimizations on AMD CPUs.
+# Enabled in a later stage with LD_PRELOAD.
+
+FROM build-apt-packages AS build-fakeintel
+
+# https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
+RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
+    mkdir -p /opt/fakeintel && \
+    gcc -shared -fPIC -o /opt/fakeintel/libfakeintel.so /tmp/fakeintel.c
+
+########################################################################
 # Install the conda environment.
 ## This stage can be reused to build Python packages.
 
@@ -96,11 +107,6 @@ RUN mamba env export -n ${PROJECT_NAME} > ${CONDA_INSTALL_PATH}/environment-raw-
 # Cleaning must be in a separate `RUN` command to preserve the Docker cache.
 RUN mamba clean -fya && \
     find ${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME} -name '__pycache__' | xargs rm -rf
-
-# Enable Intel MKL optimizations on AMD CPUs.
-# https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
-RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > ${CONDA_INSTALL_PATH}/fakeintel.c && \
-    gcc -shared -fPIC -o ${CONDA_INSTALL_PATH}/libfakeintel.so ${CONDA_INSTALL_PATH}/fakeintel.c
 
 ########################################################################
 # Here you can install other software starting from build-apt-packages,
@@ -168,9 +174,13 @@ COPY --link --from=build-conda-env ${CONDA_INSTALL_PATH}/environment-raw-after-e
 ENV PATH=${CONDA_INSTALL_PATH}/envs/${PROJECT_NAME}/bin:${PATH}
 
 # Optional optimizations.
-# Enable Intel MKL optimizations on AMD CPUs.
+# Hack to enable Intel MKL optimizations on AMD CPUs.
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
-ENV LD_PRELOAD=${CONDA_INSTALL_PATH}/libfakeintel.so:${LD_PRELOAD}
+ARG FAKEINTEL_PATH=/opt/fakeintel/libfakeintel.so
+ENV FAKEINTEL_PATH=${FAKEINTEL_PATH}
+COPY --link --from=build-fakeintel ${FAKEINTEL_PATH} ${FAKEINTEL_PATH}
+ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
+
 
 ########################################################################
 # This stage is the final user-agnostic (generic) stage.

@@ -109,7 +109,7 @@ mkdir -p $CONTAINER_IMAGES
 # E.g.,
 cd $CONTAINER_IMAGES
 # Replace with your image name
-enroot import docker://registry.rcp.epfl.ch#claire/moalla/template-project-name:amd64-cuda-moalla-latest
+enroot import docker://registry.rcp.epfl.ch#claire/moalla/template-project-name:amd64-cuda-root-latest
 # This will create a squashfs file that you'll use to start your jobs.
 ```
 
@@ -128,25 +128,14 @@ This guide includes the steps to do it, and there are general details in `data/R
 # SSH to a cluster.
 ssh kuma
 # Somewhere in your home directory on the clusters
-# TODO ask SCITAS where it's best to have the code.
-cd $HOME
+SCRATCH=/scratch/kuma/$USER
+# Or on Izar
+# SCRATCH=/scratch/izar/$USER
+cd $SCRATCH
 # Clone the repo twice with name dev and run.
 mkdir template-project-name
 git clone <HTTPS/SSH> template-project-name/dev
 git clone <HTTPS/SSH> template-project-name/run
-# Make placeholder directories in /scratch for the outputs and data.
-# You can use anything else if you have a different setup
-# On Izar
-SCRATCH=/scratch/izar/$USER
-# On Kuma
-SCRATCH=/scratch/$USER
-mkdir -p $SCRATCH/template-project-name/outputs/
-mkdir -p $SCRATCH/template-project-name/data/
-# Make the symlinks
-# For outputs the default output dir is outputs/dev
-# And if you select different ones (see src/configs/setup.yaml) you have to create symlink accordingly. Make sure you don't go over quota on /home/
-ln -s $SCRATCH/template-project-name/outputs/dev $HOME/template-project-name/dev/outputs/dev
-ln -s $SCRATCH/template-project-name/outputs/dev $HOME/template-project-name/run/outputs/dev
 ```
 
 The rest of the instructions should be performed on the cluster from the dev instance of the project.
@@ -166,7 +155,8 @@ Run
 ```bash
 # From the cluster this time.
 ./template.sh env
-# Edit the .env file with yout lab name.
+# Edit the .env file with your lab name (you can ignore the rest).
+```bash
 ./template.sh get_scitas_scripts
 ```
 to get a copy of the examples in this guide with your username, lab name, etc.
@@ -185,7 +175,7 @@ We recommend using Pyxis+enroot as it allows more remote development tools to be
 Run the script to see how the template works.
 ```bash
 cd installation/docker-amd64-cuda/EPFL-SCITAS-setup/submit-scripts
-sbatch minimal.sh
+bash minimal.sh
 ```
 
 When the container starts, its entrypoint does the following:
@@ -200,44 +190,13 @@ When the container starts, its entrypoint does the following:
 - It also handles all the remote development setups (VS Code, PyCharm, Jupyter, ...)
   that you specify with environment variables.
   These are described in the later sections of this README.
-- Finally, it executes a provided command (e.g. `sleep infinity`), otherwise by default will run a shell and stop.
-  It runs this command with PID 1 so that it can receive signals from the cluster.
-  You should not have to override the entrypoint, i.e., using `--no-container-entrypoint` flag with `pyxis` on `srun`
-  unless you are debugging the entrypoint itself.
+- Finally, it executes a provided command (e.g. `bash` here for an interactive job with a connected --pty).
 
 You need to make sure that this minimal submission works before proceeding.
 The logs of the entrypoint are only shown in case there was an error (design from pyxis).
-You can check the logs of the container with `runai logs example-minimal` to see if everything is working as expected.
-You should expect to see something like:
+(A current workaround runs the entrypoint as a script at the start instead of as an entrypoint)
 
-```text
-$ runai logs example-minimal
-...
-[TEMPLATE INFO] PROJECT_ROOT_AT is set to /claire-rcp-scratch/home/moalla/template-project-name/dev.
-[TEMPLATE INFO] Expecting workdir to be /claire-rcp-scratch/home/moalla/template-project-name/dev.
-[TEMPLATE INFO] Installing the project with pip.
-[TEMPLATE INFO] Expecting /claire-rcp-scratch/home/moalla/template-project-name/dev to be a Python project.
-[TEMPLATE INFO] To skip this installation use the env variable SKIP_INSTALL_PROJECT=1.
-Obtaining file:///claire-rcp-scratch/home/moalla/template-project-name/dev
-  Installing build dependencies: started
-  ...
-  Building editable for template-project-name (pyproject.toml): started
-  ...
-Successfully built template-project-name
-Installing collected packages: template-project-name
-Successfully installed template-project-name-0.0.1
-[TEMPLATE INFO] Testing that the package can be imported.
-[TEMPLATE INFO] Package imported successfully.
-[TEMPLATE INFO] Executing the command sleep infinity
-````
-
-You can then open a shell in the container and check that everything is working as expected:
-
-```bash
-runai exec -it example-minimal zsh
-```
-
-If the entrypoint fails the installation of your project, you can resubmit your job with `-e SKIP_INSTALL_PROJECT=1`
+If the entrypoint fails the installation of your project, you can resubmit your job with `export SKIP_INSTALL_PROJECT=1`
 which will skip the installation step then you can replay the installation manually in the container to debug it.
 
 ## Use cases
@@ -250,30 +209,28 @@ After that, return to the root README for the rest of the instructions to run ou
 ### Running unattended jobs
 
 By performing the above first steps, you should have all the required setup to run unattended jobs.
+The main difference is that the unattended job is run with `sbatch`.
 An example of an unattended job can be found in `submit-scripts/unattended.sh`.
 Note the emphasis on having a frozen copy `run` of the repository for running unattended jobs.
 
 ### Weights&Biases
 
 Your W&B API key should be exposed as the `WANDB_API_KEY` environment variable.
-Run:ai doesn't support Kubernetes secrets yet, and you don't want to pass it as a clear environment variable
-(visible in the Run:ai dashboard),
-so an alternative is to have it in your PVC and pass it with the
-`-e WANDB_API_KEY_FILE_AT` environment variable in your `runai submit` command and let the template handle it.
+You can export it or if you're sharing the script with others export a location to a file containing it with
+`export WANDB_API_KEY_FILE_AT` and let the template handle it.
 
 E.g.,
 
 ```bash
-
-# In my PVC.
-echo <my-wandb-api-key> > /claire-rcp-scratch/home/moalla/.wandb_api_key
+echo <my-wandb-api-key> > /home/moalla/.wandb-api-key
+chmod 600 /home/moalla/.wandb-api-key
 ```
 
-Then specify `-e WANDB_API_KEY_FILE_AT=/claire-rcp-scratch/home/moalla/.wandb_api_key` in my `runai submit` command.
+Then `export WANDB_API_KEY_FILE_AT=/home/moalla/.wandb-api-key` in the submit script.
 
 ### Remote development
 
-This would be the typical use case for a researcher at CLAIRE using the Run:ai cluster as their daily driver to do
+This would be the typical use case for a researcher at CLAIRE using the cluster as their daily driver to do
 development, testing, and debugging.
 Your job would be running a remote IDE/code editor on the cluster, and you would only have a lightweight local client
 running on your laptop.
@@ -287,35 +244,10 @@ Below, we list and describe in more detail the tools and IDEs supported for remo
 ### SSH Configuration (Necessary for PyCharm and VS Code)
 
 Your job will open an ssh server when you set the environment variable `SSH_SERVER=1`.
-This is necessary for some remote IDEs like PyCharm to work and can be beneficial
+You also have to mount the authorized keys file from your home directory to the container (done in the example).
+The SSH connection is necessary for some remote IDEs like PyCharm to work and can be beneficial
 for other things like ssh key forwarding.
-
 The ssh server is configured to run on port 2223 of the container.
-You can forward a local port on your machine to this port on the container.
-
-When your container is up, run
-
-```bash
-# Here 2222 on the local machine is forwarded to 2223 on the pod.
-# You can change the local port number to another port number.
-kubectl get pods
-kubectl port-forward <pod-name> 2222:2223
-```
-
-You can then ssh to your container by ssh-ing to that port on your local machine.
-Connect with the user and password you specified in your `.env` file when you built the image.
-
-```bash
-# ssh to local machine is forwarded to the pod.
-ssh -p 2222 <username>@localhost
-```
-
-As the container will each time be on a different machine, you will have to reset the ssh key for the remote server.
-You can do this with
-
-```bash
-ssh-keygen -R '[localhost]:2222'
-```
 
 With the ssh connection, you can forward the ssh keys on your local machine (that you use for GitHub, etc.)
 on the remote server.
@@ -326,19 +258,33 @@ but Run:ai doesn't support that yet with its submit command.)
 For that, you need three things: an ssh agent running on your local machine, the key added to the agent,
 and a configuration file saying that the agent should be used with the Run:ai job.
 GitHub provides a guide for that
-[here (look at the troubleshooting section too)](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/using-ssh-agent-forwarding)
-and for the ssh config file you can use the following:
+[here (look at the troubleshooting section too)](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/using-ssh-agent-forwarding).
+
+Use the following configuration in your local `~/.ssh/config`
 
 ```bash
-Host local2222
-	HostName 127.0.0.1
-	User <username>
-	Port 2222
+Host kuma
+	HostName kuma.hpc.epfl.ch
+	User moalla
+	ForwardAgent yes
+
+# EDIT THIS HOSTNAME WITH EVERY NEW JOB
+Host kuma-job
+    HostName kh021
+    User moalla
+    ProxyJump kuma
+    StrictHostKeyChecking no
+	UserKnownHostsFile=/dev/null
+    ForwardAgent yes
+
+Host kuma-container
+    HostName localhost
+    ProxyJump kuma-job
+    Port 2223
+    User moalla
 	StrictHostKeyChecking no
 	UserKnownHostsFile=/dev/null
 	ForwardAgent yes
-# If you open multiple projects at the same time, you can forward each of them to a different port.
-# And have two entries in your ssh config file.
 ```
 
 The `StrictHostKeyChecking no` and `UserKnownHostsFile=/dev/null` allow bypass checking the identity
@@ -346,7 +292,7 @@ of the host [(ref)](https://linuxcommando.blogspot.com/2008/10/how-to-disable-ss
 which keeps changing every time a job is scheduled,
 so that you don't have to reset it each time.
 
-With this config you can then simply connect to your container with `ssh local2222` when the port 2222 is forwarded.
+With this config you can then connect to your container with `ssh kuma-container`.
 
 **Limitations**
 
@@ -360,14 +306,13 @@ In particular, the following limitations apply:
 
 ### Git config
 
-You can persist your Git config (username, email, etc.) by having it in your PVC and passing its location
-with the `GIT_CONFIG_AT` environment variable.
+You can persist your Git config (username, email, etc.) by mounting it in the container.
+This is done in the examples.
 
-E.g., create your config in your PVC with
+E.g., create your config in your home directory with
 
 ```bash
-# In my PVC.
-cat >/claire-rcp-scratch/home/moalla/remote-development/gitconfig <<EOL
+cat >$HOME/.gitconfig <<EOL
 [user]
         email = your@email
         name = Your Name
@@ -376,17 +321,14 @@ cat >/claire-rcp-scratch/home/moalla/remote-development/gitconfig <<EOL
 EOL
 ```
 
-Then specify something like `-e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig`
-in your `runai submit` command.
-
 ### PyCharm Professional
 
 We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remote-development-overview.html)
 feature of PyCharm that runs a remote IDE in the container.
 
-The first time connecting you will have to install the IDE in the server in a location mounted from your PVC so
+The first time connecting you will have to install the IDE in the server in a location mounted from `/scratch` so
 that is stored for future use.
-After that, or if you already have the IDE stored in your PVC from a previous project,
+After that, or if you already have the IDE stored in `/scratch` from a previous project,
 the template will start the IDE on its own at the container creation,
 and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
 
@@ -410,10 +352,10 @@ All the directories will be created automatically.
 2. Enable port forwarding for the SSH port.
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
    install the IDE in your `${JETBRAINS_SERVER_AT}/dist`
-   (something like `/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server/dist`)
+   (something like `/scratch/moalla/jetbrains-server/dist`)
    not in its default location **(use the small "installation options..." link)**.
-   For the project directory, it should be in the same location as your PVC (`${PROJECT_ROOT_AT}`.
-   something like `/claire-rcp-scratch/home/moalla/template-project-name/dev`).
+   For the project directory, it should be in the same location where it was mounted (`${PROJECT_ROOT_AT}`,
+   something like `/scratch/moalla/template-project-name/dev`).
 
 When in the container, locate the name of the PyCharm IDE installed.
 It will be at
@@ -427,21 +369,14 @@ so that it starts automatically.
 PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 ```
 
-**When you have the IDE in the PVC**
+**When you have the IDE in the storage**
 You can find an example in `submit-scripts/remote-development.sh`.
 
 1. Same as above, but set the environment variable `PYCHARM_IDE_AT` to the directory containing the IDE binaries.
    Your IDE will start running with your container.
 2. Enable port forwarding for the SSH port.
 3. Open JetBrains Gateway, your project should already be present in the list of projects and be running.
-4. Otherwise, your container prints a link to the IDE that you can find it its logs.
-   Get the logs with `runai logs <job-name>`.
-   The link looks like:
 
-   ```bash
-    Gateway link: jetbrains-gateway://connect#idePath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Fremote-development%2Fpycharm&projectPath=%2Fclaire-rcp-scratch%2Fhome%2Fmoalla%2Ftemplate-project-name%2Fdev&host=127.0.0.1&port=2223&user=moalla&type=ssh&deploy=false&newUi=true
-    ```
-   Use it in Gateway to connect to the IDE.
 
 **Configuration**:
 
@@ -480,11 +415,11 @@ All the directories will be created automatically.
 
 VS Code takes ssh configuration from files.
 Follow the steps in the [SSH configuration section](#ssh-configuration-necessary-for-pycharm-and-vs-code)
-to set up your ssh config file for runai jobs.
+to set up your ssh config file.
 
 **Connecting VS Code to the container**:
 
-1. In your `runai submit` command, set the environment variables for
+1. In your submit command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
     - preserving your config `VSCODE_SERVER_AT`.
 2. Enable port forwarding for the SSH connection.
@@ -503,49 +438,7 @@ The directory to add to your VS Code workspace should be the same as the one spe
   and directly exec a shell into the container.
 - Support for programs with graphical interfaces (i.g. forwarding their interface) has not been tested yet.
 
-### JupyterLab
-
-If you have `jupyterlab` in your dependencies, then the template can open a Jupyter Lab server for you when
-the container starts.
-
-To do so, you need to:
-
-1. Set the `JUPYTER_SERVER=1` environment variable in your `runai submit` command.
-   You can find an example in `submit-scripts/remote-development.sh`.
-
-   A Jupyter server will start running with your container. It will print a link to the container logs.
-
-   Get the logs with `runai logs <job-name>`.
-   The link looks like:
-
-   ```bash
-   [C 2023-04-26 17:17:03.072 ServerApp]
-
-    To access the server, open this file in a browser:
-        ...
-    Or copy and paste this URL:
-        http://hostname:8887/?token=1098cadee3ac0c48e0b0a3bf012f8f06bb0d56a6cde7d128
-   ```
-
-2. Forward the port `8887` on your local machine to the port `8887` on the container.
-   ```bash
-   kubectl port-forward <pod-name> 8887:8887
-   ```
-
-3. Open the link in your browser, replacing `hostname` with `localhost`.
-
-**Note:**
-
-Development on Jupyter notebooks can be very useful, e.g., for quick iterations, plotting, etc., however,
-it can very easily facilitate bad practices, such as debugging with print statements, prevalence of global variables,
-relying on long-living kernel state, and hinder the reproducibility work.
-We strongly recommend using an IDE with a proper debugger for development, which would fill the need for quick
-iterations, and only use Jupyter notebooks for plotting results
-(where data is properly loaded from the output of a training script).
-
-**Limitations:**
-
-- We have limited usage of Jupyter so limitations are not known yet.
+### JupyterLab (TODO)
 
 ### Examples
 

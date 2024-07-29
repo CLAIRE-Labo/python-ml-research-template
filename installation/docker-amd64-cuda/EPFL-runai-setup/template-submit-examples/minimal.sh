@@ -5,7 +5,7 @@ runai submit \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
-  -g 1 --cpu-limit 16 --memory-limit 64G \
+  -g 1 --cpu 8 --cpu-limit 8 --memory 64G --memory-limit 64G \
   -- sleep infinity
 
 ## Notes:
