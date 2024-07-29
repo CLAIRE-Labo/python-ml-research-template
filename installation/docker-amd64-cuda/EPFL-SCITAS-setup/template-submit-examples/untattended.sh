@@ -12,14 +12,12 @@
 
 # Variables used by the entrypoint script
 # Change this to the path of your project (can be the /dev or /run copy)
-export PROJECT_ROOT_AT=$HOME/template-project-name/run
+export PROJECT_ROOT_AT=$SCRATCH/template-project-name/run
 export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 
 srun \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
-  --container-mounts=\
-$PROJECT_ROOT_AT:$PROJECT_ROOT_AT,\
-$SCRATCH:$SCRATCH \
+  --container-mounts=$SCRATCH:$SCRATCH \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \

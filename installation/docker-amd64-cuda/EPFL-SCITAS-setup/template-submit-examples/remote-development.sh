@@ -13,19 +13,19 @@
 
 # Variables used by the entrypoint script
 # Change this to the path of your project (can be the /dev or /run copy)
-export PROJECT_ROOT_AT=$HOME/template-project-name/dev
+export PROJECT_ROOT_AT=$SCRATCH/template-project-name/dev
 export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
 export SSH_SERVER=1
 export NO_SUDO_NEEDED=1
 export JETBRAINS_SERVER_AT=$SCRATCH/jetbrains-server
+export JETBRAINS_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 # or
 # export VSCODE_SERVER_AT=$SCRATCH/vscode-server
 
 srun \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --container-mounts=\
-$PROJECT_ROOT_AT:$PROJECT_ROOT_AT,\
 $SCRATCH:$SCRATCH,\
 $WANDB_API_KEY_FILE_AT:$WANDB_API_KEY_FILE_AT,\
 $HOME/.gitconfig:/home/moalla/.gitconfig,\
@@ -36,7 +36,7 @@ $HOME/.ssh/authorized_keys:/home/moalla/.ssh/authorized_keys \
   --no-container-entrypoint \
   --container-writable \
   -G 4 -c 60 \
-  $PROJECT_ROOT_AT/installation/docker-amd64-cuda/entrypoints/pre-entrypoint.sh \
+  /opt/template-entrypoints/pre-entrypoint.sh \
   sleep infinity
 
 # additional options

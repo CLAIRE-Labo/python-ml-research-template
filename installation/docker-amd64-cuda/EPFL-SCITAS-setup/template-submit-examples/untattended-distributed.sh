@@ -18,14 +18,13 @@
 
 # Variables used by the entrypoint script
 # Change this to the path of your project (can be the /dev or /run copy)
-export PROJECT_ROOT_AT=$HOME/template-project-name/run
+export PROJECT_ROOT_AT=$SCRATCH/template-project-name/run
 export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
 
 srun \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --container-mounts=\
-$PROJECT_ROOT_AT:$PROJECT_ROOT_AT,\
 $SCRATCH:$SCRATCH,\
 $WANDB_API_KEY_FILE_AT:$WANDB_API_KEY_FILE_AT \
   --container-workdir=$PROJECT_ROOT_AT \

@@ -210,7 +210,7 @@ After that, return to the root README for the rest of the instructions to run ou
 
 By performing the above first steps, you should have all the required setup to run unattended jobs.
 The main difference is that the unattended job is run with `sbatch`.
-An example of an unattended job can be found in `submit-scripts/unattended.sh`.
+An example of an unattended job can be found in `submit-scripts/unattended.sh` to run with `sbatch`.
 Note the emphasis on having a frozen copy `run` of the repository for running unattended jobs.
 
 ### Weights&Biases
@@ -237,7 +237,8 @@ running on your laptop.
 
 The entrypoint will start an ssh server and a remote development server for your preferred IDE/code editor
 when you set some environment variables.
-An example of an interactive job submission can be found in `submit-scripts/remote-development.sh`.
+An example of an interactive job submission can be found in `submit-scripts/remote-development.sh`
+to run with `sbatch`.
 
 Below, we list and describe in more detail the tools and IDEs supported for remote development.
 
