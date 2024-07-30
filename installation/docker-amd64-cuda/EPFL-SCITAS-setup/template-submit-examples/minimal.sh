@@ -8,6 +8,8 @@
 export PROJECT_ROOT_AT=$SCRATCH/template-project-name/dev
 export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 
+# Enroot + Pyxis
+
 srun \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --container-mounts=$SCRATCH:$SCRATCH \
@@ -23,3 +25,5 @@ srun \
 
 # additional options
 # --container-env to override environment variables defined in the container
+
+# Apptainer/Singularity
