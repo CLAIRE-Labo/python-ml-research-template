@@ -42,9 +42,7 @@ $HOME/.ssh/authorized_keys:/home/moalla/.ssh/authorized_keys \
 # additional options
 # --container-env to override environment variables defined in the container
 
-# To c
-
-
+# Draft.
 # Here can connect to the container with
 # Get the job id (and node id if multinode)
 #
