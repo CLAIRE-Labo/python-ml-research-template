@@ -262,9 +262,9 @@ Use the following configuration in your local `~/.ssh/config`
 
 ```bash
 Host kuma
-	HostName kuma.hpc.epfl.ch
-	User moalla
-	ForwardAgent yes
+    HostName kuma.hpc.epfl.ch
+    User moalla
+    ForwardAgent yes
 
 # EDIT THIS HOSTNAME WITH EVERY NEW JOB
 Host kuma-job
