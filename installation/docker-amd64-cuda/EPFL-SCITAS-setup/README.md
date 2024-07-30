@@ -156,7 +156,6 @@ Run
 # From the cluster this time.
 ./template.sh env
 # Edit the .env file with your lab name (you can ignore the rest).
-```bash
 ./template.sh get_scitas_scripts
 ```
 to get a copy of the examples in this guide with your username, lab name, etc.
