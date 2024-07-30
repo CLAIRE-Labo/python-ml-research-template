@@ -272,7 +272,7 @@ Host kuma-job
     User moalla
     ProxyJump kuma
     StrictHostKeyChecking no
-	UserKnownHostsFile=/dev/null
+    UserKnownHostsFile=/dev/null
     ForwardAgent yes
 
 Host kuma-container
@@ -280,9 +280,9 @@ Host kuma-container
     ProxyJump kuma-job
     Port 2223
     User moalla
-	StrictHostKeyChecking no
-	UserKnownHostsFile=/dev/null
-	ForwardAgent yes
+    StrictHostKeyChecking no
+    UserKnownHostsFile=/dev/null
+    ForwardAgent yes
 ```
 
 The `StrictHostKeyChecking no` and `UserKnownHostsFile=/dev/null` allow bypass checking the identity
