@@ -28,7 +28,6 @@ fi
 # https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
 if [ -n "${SKIP_INSTALL_PROJECT}" ]; then
   # For debugging or other purposes.
-  # Also install only once per node.
   # Best practice is to install the project.
   echo "[TEMPLATE INFO] Skipping the installation of the project."
 else
