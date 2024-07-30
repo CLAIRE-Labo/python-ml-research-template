@@ -315,6 +315,7 @@ get_scitas_scripts() {
   for file in \
     "./EPFL-SCITAS-setup/submit-scripts/minimal.sh" \
     "./EPFL-SCITAS-setup/submit-scripts/remote-development.sh" \
+    "./EPFL-SCITAS-setup/submit-scripts/unattended-distributed.sh" \
     "./EPFL-SCITAS-setup/submit-scripts/unattended.sh" ; do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
