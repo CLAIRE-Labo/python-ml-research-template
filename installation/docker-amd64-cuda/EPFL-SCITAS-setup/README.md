@@ -15,7 +15,7 @@ and use it for
 
 You should be able to run your Docker image locally
 (e.g., on the machine you built it, or for CLAIRE with the remote Docker Engine on our `claire-build-machine`).
-It will be hard to debug your image on Run:ai if you can't even run it locally.
+It will be hard to debug your image on SCITAS if you can't even run it locally.
 The simple checks below will be enough.
 
 ```bash
@@ -86,7 +86,7 @@ mkdir -p $(dirname $ENROOT_CONFIG_PATH)
 touch $ENROOT_CONFIG_PATH
 # Make sur the file is only readable by you
 chmod 600 $ENROOT_CONFIG_PATH
-````
+```
 Write the following to the file.
 ```bash
 # E.g. vim $ENROOT_CONFIG_PATH
@@ -140,7 +140,7 @@ git clone <HTTPS/SSH> template-project-name/run
 
 The rest of the instructions should be performed on the cluster from the dev instance of the project.
 ```bash
-cd $HOME/template-project-name/dev/
+cd $SCRATCH/template-project-name/dev/
 # It may also be useful to open a remote code editor on a login node to view the project. (The remote development will happen in another IDE in the container.)
 # Push what you did on your local machine so far (change project name etc) and pull it on the cluster.
 git pull
@@ -160,7 +160,7 @@ Run
 ./template.sh get_scitas_scripts
 ```
 to get a copy of the examples in this guide with your username, lab name, etc.
-They will be in `.EPFL-SCITAS-setup/submit-scripts`.
+They will be in `./EPFL-SCITAS-setup/submit-scripts`.
 
 ### A quick test to understand how the template works
 
@@ -222,11 +222,11 @@ You can export it or if you're sharing the script with others export a location 
 E.g.,
 
 ```bash
-echo <my-wandb-api-key> > /home/moalla/.wandb-api-key
-chmod 600 /home/moalla/.wandb-api-key
+echo <my-wandb-api-key> > $HOME/.wandb-api-key
+chmod 600 $HOME/.wandb-api-key
 ```
 
-Then `export WANDB_API_KEY_FILE_AT=/home/moalla/.wandb-api-key` in the submit script.
+Then `export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key` in the submit script.
 
 ### Remote development
 
@@ -253,11 +253,9 @@ The ssh server is configured to run on port 2223 of the container.
 With the ssh connection, you can forward the ssh keys on your local machine (that you use for GitHub, etc.)
 on the remote server.
 This allows using the ssh keys on the remote server without having to copy them there.
-(The alternative would be to have them as Kubernetes secrets,
-but Run:ai doesn't support that yet with its submit command.)
 
 For that, you need three things: an ssh agent running on your local machine, the key added to the agent,
-and a configuration file saying that the agent should be used with the Run:ai job.
+and a configuration file saying that the agent should be used with the ssh connection to SCITAS.
 GitHub provides a guide for that
 [here (look at the troubleshooting section too)](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/using-ssh-agent-forwarding).
 
@@ -444,7 +442,5 @@ The directory to add to your VS Code workspace should be the same as the one spe
 ### Examples
 
 We provide examples of how to use the template in the `submit-scripts` directory.
-We use `submit` commands and not YAML files to specify job configurations because the Run:ai API for kubernetes
-resources keeps changing and is not stable yet.
 
 ### Troubleshooting
