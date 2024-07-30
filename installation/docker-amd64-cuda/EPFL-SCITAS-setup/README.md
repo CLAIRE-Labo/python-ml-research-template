@@ -94,6 +94,12 @@ machine ic-registry.epfl.ch login <username> password <password>
 machine registry.rcp.epfl.ch login <username> password <password>
 ```
 
+Optionally if you want to use Apptainer
+```bash
+apptainer registry login --username <username> docker://registry.rcp.epfl.ch
+apptainer registry login --username <username> docker://ic-registry.epfl.ch
+```
+
 Then you can pull your image with
 ```bash
 # On Izar
@@ -108,9 +114,20 @@ mkdir -p $CONTAINER_IMAGES
 # Pull the generic image (with tagged with root)
 # E.g.,
 cd $CONTAINER_IMAGES
+# Don't do this on a login node.
 # Replace with your image name
+
+salloc --exclusive --partition h100 --time=4:00:00 \
 enroot import docker://registry.rcp.epfl.ch#claire/moalla/template-project-name:amd64-cuda-root-latest
 # This will create a squashfs file that you'll use to start your jobs.
+```
+
+Optionally if you want to use Apptainer
+```bash
+# Takes ages to convert to sif.
+# Don't do this on a login node.
+salloc --exclusive --partition h100 --time=4:00:00 \
+apptainer pull docker://registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-root-latest
 ```
 
 ### Clone your repository in your home directory
