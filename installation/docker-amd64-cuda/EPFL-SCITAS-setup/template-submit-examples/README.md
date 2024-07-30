@@ -1,3 +1,3 @@
-# Tips and Best Practices for Running Jobs on Run:AI
+# Tips and Best Practices for Running Jobs with Slurm + pyxis + enroot
 
 Placeholder.
