@@ -50,7 +50,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     rm -rf /var/lib/apt/lists/*
 
 ########################################################################
-# Enable Intel MKL optimizations on AMD CPUs.
+# Hack to enable Intel MKL optimizations on AMD CPUs.
+# Enabled in a later stage with LD_PRELOAD.
 
 FROM build-apt-packages AS build-fakeintel
 
@@ -58,7 +59,6 @@ FROM build-apt-packages AS build-fakeintel
 RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
     mkdir -p /opt/fakeintel && \
     gcc -shared -fPIC -o /opt/fakeintel/libfakeintel.so /tmp/fakeintel.c
-
 
 ########################################################################
 # Here you can install other software starting from build-apt-packages,
@@ -121,10 +121,11 @@ RUN pip install -r ${PIP_REQS_FILE}
 RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install-r.txt
 
 # Optional optimizations.
-# Enable Intel MKL optimizations on AMD CPUs.
+# Hack to enable Intel MKL optimizations on AMD CPUs.
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
 ARG FAKEINTEL_PATH=/opt/fakeintel/libfakeintel.so
-COPY --link --from=build-fakeintel --chmod=777 ${FAKEINTEL_PATH} ${FAKEINTEL_PATH}
+ENV FAKEINTEL_PATH=${FAKEINTEL_PATH}
+COPY --link --from=build-fakeintel ${FAKEINTEL_PATH} ${FAKEINTEL_PATH}
 ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
 
 ########################################################################

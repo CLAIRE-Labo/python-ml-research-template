@@ -143,3 +143,4 @@ outputs/*
 !outputs/README.md
 
 wandb
+slurm-*.out

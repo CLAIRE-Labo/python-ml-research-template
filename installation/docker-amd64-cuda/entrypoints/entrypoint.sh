@@ -18,12 +18,14 @@ fi
 echo "[TEMPLATE INFO] Expecting workdir to be ${PROJECT_ROOT_AT}."
 
 if [ "$(pwd)" != "${PROJECT_ROOT_AT}" ]; then
-  echo "[TEMPLATE WARNING] The current directory $(pwd) is different from PROJECT_ROOT_AT."
+  echo "[TEMPLATE WARNING] The current/working directory $(pwd) is different from PROJECT_ROOT_AT."
   echo "[TEMPLATE WARNING] The template expects them to be the same."
 fi
 
 # Install the package in editable mode.
 # Also ensures the code is mounted correctly.
+# Because setting the Python path the the project may not be enough.
+# https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
 if [ -n "${SKIP_INSTALL_PROJECT}" ]; then
   # For debugging or other purposes.
   # Best practice is to install the project.
@@ -46,7 +48,13 @@ source "${ENTRYPOINTS_ROOT}"/logins-setup.sh
 
 # Remote development options (e.g., PyCharm or VS Code configuration, Jupyter etc).
 # Doesn't do anything if no option provided.
-source "${ENTRYPOINTS_ROOT}"/remote-development-setup.sh
+# Only do them once for SLURM.
+if [ -n "${SLURM_ONE_REMOTE_DEV}" ] && [ "${SLURM_PROCID}" -gt 0 ]; then
+  echo "[TEMPLATE INFO] Running the remote development entrypoint only once."
+  echo "[TEMPLATE INFO] Skipping remote development setup on SLURM_PROCID ${SLURM_PROCID}."
+else
+  source "${ENTRYPOINTS_ROOT}"/remote-development-setup.sh
+fi
 
 # Exec so that the child process receives the OS signals.
 # E.g., signals that the container will be preempted.

@@ -17,7 +17,8 @@ projects with hardware acceleration featuring:
   covering multiple use cases:
     - local machines, e.g., macOS (+ Apple Silicon/MPS) and Linux/Windows WSL (+ NVIDIA GPU).
     - Remote Linux servers with GPUs, e.g., VMs on cloud providers and IC and RCP HaaS at EPFL.
-    - Managed clusters supporting OCI containers with GPUs, e.g., the EPFL IC and RCP Run:ai (Kubernetes) clusters.
+    - Managed clusters supporting OCI containers with GPUs, e.g., the EPFL IC and RCP Run:ai (Kubernetes) clusters
+      and the SCITAS Slurm clusters.
 - Python project packaging following the
   [PyPA packaging guidelines](https://packaging.python.org/en/latest/tutorials/packaging-projects/) to avoid hacky
   imports.
@@ -89,8 +90,8 @@ Remember to get back to this root one after finishing each step.
     - **Docker**.
       This is the preferred method to run on Linux machines (e.g. EPFL HaaS servers),
       Windows machines with WSL, clusters running OCI-compliant containers like the EPFL Run:ai (Kubernetes) clusters,
-      and other cloud services.
-      (A tutorial to deploy on Run:ai clusters is provided.)
+      the SCITAS clusters, and other cloud services.
+      (We provide tutorials for deployment with Docker, on the EPFL runai cluster, and on the SCITAS cluster.)
 
       The environment is shipped as a Linux Docker image, ensuring the highest level of reproducibility.
       You are free to choose the architecture you want to build the image for,

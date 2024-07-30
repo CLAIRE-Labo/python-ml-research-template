@@ -294,7 +294,7 @@ dev() {
 
 get_runai_scripts() {
   # Rename the runai examples.
-  # ./template.sh rename-runai-examples
+  # ./template.sh get_runai_scripts
   check
   cp -r "./EPFL-runai-setup/template-submit-examples/" "./EPFL-runai-setup/submit-scripts"
   for file in \
@@ -303,7 +303,21 @@ get_runai_scripts() {
     "./EPFL-runai-setup/submit-scripts/remote-development.sh" \
     "./EPFL-runai-setup/submit-scripts/unattended.sh" ; do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
-    sed -i.deleteme "s/claire-compute/${GRP}/g" "$file" && rm "${file}.deleteme"
+    sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
+  done
+}
+
+get_scitas_scripts() {
+  # Rename the scitas examples.
+  # ./template.sh get_scitas_scripts
+  check
+  cp -r "./EPFL-SCITAS-setup/template-submit-examples/" "./EPFL-SCITAS-setup/submit-scripts"
+  for file in \
+    "./EPFL-SCITAS-setup/submit-scripts/minimal.sh" \
+    "./EPFL-SCITAS-setup/submit-scripts/remote-development.sh" \
+    "./EPFL-SCITAS-setup/submit-scripts/unattended-distributed.sh" \
+    "./EPFL-SCITAS-setup/submit-scripts/unattended.sh" ; do
+    sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
 }
