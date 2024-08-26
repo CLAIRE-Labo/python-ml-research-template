@@ -2,3 +2,10 @@
 # The above line should appear in the override configs so that they sit at the root of the config tree.
 
 is_this_overridden: yes
+
+wandb:
+  mode: disabled
+
+resuming:
+  resume: True
+  use_commit: True

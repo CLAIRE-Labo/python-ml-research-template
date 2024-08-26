@@ -27,7 +27,7 @@ job_subdir: dev
 
 hydra:
   run:
-    # This is where the outputs of an individual run will be stored.
+    # Finally this is where the outputs of an individual run will be stored.
     dir: outputs/${outputs_subdir}/${hydra.job.name}/${job_subdir}/${now:%Y-%m-%d_%H-%M-%S-%f}
   job:
     chdir: true
@@ -42,3 +42,7 @@ wandb:
   anonymous: allow
   tags:
     - development
+
+resuming:
+  resume: False
+  use_commit: False
