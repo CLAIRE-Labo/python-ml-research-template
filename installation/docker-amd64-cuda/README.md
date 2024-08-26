@@ -23,6 +23,7 @@ for your future users (and yourself).
    The default platform is Linux (fixed) on AMD64 CPUs `amd64` (can be changed to e.g. `arm64`)
    with support for NVIDIA GPUs.
    (reflected in the name of the directory `docker-amd64-cuda` by default).
+   (The EPFL Run:ai and the SCITAS clusters are on `amd64`, the CSCS Todi cluster is on `arm64`.)
    If this is good for you, you can skip this part.
    Otherwise, to edit it, run
    ```bash
@@ -92,6 +93,8 @@ for your future users (and yourself).
    If you change the dependency files commit so that you can track what worked and what didn't.
 6. Build the environment following the instructions to [build the environment](#obtainingbuilding-the-environment).
    (Obviously, you'll have to build the generic image not pull it.)
+   For CSCS todi, steps 6, 7, and 8 are described in `./CSCS-Todi-setup/README.md`.
+   Follow the instructions there.
 7. Follow the instructions to [run the environment](#the-environment) with your target
    deployment option.
    If everything goes well (we suggested checking that all your dependencies are there
@@ -222,6 +225,12 @@ We provide the following guides for obtaining/building and running the environme
   The guide also provides instructions to do remote development on the SCITAS cluster
   with VSCode, PyCharm, and Jupyter Lab.
   Other Slurm + enroot/Apptainer/Singularity cluster users can get inspiration from it too.
+- To run on the CSCS Todi cluster, follow the instructions in `./CSCS-Todi-setup/README.md`.
+
+  The guide also provides instructions to do remote development on the Todi cluster
+  with VSCode, PyCharm, and Jupyter Lab.
+  Other Slurm + enroot cluster users can get inspiration from it too.
+
 - We also provide an image with the dependencies needed to run the environment
   that you can use with your favorite OCI-compatible container runtime.
   Follow the instructions
@@ -291,7 +300,7 @@ cd installation/docker-amd64-cuda
       # Pull the generic image if available.
       ./template.sh pull_generic TODO ADD PULL_IMAGE_NAME (private or public).
       ````
-    - Otherwise, build them.
+    - Otherwise, build it.
       ```bash
       ./template.sh build_generic
       ```
@@ -315,8 +324,38 @@ cd installation/docker-amd64-cuda
    This will be the image that you run and deploy to match the permissions on your mounted storage in container
    setups that maintain the user namespace (e.g., rootful Docker, the EPFL runai cluster).
 
-For the local deployment option with Docker Compose, follow the instructions below,
-otherwise get back to the instructions of deployment option you're following.
+For the local deployment option with Docker Compose, follow the instructions below.
+
+For the EPFL Run:ai and SCITAS clusters you need to push the images to a registry, described below,
+then get back to the instructions of the deployment option you're following.
+
+### Push your image to the RCP or IC Docker registry
+
+Push the generic image if you built it (`LAB_NAME/USR/PROJECT_NAME:PLATFORM-root-latest`).
+
+```bash
+./template.sh push_generic IC
+# Or/and (both clusters can read from both registries)
+./template.sh push_generic RCP
+```
+
+Pro-tip: it will also push them with the git commit hash as a tag if the build is at the latest commit.
+You can rebuild the images with `./template.sh build` to tag them with the latest commit hash.
+
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> Give the generic image name you just pushed
+> (e.g., `ic-registry.epfl.ch/LAB_NAME/USR/PROJECT_NAME`)
+> to your teammates so that they can directly build their user-configured images on top of it.
+> Replace the _TODO ADD PULL_IMAGE_NAME_ above with this name.
+
+Push the user-configured image for the Run:ai cluster (`LAB_NAME/USR/PROJECT_NAME:PLATFORM-USR-latest`)
+
+```bash
+./template.sh push_user IC
+# Or/and (both clusters can read from both registries)
+./template.sh push_user RCP
+```
 
 ## Running locally with Docker Compose
 

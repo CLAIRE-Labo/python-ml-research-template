@@ -7,6 +7,10 @@ ENV_TEXT=$(
 # All user-specific configurations are here.
 
 ## For building:
+# Which docker and compose binary to use
+# docker and docker compose in general or podman and podman-compose for CSCS todi
+DOCKER=docker
+COMPOSE=docker compose
 # Use the same USRID and GRPID as on the storage you will be mounting.
 # USR is used in the image name and must be lowercase.
 # It's fine if your username is not lowercase, jut make it lowercase.
@@ -96,8 +100,8 @@ pull_generic() {
     exit 1
   fi
 
-  docker pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
-  docker tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  $DOCKER pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  $DOCKER tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
 }
 
 build_generic() {
@@ -124,11 +128,11 @@ build_generic() {
 
   # Build the generic runtime and dev images and tag them with the current git commit.
   check
-  docker compose -p "${COMPOSE_PROJECT}" build image-root
+  $COMPOSE -p "${COMPOSE_PROJECT}" build image-root
 
   # Tag the images with the current git commit.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT}"
+  $DOCKER tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT}"
 }
 
 build_user() {
@@ -155,13 +159,13 @@ build_user() {
 
   # Build the user runtime and dev images and tag them with the current git commit.
   check
-  docker compose -p "${COMPOSE_PROJECT}" build image-user
+  $COMPOSE -p "${COMPOSE_PROJECT}" build image-user
 
   # If the generic image has the current git tag, then the user image has been build from that tag.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  if [[ $(docker images --format '{{.Repository}}:${IMAGE_PLATFORM}-{{.Tag}}' |\
+  if [[ $($DOCKER images --format '{{.Repository}}:${IMAGE_PLATFORM}-{{.Tag}}' |\
    grep -c "${GIT_COMMIT}") -ge 1 ]]; then
-    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-${GIT_COMMIT}"
+    $DOCKER tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-${GIT_COMMIT}"
   fi
 }
 
@@ -187,17 +191,17 @@ push_usr_or_root() {
     PUSH_IMAGE_NAME="registry.rcp.epfl.ch/${IMAGE_NAME}"
   fi
 
-  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest" \
+  $DOCKER tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest" \
   "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest"
-  docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest"
+  $DOCKER push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest"
 
   # If the image has a git tag push it as well.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  if [[ $(docker images --format '{{.Repository}}:{{.Tag}}' |\
+  if [[ $($DOCKER images --format '{{.Repository}}:{{.Tag}}' |\
   grep "${USR_OR_ROOT}-${GIT_COMMIT}" -c) -ge 1 ]]; then
-    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}" \
+    $DOCKER tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}" \
       "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}"
-    docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}"
+    $DOCKER push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}"
   fi
 }
 
@@ -222,7 +226,7 @@ list_env() {
   echo "[TEMPLATE INFO] Listing the dependencies in an empty container (nothing mounted)."
   echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
   echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" zsh -c \
+  $DOCKER run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" zsh -c \
   "echo '[TEMPLATE INFO] Running mamba list';\
   if command -v mamba >/dev/null 2>&1; then mamba list -n ${PROJECT_NAME}; \
   else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi;
@@ -235,7 +239,7 @@ empty_interactive() {
   echo "[TEMPLATE INFO] Starting an interactive shell in an empty container (nothing mounted)."
   echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
   echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
-  docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  $DOCKER run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
 }
 
 run() {
@@ -259,7 +263,7 @@ run() {
   done
 
   # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
+  $COMPOSE -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
 }
 
 dev() {
@@ -289,7 +293,7 @@ dev() {
   done
 
   # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
+  $COMPOSE -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
 }
 
 get_runai_scripts() {

@@ -14,23 +14,6 @@ instructions in the `installation/docker-amd64-cuda/README.md` file.
 
 ## Prerequisites
 
-**Docker image**:
-
-You should be able to run your Docker image locally
-(e.g., on the machine you built it, or for CLAIRE with the remote Docker Engine on our `claire-build-machine`).
-It will be hard to debug your image on Run:ai if you can't even run it locally.
-The simple checks below will be enough.
-
-```bash
-# Check all your dependencies are there.
-./template.sh list_env
-
-# Get a shell and check manually other things.
-# This will only contain the environment and not the project code.
-# Project code can be debugged on the cluster directly.
-./template.sh empty_interactive
-```
-
 **Run:ai**:
 
 1. You should have access to a Run:ai project and have some knowledge of the Run:ai platform, e.g.,
@@ -58,29 +41,6 @@ Run
 ```
 to get a copy of the examples in this guide with your username, lab name, etc.
 They will be in `.EPFL-runai-setup/submit-scripts`.
-
-### Push your image to the RCP or IC Docker registry
-
-The following will push the generic and user-configured runtime images.
-
-- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-root-latest`
-- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-USR-latest`
-
-It will also push them with the git commit hash as a tag if the build is at the latest commit.
-You can rebuild the images with `./template.sh build` to tag them with the latest commit hash.
-
-```bash
-./template.sh push IC
-# Or/and (both clusters can read from both registries)
-./template.sh push RCP
-```
-
-> [!IMPORTANT]
-> **TEMPLATE TODO:**
-> Give the generic image name you just pushed
-> (e.g., `ic-registry.epfl.ch/LAB_NAME/USR/PROJECT_NAME`)
-> to your teammates so that they can directly build their user-configured images on top of it.
-> Replace the _TODO ADD PULL_IMAGE_NAME_ in the `installation/docker-amd64-cuda/README` file with this name.
 
 ### Clone your repository in your PVCs
 

@@ -1,31 +1,134 @@
-# Guide for using the template with the EPFL SCITAS clusters (Kuma, Izar)
+# Guide for using the template with the CSCS Todi cluster
 
 ## Overview
 
-At this point, you should have the runtime image that can be deployed on multiple platforms.
-This guide will show you how to deploy your image on the EPFL SCITAS clusters supporting containers (Kuma, Izar)
-and use it for
+At this point, you should have edited the environment files and are ready to build or run the image.
+This guide will show you how to build and run your image on the CSCS Todi cluster and use it for
 
 1. Remote development.
 2. Running unattended jobs.
 
-## Prerequisites
 
-**SCITAS and Slurm**:
+## Building the environment (skip if already have access to the image)
 
-1. You should have access to the SCITAS clusters using containers (Kuma, Izar).
-2. You should have some knowledge of Slurm.
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> After saving your generic image, provide the image location to your teammates.
+> Ideally also push it to team registry and later on a public registry if you open-source your project.
+> Add it below in the TODO ADD PULL_IMAGE_NAME.
 
-CLAIRE lab members can refer to our internal documentation on using the SCITAS clusters
-[here](https://prickly-lip-484.notion.site/Compute-and-Storage-CLAIRE-91b4eddcc16c4a95a5ab32a83f3a8294#1402ae1961ac4b3e86a6a3ee2d8602aa).
+### Prerequisites
+
+* `podman` (Already installed on the CSCS clusters).
+* `podman-compose` (A utility to run Docker compose files with Podman) [Install here](https://github.com/containers/podman-compose/tree/main)
+  or follow the steps below for an installation from scratch on CSCS.
+
+```bash
+# Install Miniconda
+curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh
+# Follow the instructions
+# Close and reopen your terminal
+bash
+# Create a new conda environment
+mamba create -n podman python=3.10
+mamba activate podman
+pip install podman-compose
+
+# Activate this environment whenever you use this template.
+```
+
+### Build the images
+
+All commands should be run from the `installation/docker-amd64-cuda/` directory.
+
+```bash
+cd installation/docker-amd64-cuda
+```
+
+1. Create an environment file for your personal configuration with
+   ```bash
+   ./template.sh env
+   ```
+   This creates a `.env` file with pre-filled values.
+    - Edit the `DOCKER` variable to `podman` and the `COMPOSE` variable to `podman-compose`.
+    - You can ignore the variables `USR, USRID, GRP, GRPID, and PASSW`.
+    - `LAB_NAME` will be the first element in name of the local images you get.
+      (**EPFL Note:** _If pushing to the IC or RCP registries this should be the name of your lab's project
+      in the registry. CLAIRE members should use `claire`._)
+    - You can ignore the rest of the variables after `## For running locally`.
+
+2. Build the generic image.
+   This is the image with root as user.
+   It will be named according to the image name in your `.env`.
+   It will be tagged with `<platform>-root-latest` and if you're building it,
+   it will also be tagged with the latest git commit hash `<platform>-root-<sha>` and `<platform>-root-<sha>`.
+   ```bash
+      ./template.sh build_generic
+   ```
+3. You can run quick checks on the image to check it that it has what you expect it to have:
+   ```bash
+   # Check all your dependencies are there.
+   ./template.sh list_env
+
+    # Get a shell and check manually other things.
+    # This will only contain the environment and not the project code.
+    # Project code can be debugged on the cluster directly.
+    ./template.sh empty_interactive
+   ```
+
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> Give the location of the image name you just built
+> ...
+
 
 ## First steps
 
+### Prerequisites
+
+**CSCS and Slurm**:
+
+1. You should have access to the Todi cluster.
+2. You should have some knowledge of Slurm.
+
+There is a great documentation provided by the SwissAI initiative [here](https://github.com/swiss-ai/documentation).
+
 ### Getting your image on the SCITAS clusters
 
+There are multiple ways to get the image on the SCITAS clusters.
+
+One way is to push your image to an image registry that the SCITAS clusters can access,
+e.g., DockerHub or the IC/RCP registries then pull it from there.
+
+At CLAIRE we reuse images across all clusters and maintain them in the IC and RCP registries.
+We give instructions to push the image to those registries and pull from them.
+You can follow similar steps to push to DockerHub.
+
+The following will push the generic and user-configured runtime images:
+
+- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-root-latest`
+- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-USR-latest`
+
+It will also push them with the git commit hash as a tag if the build is at the latest commit.
+You can rebuild the images with `./template.sh build` to tag them with the latest commit hash.
+
+```bash
+./template.sh push IC
+# Or/and (all clusters can read from both registries)
+./template.sh push RCP
+```
+
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> Give the generic image name you just pushed
+> (e.g., `ic-registry.epfl.ch/LAB_NAME/USR/PROJECT_NAME`)
+> Replace the _TODO ADD PULL_IMAGE_NAME_ in the `installation/docker-amd64-cuda/README` file with this name.
+
+Then you need to pull your image on the SCITAS clusters.
 You only need to pull the generic image as SCITAS mounts namespaces to the containers.
 
-All the commands should be run on the SCITAS clusters.
+All the remaining commands should be run on the SCITAS clusters.
 ```bash
 ssh izar
 # or
