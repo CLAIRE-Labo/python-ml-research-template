@@ -39,12 +39,10 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_DEPENDENCIES_FILE=/tmp/dependencies/apt-build.txt
-COPY --link dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
+COPY dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-build.txt.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
-    --mount=type=cache,target=/var/lib/apt,sharing=private \
-    apt update && \
+RUN apt update && \
     sed -e 's/#.*//g' -e 's/\r//g' ${BUILD_DEPENDENCIES_FILE} | \
     xargs -t apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
@@ -87,12 +85,10 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG RUNTIME_DEPENDENCIES_FILE=/tmp/dependencies/apt-runtime.txt
-COPY --link dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
+COPY dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
 
 # sed is only used as a hack to remove comments from the file apt-runtime.txt.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
-    --mount=type=cache,target=/var/lib/apt,sharing=private \
-    apt update && \
+RUN apt update && \
     sed -e 's/#.*//g' -e 's/\r//g' ${RUNTIME_DEPENDENCIES_FILE} | \
     xargs -t apt-get install -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
@@ -106,16 +102,16 @@ FROM runtime-apt-pkgs AS runtime-deps
 # A directory to record all the dependency files used at multiple stages.
 # This is useful for a later inspection or debugging.
 ENV DEPENDENCIES_DIR=/opt/template-dependencies
-RUN mkdir -m 777 ${DEPENDENCIES_DIR}
+RUN mkdir ${DEPENDENCIES_DIR}
 COPY dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
 COPY dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
 COPY dependencies/requirements.txt ${DEPENDENCIES_DIR}/requirements.txt
 
 # Install pip packages.
 # Doing this in the runtime assuming it builds on a base images that has enough build dependencies.
-# Maybe consider doing this in the build stage.
+# Should consider doing this in the build stage.
 ARG PIP_REQS_FILE=/tmp/dependencies/requirements.txt
-COPY --link dependencies/requirements.txt ${PIP_REQS_FILE}
+COPY dependencies/requirements.txt ${PIP_REQS_FILE}
 RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-before-pip-install-r.txt
 RUN pip install -r ${PIP_REQS_FILE}
 RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install-r.txt
@@ -125,7 +121,7 @@ RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install-r.txt
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
 ARG FAKEINTEL_PATH=/opt/fakeintel/libfakeintel.so
 ENV FAKEINTEL_PATH=${FAKEINTEL_PATH}
-COPY --link --from=build-fakeintel ${FAKEINTEL_PATH} ${FAKEINTEL_PATH}
+COPY --from=build-fakeintel ${FAKEINTEL_PATH} ${FAKEINTEL_PATH}
 ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
 
 ########################################################################
@@ -154,9 +150,9 @@ ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
 ARG ZSHS_PATH=${ZSH_ENHANCE_DIR}/zsh-syntax-highlighting
-COPY --link --from=get-pure /opt/zsh/pure ${PURE_PATH}
-COPY --link --from=get-pure /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
-COPY --link --from=get-pure /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
+COPY --from=get-pure /opt/zsh/pure ${PURE_PATH}
+COPY --from=get-pure /opt/zsh/zsh-autosuggestions ${ZSHA_PATH}
+COPY --from=get-pure /opt/zsh/zsh-syntax-highlighting ${ZSHS_PATH}
 RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "autoload -Uz promptinit; promptinit"; \
         echo "prompt pure"; \
@@ -180,7 +176,7 @@ ARG BASE_ENTRYPOINT_EXECS
 ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
 ENV BASE_ENTRYPOINT_EXECS=${BASE_ENTRYPOINT_EXECS}
 ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
-COPY --link --chmod=777 entrypoints ${ENTRYPOINTS_ROOT}
+COPY entrypoints ${ENTRYPOINTS_ROOT}
 ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh"]
 

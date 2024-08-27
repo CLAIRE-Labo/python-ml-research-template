@@ -25,8 +25,8 @@ export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
 srun \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --container-mounts=\
-$SCRATCH:$SCRATCH,\
-$WANDB_API_KEY_FILE_AT:$WANDB_API_KEY_FILE_AT \
+$SCRATCH,\
+$WANDB_API_KEY_FILE_AT \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \

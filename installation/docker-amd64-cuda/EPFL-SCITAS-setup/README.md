@@ -70,7 +70,7 @@ cd $CONTAINER_IMAGES
 # Don't do this on a login node.
 # Replace with your image name
 
-salloc --exclusive --partition h100 --time=4:00:00 \
+srun --exclusive --partition h100 --time=4:00:00 \
 enroot import docker://registry.rcp.epfl.ch#claire/moalla/template-project-name:amd64-cuda-root-latest
 # This will create a squashfs file that you'll use to start your jobs.
 ```
@@ -83,7 +83,7 @@ salloc --exclusive --partition h100 --time=4:00:00 \
 apptainer pull docker://registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-root-latest
 ```
 
-### Clone your repository in your home directory
+### Clone your repository in your scratch directory
 
 We strongly suggest having two instances of your project repository.
 

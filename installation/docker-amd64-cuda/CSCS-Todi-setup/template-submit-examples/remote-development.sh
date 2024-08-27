@@ -1,15 +1,7 @@
 #!/bin/bash
 
 #SBATCH -J template-remote-development
-#SBATCH -t 0:30:00
-#SBATCH --partition h100
-#SBATCH --gpus 4
-#SBATCH --cpus-per-task 60
-
-# Only for Kuma temporarily
-
-# If not done already in your bashrc (depends on the cluster so better write that logic there.)
-# export SCRATCH=/scratch/moalla
+#SBATCH -t 12:00:00
 
 # Variables used by the entrypoint script
 # Change this to the path of your project (can be the /dev or /run copy)
@@ -19,23 +11,22 @@ export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
 export SSH_SERVER=1
 export NO_SUDO_NEEDED=1
 export JETBRAINS_SERVER_AT=$SCRATCH/jetbrains-server
-export JETBRAINS_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
+# export JETBRAINS_IDE_AT=744eea3d4045b_pycharm-professional-2024.1.6-aarch64
 # or
 # export VSCODE_SERVER_AT=$SCRATCH/vscode-server
 
 srun \
-  --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
+  --container-image=$CONTAINER_IMAGES/claire+smoalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --container-mounts=\
 $SCRATCH:$SCRATCH,\
-$WANDB_API_KEY_FILE_AT:$WANDB_API_KEY_FILE_AT,\
-$HOME/.gitconfig:/home/moalla/.gitconfig,\
-$HOME/.ssh/authorized_keys:/home/moalla/.ssh/authorized_keys \
+$WANDB_API_KEY_FILE_AT,\
+$HOME/.gitconfig,\
+$HOME/.ssh/authorized_keys \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \
   --no-container-entrypoint \
   --container-writable \
-  -G 4 -c 60 \
   /opt/template-entrypoints/pre-entrypoint.sh \
   sleep infinity
 
@@ -49,6 +40,6 @@ $HOME/.ssh/authorized_keys:/home/moalla/.ssh/authorized_keys \
 # Connect to the allocation
 #   srun --overlap --pty --jobid=JOBID bash
 # Inside the job find the container name
-#   enroot list
+#   enroot list -f
 # Exec to the container
-#   enroot exec <container-name> zsh
+#   enroot exec <container-pid> zsh

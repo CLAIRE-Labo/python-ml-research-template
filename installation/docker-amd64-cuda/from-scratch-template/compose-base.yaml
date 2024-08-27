@@ -4,7 +4,7 @@ services:
       args:
         BASE_IMAGE: ubuntu:22.04                # Ubuntu: https://hub.docker.com/_/ubuntu
         CURL_IMAGE: curlimages/curl:8.2.1       # https://hub.docker.com/r/curlimages/curl/tags
-        GIT_IMAGE: alpine/git:2.40.1            # https://hub.docker.com/r/alpine/git/tags
+        GIT_IMAGE: docker.io/alpine/git:2.40.1            # https://hub.docker.com/r/alpine/git/tags
         CONDA_URL: https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Miniforge3-23.3.1-1-Linux-x86_64.sh
         # Change the link when changing the platform or updating to a new version.
         # https://conda-forge.org/miniforge/

@@ -17,7 +17,7 @@ export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 
 srun \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
-  --container-mounts=$SCRATCH:$SCRATCH \
+  --container-mounts=$SCRATCH \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \

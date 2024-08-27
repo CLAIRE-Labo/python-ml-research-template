@@ -10,7 +10,7 @@ ENV_TEXT=$(
 # Which docker and compose binary to use
 # docker and docker compose in general or podman and podman-compose for CSCS todi
 DOCKER=docker
-COMPOSE=docker compose
+COMPOSE="docker compose"
 # Use the same USRID and GRPID as on the storage you will be mounting.
 # USR is used in the image name and must be lowercase.
 # It's fine if your username is not lowercase, jut make it lowercase.
@@ -174,6 +174,16 @@ build() {
   build_user "$@"
 }
 
+import_from_podman() {
+  check
+  enroot import -x mount "podman://${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  GIT_COMMIT=$(git rev-parse --short HEAD)
+  if [[ $($DOCKER images --format '{{.Repository}}:{{.Tag}}' |\
+    grep "root-${GIT_COMMIT}" -c) -ge 1 ]]; then
+    enroot import -x mount "podman://${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT}"
+  fi
+}
+
 push_usr_or_root() {
   check
   USR_OR_ROOT="${1}"
@@ -301,11 +311,7 @@ get_runai_scripts() {
   # ./template.sh get_runai_scripts
   check
   cp -r "./EPFL-runai-setup/template-submit-examples/" "./EPFL-runai-setup/submit-scripts"
-  for file in \
-    "./EPFL-runai-setup/submit-scripts/first-steps.sh" \
-    "./EPFL-runai-setup/submit-scripts/minimal.sh" \
-    "./EPFL-runai-setup/submit-scripts/remote-development.sh" \
-    "./EPFL-runai-setup/submit-scripts/unattended.sh" ; do
+  for file in $(find . -name "*.sh"); do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
@@ -316,12 +322,19 @@ get_scitas_scripts() {
   # ./template.sh get_scitas_scripts
   check
   cp -r "./EPFL-SCITAS-setup/template-submit-examples/" "./EPFL-SCITAS-setup/submit-scripts"
-  for file in \
-    "./EPFL-SCITAS-setup/submit-scripts/minimal.sh" \
-    "./EPFL-SCITAS-setup/submit-scripts/remote-development.sh" \
-    "./EPFL-SCITAS-setup/submit-scripts/unattended-distributed.sh" \
-    "./EPFL-SCITAS-setup/submit-scripts/unattended.sh" ; do
+    for file in $(find . -name "*.sh"); do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
+    sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
+  done
+}
+
+get_cscs_scripts() {
+  # Rename the scitas examples.
+  # ./template.sh get_scitas_scripts
+  check
+  cp -r "./CSCS-Todi-setup/template-submit-examples/" "./CSCS-Todi-setup/submit-scripts"
+  for file in $(find . -name "*.sh"); do
+    sed -i.deleteme "s/smoalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
 }
@@ -335,6 +348,7 @@ usage() {
   echo "build_generic: Build the generic runtime and dev images."
   echo "build_user: Build the user runtime and dev images."
   echo "build: Build the generic and user runtime and dev images."
+  echo "import_from_podman: Import the podman image to enroot."
   echo "push_generic IMAGE_NAME: Push the generic runtime and dev images."
   echo "push_user IMAGE_NAME: Push the user runtime and dev images."
   echo "push IMAGE_NAME: Push the generic and user runtime and dev images."
@@ -343,6 +357,8 @@ usage() {
   echo "run -e VAR1=VAL1 -e VAR2=VAL2 ... COMMAND: Run a command in a new runtime container."
   echo "dev -e VAR1=VAL1 -e VAR2=VAL2 ... COMMAND: Run a command in a new development container."
   echo "get_runai_scripts: Rename the runai examples."
+  echo "get_scitas_scripts: Rename the scitas examples."
+  echo "get_cscs_scripts: Rename the cscs examples."
 }
 
 if [ $# -eq 0 ]; then

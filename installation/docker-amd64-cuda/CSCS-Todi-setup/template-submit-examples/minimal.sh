@@ -11,10 +11,10 @@ export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 # Enroot + Pyxis
 
 srun \
-  -G 1 --partition h100 -J template-minimal \
+  -J template-minimal \
   --pty \
-  --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
-  --container-mounts=$SCRATCH:$SCRATCH \
+  --container-image=$CONTAINER_IMAGES/claire+smoalla+template-project-name+amd64-cuda-root-latest.sqsh \
+  --container-mounts=$SCRATCH \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \
@@ -27,18 +27,3 @@ srun \
 # --container-env to override environment variables defined in the container
 
 exit 0
-
-# Some other possible option
-# Apptainer/Singularity
-srun \
-  -G 1 --partition h100 -J template-minimal \
-  --pty \
-  apptainer run \
-  --contain \
-  --bind $SCRATCH:$SCRATCH \
-  --cwd $PROJECT_ROOT_AT \
-  --no-home \
-  --nv \
-  --writable-tmpfs \
-  $CONTAINER_IMAGES/template-project-name_amd64-cuda-root-latest.sif \
-  bash

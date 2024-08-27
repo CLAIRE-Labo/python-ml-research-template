@@ -15,11 +15,12 @@ This guide will show you how to build and run your image on the CSCS Todi cluste
 > **TEMPLATE TODO:**
 > After saving your generic image, provide the image location to your teammates.
 > Ideally also push it to team registry and later on a public registry if you open-source your project.
-> Add it below in the TODO ADD PULL_IMAGE_NAME.
+> Add it below in the TODO ADD IMAGE PATH.
 
 ### Prerequisites
 
-* `podman` (Already installed on the CSCS clusters).
+* `podman` (Already installed on the CSCS clusters). Configure it as described [here](https://confluence.cscs.ch/display/KB/LLM+Inference)
+  (step after "To use Podman, we first need to configure some storage ...")
 * `podman-compose` (A utility to run Docker compose files with Podman) [Install here](https://github.com/containers/podman-compose/tree/main)
   or follow the steps below for an installation from scratch on CSCS.
 
@@ -41,6 +42,11 @@ pip install podman-compose
 ### Build the images
 
 All commands should be run from the `installation/docker-amd64-cuda/` directory.
+
+You should be on a compute node. If not already, get one with e.g.,
+```bash
+salloc -J setup -t 8:00:00
+```
 
 ```bash
 cd installation/docker-amd64-cuda
@@ -66,22 +72,18 @@ cd installation/docker-amd64-cuda
    ```bash
       ./template.sh build_generic
    ```
-3. You can run quick checks on the image to check it that it has what you expect it to have:
+3. Export the image to a file and move it to a directory where you keep the images.
    ```bash
-   # Check all your dependencies are there.
-   ./template.sh list_env
-
-    # Get a shell and check manually other things.
-    # This will only contain the environment and not the project code.
-    # Project code can be debugged on the cluster directly.
-    ./template.sh empty_interactive
+   ./template export_from_podman
+   # Move the images
+   # Make a directory where you store your images
+   # Add it to your bashrc as it'll be used often
+   CONTAINER_IMAGES=$SCRATCH/container-images
+   mkdir -p $CONTAINER_IMAGES
+   mv *.sqsh $CONTAINER_IMAGES
    ```
-
-> [!IMPORTANT]
-> **TEMPLATE TODO:**
-> Give the location of the image name you just built
-> ...
-
+4. You can run quick checks on the image to check it that it has what you expect it to have.
+   When the examples scripts are described later, run the `test.sh` example script before the other scripts.
 
 ## First steps
 
@@ -94,99 +96,23 @@ cd installation/docker-amd64-cuda
 
 There is a great documentation provided by the SwissAI initiative [here](https://github.com/swiss-ai/documentation).
 
-### Getting your image on the SCITAS clusters
+### Getting your image
 
-There are multiple ways to get the image on the SCITAS clusters.
+#### From a file
 
-One way is to push your image to an image registry that the SCITAS clusters can access,
-e.g., DockerHub or the IC/RCP registries then pull it from there.
-
-At CLAIRE we reuse images across all clusters and maintain them in the IC and RCP registries.
-We give instructions to push the image to those registries and pull from them.
-You can follow similar steps to push to DockerHub.
-
-The following will push the generic and user-configured runtime images:
-
-- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-root-latest`
-- `LAB_NAME/USR/PROJECT_NAME:PLATFORM-USR-latest`
-
-It will also push them with the git commit hash as a tag if the build is at the latest commit.
-You can rebuild the images with `./template.sh build` to tag them with the latest commit hash.
-
+You will find the image to use for this project in _TODO ADD IMAGE_PATH_.
+Copy it or create a symlink to it where you keep your images. E.g.,
 ```bash
-./template.sh push IC
-# Or/and (all clusters can read from both registries)
-./template.sh push RCP
-```
-
-> [!IMPORTANT]
-> **TEMPLATE TODO:**
-> Give the generic image name you just pushed
-> (e.g., `ic-registry.epfl.ch/LAB_NAME/USR/PROJECT_NAME`)
-> Replace the _TODO ADD PULL_IMAGE_NAME_ in the `installation/docker-amd64-cuda/README` file with this name.
-
-Then you need to pull your image on the SCITAS clusters.
-You only need to pull the generic image as SCITAS mounts namespaces to the containers.
-
-All the remaining commands should be run on the SCITAS clusters.
-```bash
-ssh izar
-# or
-ssh kuma
-```
-Create an enroot config file in your home directory on the cluster if you don't have one yet.
-It will store your credentials for the registries.
-```bash
-export ENROOT_CONFIG_PATH=$HOME/.config/enroot/.credentials
-mkdir -p $(dirname $ENROOT_CONFIG_PATH)
-touch $ENROOT_CONFIG_PATH
-# Make sur the file is only readable by you
-chmod 600 $ENROOT_CONFIG_PATH
-```
-Write the following to the file.
-```bash
-# E.g. vim $ENROOT_CONFIG_PATH
-machine ic-registry.epfl.ch login <username> password <password>
-machine registry.rcp.epfl.ch login <username> password <password>
-```
-
-Optionally if you want to use Apptainer
-```bash
-apptainer registry login --username <username> docker://registry.rcp.epfl.ch
-apptainer registry login --username <username> docker://ic-registry.epfl.ch
-```
-
-Then you can pull your image with
-```bash
-# On Izar
-SCRATCH=/scratch/izar/$USER
-# On Kuma
-SCRATCH=/scratch/$USER
 # Make a directory where you store your images
 # Add it to your bashrc as it'll be used often
 CONTAINER_IMAGES=$SCRATCH/container-images
 mkdir -p $CONTAINER_IMAGES
-
-# Pull the generic image (with tagged with root)
-# E.g.,
-cd $CONTAINER_IMAGES
-# Don't do this on a login node.
-# Replace with your image name
-
-salloc --exclusive --partition h100 --time=4:00:00 \
-enroot import docker://registry.rcp.epfl.ch#claire/moalla/template-project-name:amd64-cuda-root-latest
-# This will create a squashfs file that you'll use to start your jobs.
+ln -s _TODO ADD IMAGE_PATH_ $CONTAINER_IMAGES/ADAPTED_NAME.sqsh
 ```
 
-Optionally if you want to use Apptainer
-```bash
-# Takes ages to convert to sif.
-# Don't do this on a login node.
-salloc --exclusive --partition h100 --time=4:00:00 \
-apptainer pull docker://registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-root-latest
-```
+#### From a registry (TODO)
 
-### Clone your repository in your home directory
+### Clone your repository in your scratch directory
 
 We strongly suggest having two instances of your project repository.
 
@@ -205,7 +131,7 @@ SCRATCH=/scratch/kuma/$USER
 # Or on Izar
 # SCRATCH=/scratch/izar/$USER
 cd $SCRATCH
-# Clone the repo twice with name dev and run.
+# Clone the repo twice with name dev and run (if you already have one, mv it to a different name)
 mkdir template-project-name
 git clone <HTTPS/SSH> template-project-name/dev
 git clone <HTTPS/SSH> template-project-name/run
@@ -222,14 +148,13 @@ cd template-project-name/dev/installation/docker-amd64-cuda
 
 ### Note about the examples
 
-The example files were made with username `moalla` and lab-name `claire`.
+The example files were made with username `smoalla` and lab-name `claire`.
 Adapt them accordingly to your username and lab name.
 Run
 ```bash
-# From the cluster this time.
 ./template.sh env
 # Edit the .env file with your lab name (you can ignore the rest).
-./template.sh get_scitas_scripts
+./template.sh get_cscs_scripts
 ```
 to get a copy of the examples in this guide with your username, lab name, etc.
 They will be in `./EPFL-SCITAS-setup/submit-scripts`.
@@ -238,15 +163,12 @@ They will be in `./EPFL-SCITAS-setup/submit-scripts`.
 
 Adapt the `submit-scripts/minimal.sh` with the name of your image and your cluster storage setup.
 
-The submission script gives two examples of how to run containers on SCITAS.
-Either with [`enroot`](https://github.com/NVIDIA/enroo)
+The submission script gives an example of how to run containers on Todi with [`enroot`](https://github.com/NVIDIA/enroo)
 and the [`pyxis`](https://github.com/NVIDIA/pyxis) plugin directly integrated in `srun`,
-or with `apptainer` inside tasks as a separate command.
-We recommend using Pyxis+enroot as it allows more remote development tools to be used.
 
 Run the script to see how the template works.
 ```bash
-cd installation/docker-amd64-cuda/EPFL-SCITAS-setup/submit-scripts
+cd installation/docker-amd64-cuda//CSCS-Todi-setup/submit-scripts
 bash minimal.sh
 ```
 
@@ -334,28 +256,29 @@ GitHub provides a guide for that
 Use the following configuration in your local `~/.ssh/config`
 
 ```bash
-Host kuma
-    HostName kuma.hpc.epfl.ch
-    User moalla
+Host todi
+    HostName todi.cscs.ch
+    User smoalla
+    ProxyJump ela
     ForwardAgent yes
 
 # EDIT THIS HOSTNAME WITH EVERY NEW JOB
-Host kuma-job
-    HostName kh021
-    User moalla
-    ProxyJump kuma
+Host todi-job
+    HostName nid005105
+    User smoalla
+    ProxyJump todi
     StrictHostKeyChecking no
-    UserKnownHostsFile=/dev/null
-    ForwardAgent yes
+	  UserKnownHostsFile=/dev/null
+	  ForwardAgent yes
 
-Host kuma-container
+Host todi-container
     HostName localhost
-    ProxyJump kuma-job
+    ProxyJump todi-job
     Port 2223
-    User moalla
-    StrictHostKeyChecking no
-    UserKnownHostsFile=/dev/null
-    ForwardAgent yes
+    User smoalla
+	  StrictHostKeyChecking no
+	  UserKnownHostsFile=/dev/null
+	  ForwardAgent yes
 ```
 
 The `StrictHostKeyChecking no` and `UserKnownHostsFile=/dev/null` allow bypass checking the identity
@@ -437,7 +360,7 @@ ls ${JETBRAINS_SERVER_AT}/dist
 The name of this directory will be what you should set the `PYCHARM_IDE_AT` variable to in the next submissions
 so that it starts automatically.
 ```bash
-PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
+PYCHARM_IDE_AT=744eea3d4045b_pycharm-professional-2024.1.6-aarch64
 ```
 
 **When you have the IDE in the storage**
