@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# If not done already in your bashrc (depends on the cluster so better write that logic there.)
-# export SCRATCH=/scratch/moalla
-
 # Variables used by the entrypoint script
 # Change this to the path of your project (can be the /dev or /run copy)
 export PROJECT_ROOT_AT=$SCRATCH/template-project-name/dev

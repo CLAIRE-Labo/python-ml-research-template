@@ -4,7 +4,7 @@
 # In that case, you have to update this file to add commands that
 # will fix the environment file. (you could also just edit it manually afterwards).
 
-ENV_FILE="${PROJECT_ROOT_AT}"/installation/docker-amd64-cuda/dependencies/requirements.txt
+ENV_FILE="${PROJECT_ROOT_AT}"/installation/docker-amd64-cuda/requirements.txt
 # Export, but delete the package itself as it's installed at runtime.
 # This is because it is only available after mounting the code.
 # Also remove the details of all packages installed from files prefixed with @.

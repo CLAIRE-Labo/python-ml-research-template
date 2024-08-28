@@ -8,10 +8,6 @@ ARG BASE_IMAGE
 ARG GIT_IMAGE
 
 ########################################################################
-# 1. Stages for downloading, installing, and building things.
-########################################################################
-
-########################################################################
 # Download Z-Shell enhancements.
 
 FROM ${GIT_IMAGE} AS get-pure
@@ -26,112 +22,63 @@ RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
 
 
 ########################################################################
-# Install missing apt build packages.
-## This stage can be reused to build other software.
-
-FROM ${BASE_IMAGE} AS build-apt-packages
-
-# Enable caching for `apt` packages in Docker.
-# https://docs.docker.com/engine/reference/builder/#run---mounttypecache
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
-    /etc/apt/apt.conf.d/keep-cache
-
-ARG DEBIAN_FRONTEND=noninteractive
-ARG BUILD_DEPENDENCIES_FILE=/tmp/dependencies/apt-build.txt
-COPY dependencies/apt-build.txt ${BUILD_DEPENDENCIES_FILE}
-
-# sed is only used as a hack to remove comments from the file apt-build.txt.
-RUN apt update && \
-    sed -e 's/#.*//g' -e 's/\r//g' ${BUILD_DEPENDENCIES_FILE} | \
-    xargs -t apt-get install -y --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
-
-########################################################################
-# Hack to enable Intel MKL optimizations on AMD CPUs.
-# Enabled in a later stage with LD_PRELOAD.
-
-FROM build-apt-packages AS build-fakeintel
-
-# https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
-RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
-    mkdir -p /opt/fakeintel && \
-    gcc -shared -fPIC -o /opt/fakeintel/libfakeintel.so /tmp/fakeintel.c
-
-########################################################################
-# Here you can install other software starting from build-apt-packages,
-# then copy the installation artifacts to runtime-deps.
-# Think multi-stage and cache-efficient.
-# E.g. you can build wheels and then install them with pip in runtime-deps.
-# The MKL hack for AMD can be seen as an example.
-
-
-########################################################################
-# 2. Stages for setting up the runtime environment.
-########################################################################
-
-########################################################################
-# Install apt runtime packages.
-# This layer is the base for the image that will run unattended jobs.
-# Observe that build-apt-packages is not used anymore and will not be present in the final image.
+# Install apt packages.
 
 FROM ${BASE_IMAGE} AS runtime-apt-pkgs
-
-# Enable caching for `apt` packages in Docker.
-# https://docs.docker.com/engine/reference/builder/#run---mounttypecache
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
-    /etc/apt/apt.conf.d/keep-cache
-
-ARG DEBIAN_FRONTEND=noninteractive
-ARG RUNTIME_DEPENDENCIES_FILE=/tmp/dependencies/apt-runtime.txt
-COPY dependencies/apt-runtime.txt ${RUNTIME_DEPENDENCIES_FILE}
-
-# sed is only used as a hack to remove comments from the file apt-runtime.txt.
-RUN apt update && \
-    sed -e 's/#.*//g' -e 's/\r//g' ${RUNTIME_DEPENDENCIES_FILE} | \
-    xargs -t apt-get install -y --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
-
-########################################################################
-# Copy build artifacts and software.
-# You can use this stage to test the python env and other build artifacts.
-
-FROM runtime-apt-pkgs AS runtime-deps
 
 # A directory to record all the dependency files used at multiple stages.
 # This is useful for a later inspection or debugging.
 ENV DEPENDENCIES_DIR=/opt/template-dependencies
 RUN mkdir ${DEPENDENCIES_DIR}
-COPY dependencies/apt-build.txt ${DEPENDENCIES_DIR}/apt-build.txt
-COPY dependencies/apt-runtime.txt ${DEPENDENCIES_DIR}/apt-runtime.txt
-COPY dependencies/requirements.txt ${DEPENDENCIES_DIR}/requirements.txt
+COPY apt.txt ${DEPENDENCIES_DIR}/apt.txt
+
+# Enable caching for `apt` packages in Docker.
+# https://docs.docker.com/engine/reference/builder/#run---mounttypecache
+RUN rm -f /etc/apt/apt.conf.d/docker-clean; \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > \
+    /etc/apt/apt.conf.d/keep-cache
+
+ARG DEBIAN_FRONTEND=noninteractive
+# sed is only used as a hack to remove comments from the file apt.txt.
+RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
+    --mount=type=cache,target=/var/lib/apt,sharing=private \
+    apt update && \
+    sed -e 's/#.*//g' -e 's/\r//g' ${DEPENDENCIES_DIR}/apt.txt | \
+    xargs -t apt-get install -y --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+
+########################################################################
+# Install dependencies.
+
+FROM runtime-apt-pkgs AS runtime-deps
 
 # Install pip packages.
-# Doing this in the runtime assuming it builds on a base images that has enough build dependencies.
-# Should consider doing this in the build stage.
-ARG PIP_REQS_FILE=/tmp/dependencies/requirements.txt
-COPY dependencies/requirements.txt ${PIP_REQS_FILE}
-RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-before-pip-install-r.txt
-RUN pip install -r ${PIP_REQS_FILE}
-RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install-r.txt
+ENV PIP_CACHE_DIR=/root/.cache/pip
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-before-pip-install.txt
+COPY requirements.txt ${DEPENDENCIES_DIR}/requirements.txt
+RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
+    pip install -r ${DEPENDENCIES_DIR}/requirements.txt
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install.txt
 
 # Optional optimizations.
 # Hack to enable Intel MKL optimizations on AMD CPUs.
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
 ARG FAKEINTEL_PATH=/opt/fakeintel/libfakeintel.so
 ENV FAKEINTEL_PATH=${FAKEINTEL_PATH}
-COPY --from=build-fakeintel ${FAKEINTEL_PATH} ${FAKEINTEL_PATH}
+# https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
+# Build.
+RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
+    mkdir -p /opt/fakeintel && \
+    gcc -shared -fPIC -o ${FAKEINTEL_PATH} /tmp/fakeintel.c \
+# Enable.
 ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
 
 ########################################################################
+# Here you can install other software
+
+########################################################################
 # This stage is the final user-agnostic (generic) stage.
-# It contains all the dependencies of the environment and the setup scripts.
-# It will be extended to do the final user configuration.
 # This layer can be distributed so that subsequent users
-# don't have to build the whole environment from scratch.
-# Only their user configuration will be added on top of this layer.
-# This would improve the reproducibility of the project.
 
 FROM runtime-deps AS runtime-generic
 
@@ -146,7 +93,6 @@ RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-final.txt
 
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance
-
 ARG PURE_PATH=${ZSH_ENHANCE_DIR}/pure
 ARG ZSHA_PATH=${ZSH_ENHANCE_DIR}/zsh-autosuggestions
 ARG ZSHS_PATH=${ZSH_ENHANCE_DIR}/zsh-syntax-highlighting
@@ -160,9 +106,7 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
         echo "source ${ZSHS_PATH}/zsh-syntax-highlighting.zsh"; \
         echo "alias ls='ls --color=auto'"; \
         echo "alias ll='ls -lh'"; \
-        echo "alias wns='watch nvidia-smi'"; \
-        echo "alias hist='history 1'"; \
-        echo "alias update-env-file='source \${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/dependencies/update-env-file.sh'"; \
+        echo "alias update-env-file='source \${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/update-env-file.sh'"; \
     } >> /etc/zsh/zshrc
 
 
@@ -170,7 +114,6 @@ RUN {   echo "fpath+=${PURE_PATH}"; \
 # Don't overwrite the entrypoint, it is installing the project
 # and testing that you correctly mounted the project code.
 # It also performs some other important setup depending on the deployment platform.
-
 ARG BASE_ENTRYPOINT
 ARG BASE_ENTRYPOINT_EXECS
 ENV BASE_ENTRYPOINT=${BASE_ENTRYPOINT}
@@ -179,8 +122,3 @@ ENV ENTRYPOINTS_ROOT=/opt/template-entrypoints
 COPY entrypoints ${ENTRYPOINTS_ROOT}
 ENTRYPOINT ["/opt/template-entrypoints/pre-entrypoint.sh"]
 CMD ["/bin/zsh"]
-
-########################################################################
-# 3. Stages for setting up the user environment.
-# Continued in the Dockerfile-user file.
-########################################################################
