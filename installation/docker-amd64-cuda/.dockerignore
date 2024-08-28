@@ -1,3 +1,6 @@
 **
-!dependencies/
 !entrypoints/
+!apt.txt
+!requirements.txt
+!environment.yml
+!update-env-file.sh
