@@ -292,7 +292,7 @@ cd installation/docker-amd64-cuda
       ```bash
       # Pull the generic image if available.
       ./template.sh pull_generic TODO ADD PULL_IMAGE_NAME (private or public).
-      ````
+      ```
     - Otherwise, build it.
       ```bash
       ./template.sh build_generic
