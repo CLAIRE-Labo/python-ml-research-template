@@ -78,7 +78,7 @@ edit_from_base() {
   FROM_BASE="${1}"
   if [ "${FROM_BASE}" == "from-python" ] || [ "${FROM_BASE}" == "from-scratch" ]; then
     rm -f compose-base.yaml Dockerfile requirements.txt environment.yml update-env-file.sh
-    cp -r "${FROM_BASE}-template" .
+    cp -r "${FROM_BASE}-template"/* .
   else
     echo "[TEMPLATE ERROR] Please specify a valid from-base: from-python or from-scratch."
     exit 1
