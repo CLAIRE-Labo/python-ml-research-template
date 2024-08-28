@@ -107,7 +107,7 @@ ENV FAKEINTEL_PATH=${FAKEINTEL_PATH}
 # Build.
 RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
     mkdir -p /opt/fakeintel && \
-    gcc -shared -fPIC -o ${FAKEINTEL_PATH} /tmp/fakeintel.c \
+    gcc -shared -fPIC -o ${FAKEINTEL_PATH} /tmp/fakeintel.c
 # Enable.
 ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
 

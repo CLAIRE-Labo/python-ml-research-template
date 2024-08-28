@@ -1,6 +1,7 @@
-**
-!entrypoints/
-!apt.txt
-!requirements.txt
-!environment.yml
-!update-env-file.sh
+CSCS-Todi-setup
+EPFL-runai-setup
+EPFL-SCITAS-setup
+from-python-template
+from-scratch-template
+README.md
+template.sh
