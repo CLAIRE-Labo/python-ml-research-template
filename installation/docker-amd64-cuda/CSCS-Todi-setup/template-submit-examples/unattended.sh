@@ -10,6 +10,7 @@ export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 
 srun \
   --container-image=$CONTAINER_IMAGES/claire+smoalla+template-project-name+amd64-cuda-root-latest.sqsh \
+  --environment="$(dirname "$0")/edf.toml" \
   --container-mounts=$SCRATCH:$SCRATCH \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \

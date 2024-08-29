@@ -19,6 +19,7 @@ export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
 
 srun \
   --container-image=$CONTAINER_IMAGES/claire+smoalla+template-project-name+amd64-cuda-root-latest.sqsh \
+  --environment="$(dirname "$0")/edf.toml" \
   --container-mounts=\
 $SCRATCH,\
 $WANDB_API_KEY_FILE_AT \
