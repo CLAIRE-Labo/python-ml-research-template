@@ -11,3 +11,9 @@ if [ -n "${WANDB_API_KEY_FILE_AT}" ]; then
   echo "[TEMPLATE INFO] Logging in to W&B."
   wandb login "$(cat "${WANDB_API_KEY_FILE_AT}")"
 fi
+
+# Hugging Face login.
+if [ -n "${HF_TOKEN_AT}" ]; then
+  echo "[TEMPLATE INFO] Logging in to Hugging Face."
+  huggingface-cli login --token "$(cat "${HF_TOKEN_AT}")"
+fi
