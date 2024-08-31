@@ -63,8 +63,10 @@ cd installation/docker-amd64-cuda
       (**EPFL Note:** _If pushing to the IC or RCP registries this should be the name of your lab's project
       in the registry. CLAIRE members should use `claire`._)
     - You can ignore the rest of the variables after `## For running locally`.
-
-2. Build the generic image.
+2. Edit the Dockerfile to make it compatible with Podman:
+   There are commented lines starting with `# Podman` which should be uncommented
+   and replace the corresponding lines above them.
+3. Build the generic image.
    This is the image with root as user.
    It will be named according to the image name in your `.env`.
    It will be tagged with `<platform>-root-latest` and if you're building it,
@@ -72,7 +74,7 @@ cd installation/docker-amd64-cuda
    ```bash
       ./template.sh build_generic
    ```
-3. Export the image to a file and move it to a directory where you keep the images.
+4. Export the image to a file and move it to a directory where you keep the images.
    ```bash
    ./template export_from_podman
    # Move the images
@@ -82,8 +84,8 @@ cd installation/docker-amd64-cuda
    mkdir -p $CONTAINER_IMAGES
    mv *.sqsh $CONTAINER_IMAGES
    ```
-4. You can run quick checks on the image to check it that it has what you expect it to have.
-   When the examples scripts are described later, run the `test.sh` example script before the other scripts.
+5. You can run quick checks on the image to check it that it has what you expect it to have.
+   When the example scripts are described later, run the `test.sh` example script before the other scripts.
 
 ## First steps
 
