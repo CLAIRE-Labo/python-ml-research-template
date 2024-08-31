@@ -72,7 +72,9 @@ cd installation/docker-amd64-cuda
    It will be tagged with `<platform>-root-latest` and if you're building it,
    it will also be tagged with the latest git commit hash `<platform>-root-<sha>` and `<platform>-root-<sha>`.
    ```bash
-      ./template.sh build_generic
+   # Make sure the Conda environment with podman-compose is activated.
+   # mamba activate podman
+   ./template.sh build_generic
    ```
 4. Export the image to a file and move it to a directory where you keep the images.
    ```bash
