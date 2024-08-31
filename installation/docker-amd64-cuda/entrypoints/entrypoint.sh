@@ -19,7 +19,7 @@ echo "[TEMPLATE INFO] Expecting workdir to be ${PROJECT_ROOT_AT}."
 
 if [ "$(pwd)" != "${PROJECT_ROOT_AT}" ]; then
   echo "[TEMPLATE WARNING] The current/working directory $(pwd) is different from PROJECT_ROOT_AT."
-  echo "[TEMPLATE WARNING] The template expects them to be the same."
+  echo "[TEMPLATE WARNING] The template expects them to be the same, as it assumes running the experiments from PROJECT_ROOT_AT."
 fi
 
 # Install the package in editable mode.

@@ -78,7 +78,7 @@ cd installation/docker-amd64-cuda
    ```
 4. Export the image to a file and move it to a directory where you keep the images.
    ```bash
-   ./template export_from_podman
+   ./template.sh import_from_podman
    # Move the images
    # Make a directory where you store your images
    # Add it to your bashrc as it'll be used often
@@ -87,7 +87,7 @@ cd installation/docker-amd64-cuda
    mv *.sqsh $CONTAINER_IMAGES
    ```
 5. You can run quick checks on the image to check it that it has what you expect it to have.
-   When the example scripts are described later, run the `test.sh` example script before the other scripts.
+   When the example scripts are described later, run the `test-interactive.sh` example script before the other scripts.
 
 ## First steps
 
