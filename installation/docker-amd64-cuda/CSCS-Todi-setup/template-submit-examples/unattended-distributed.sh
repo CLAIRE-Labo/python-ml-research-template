@@ -2,9 +2,8 @@
 
 #SBATCH -J template-untattended-distributed
 #SBATCH -t 0:30:00
-#SBATCH --nodes 3
-#SBATCH --ntasks-per-node 2
-#SBATCH --gpus-per-task 1
+#SBATCH --nodes 2
+#SBATCH --ntasks-per-node 3
 
 # There is a current limitation in pyxis with the entrypoint and it has to run manually.
 # It has to run only once per node and the other tasks in the nodes have to wait for it to finish.
@@ -28,9 +27,10 @@ $WANDB_API_KEY_FILE_AT \
   --no-container-remap-root \
   --no-container-entrypoint \
   --container-writable \
-  -G 1 \
   /opt/template-entrypoints/pre-entrypoint.sh \
-  bash -c 'sleep 60; python -m template_package_name.template_experiment some_arg=$SLURM_JOB_ID$SLURM_PROCID'
+  bash -c 'sleep 60; python -m template_package_name.template_experiment some_arg=LOCALID-$SLURM_LOCALID-PROCID-$SLURM_PROCID'
+
+# Sleep to wait for the installation of the project.
 
 # additional options
 # --container-env to override environment variables defined in the container

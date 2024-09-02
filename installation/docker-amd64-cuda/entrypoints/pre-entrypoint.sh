@@ -10,12 +10,19 @@
 if [ -n "${SLURM_ONE_ENTRYPOINT_SCRIPT_PER_JOB}" ] && [ "${SLURM_PROCID}" -gt 0 ]; then
   echo "[TEMPLATE INFO] Running the entrypoing only once for the job."
   echo "[TEMPLATE INFO] Skipping entrypoints on SLURM_PROCID ${SLURM_PROCID}."
+  echo "[TEMPLATE INFO] Executing the command" "$@"
   exec "$@"
 fi
 if [ -n "${SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE}" ] && [ "${SLURM_LOCALID}" -gt 0 ]; then
   echo "[TEMPLATE INFO] Running the entrypoint once per node."
   echo "[TEMPLATE INFO] Skipping entrypoints on SLURM_PROCID ${SLURM_PROCID}."
+  echo "[TEMPLATE INFO] Executing the command" "$@"
   exec "$@"
+fi
+
+# Continue with the entrypoint script.
+if [ -n "${SLURM_PROCID}" ]; then
+  echo "[TEMPLATE INFO] Running the pre-entrypoint.sh for SLURM_PROCID ${SLURM_PROCID}, SLURM_LOCALID ${SLURM_LOCALID}, hostname $(hostname)."
 fi
 
 # Do this if the entrypoint execs the command it receives (every entrypoint should do this).
