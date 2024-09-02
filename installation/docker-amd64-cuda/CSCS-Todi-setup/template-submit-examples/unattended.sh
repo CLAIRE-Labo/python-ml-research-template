@@ -11,7 +11,7 @@ export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 srun \
   --container-image=$CONTAINER_IMAGES/claire+smoalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --environment="${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/CSCS-Todi-setup/submit-scripts/edf.toml" \
-  --container-mounts=$SCRATCH:$SCRATCH \
+  --container-mounts=$SCRATCH \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \

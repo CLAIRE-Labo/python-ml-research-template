@@ -10,8 +10,12 @@ export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 
 # Enroot + Pyxis
 
+# Limitation: pyxis doesn't send environment variables to the entrypoint so it has to be run manually
+# This is fixed in v0.20.0
+
 srun \
-  -G 1 --partition h100 -J template-minimal \
+  -J template-minimal \
+  -G 1 --partition h100 \
   --pty \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --container-mounts=$SCRATCH \
@@ -23,7 +27,7 @@ srun \
   /opt/template-entrypoints/pre-entrypoint.sh \
   bash
 
-# additional options
+# additional options for pyxis
 # --container-env to override environment variables defined in the container
 
 exit 0

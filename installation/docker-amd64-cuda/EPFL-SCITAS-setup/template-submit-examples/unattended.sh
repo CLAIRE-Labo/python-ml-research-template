@@ -27,5 +27,7 @@ srun \
   /opt/template-entrypoints/pre-entrypoint.sh \
   python -m template_package_name.template_experiment some_arg=some_value wandb.mode=offline
 
-# additional options
+# additional options for pyxis
 # --container-env to override environment variables defined in the container
+
+exit 0
