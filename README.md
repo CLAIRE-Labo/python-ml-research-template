@@ -110,25 +110,25 @@ Remember to get back to this root one after finishing each step.
       Go to `installation/docker-amd64-cuda/README.md` for the setup.
       Come back here after following the instructions there.
 
-      - **Conda**.
-        The environment is shipped as a conda environment file.
-        The level of reproducibility is lower than with Docker, as system dependencies will not be strictly recorded.
-        The only reason this option is available is to leverage hardware acceleration of platforms not compatible with
-        OCI containers, in particular, [MPS](https://developer.apple.com/metal/pytorch/)
-        which is [not supported](https://github.com/pytorch/pytorch/issues/81224)
-        on Docker for macOS with Apple Silicon.
+    - **Conda**.
+      The environment is shipped as a conda environment file.
+      The level of reproducibility is lower than with Docker, as system dependencies will not be strictly recorded.
+      The only reason this option is available is to leverage hardware acceleration of platforms not compatible with
+      OCI containers, in particular, [MPS](https://developer.apple.com/metal/pytorch/)
+      which is [not supported](https://github.com/pytorch/pytorch/issues/81224)
+      on Docker for macOS with Apple Silicon.
 
-        By default, this option is set up for `osx-arm64` to run on macOS with Apple Silicon.
-        This installation method could also be used if you want to settle for a lower level of reproducibility
-        and do not need to run on container clusters.
-        In that case, you might support another platform, e.g. `amd64`, and hardware acceleration, e.g., NVIDIA GPUs.
+      By default, this option is set up for `osx-arm64` to run on macOS with Apple Silicon.
+      This installation method could also be used if you want to settle for a lower level of reproducibility
+      and do not need to run on container clusters.
+      In that case, you might support another platform, e.g. `amd64`, and hardware acceleration, e.g., NVIDIA GPUs.
 
-        If you plan to support multiple platforms or hardware accelerations,
-        you can duplicate this installation method
-        or adapt it to support multiple platforms at the same time.
+      If you plan to support multiple platforms or hardware accelerations,
+      you can duplicate this installation method
+      or adapt it to support multiple platforms at the same time.
 
-        Go to `installation/conda-osx-arm64-mps/README.md` for the setup.
-        Come back here after following the instructions there.
+      Go to `installation/conda-osx-arm64-mps/README.md` for the setup.
+      Come back here after following the instructions there.
 
    Delete the installation directory for the installation method you don't use.
 
