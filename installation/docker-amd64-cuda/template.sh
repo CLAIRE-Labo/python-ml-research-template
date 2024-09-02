@@ -307,7 +307,7 @@ get_runai_scripts() {
   # ./template.sh get_runai_scripts
   check
   cp -r "./EPFL-runai-setup/template-submit-examples/" "./EPFL-runai-setup/submit-scripts"
-  for file in $(find . -name "*.sh"); do
+  for file in $(find "./EPFL-runai-setup/submit-scripts" -type f); do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
@@ -318,7 +318,7 @@ get_scitas_scripts() {
   # ./template.sh get_scitas_scripts
   check
   cp -r "./EPFL-SCITAS-setup/template-submit-examples/" "./EPFL-SCITAS-setup/submit-scripts"
-    for file in $(find . -name "*.sh"); do
+    for file in $(find "./EPFL-SCITAS-setup/submit-scripts" -type f); do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
@@ -329,7 +329,7 @@ get_cscs_scripts() {
   # ./template.sh get_scitas_scripts
   check
   cp -r "./CSCS-Todi-setup/template-submit-examples/" "./CSCS-Todi-setup/submit-scripts"
-  for file in $(find . -name "*.sh"); do
+  for file in $(find "./CSCS-Todi-setup/submit-scripts" -type f); do
     sed -i.deleteme "s/smoalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done

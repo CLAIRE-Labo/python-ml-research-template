@@ -10,7 +10,7 @@ export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 
 srun \
   --container-image=$CONTAINER_IMAGES/claire+smoalla+template-project-name+amd64-cuda-root-latest.sqsh \
-  --environment="$(dirname "$0")/edf.toml" \
+  --environment="${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/CSCS-Todi-setup/submit-scripts/edf.toml" \
   --container-mounts=$SCRATCH:$SCRATCH \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
@@ -20,5 +20,7 @@ srun \
   /opt/template-entrypoints/pre-entrypoint.sh \
   python -m template_package_name.template_experiment some_arg=some_value wandb.mode=offline
 
-# additional options
+# additional options for pyxis
 # --container-env to override environment variables defined in the container
+
+exit 0
