@@ -4,7 +4,7 @@
 # In that case, you have to update this file to add commands that
 # will fix the environment file. (you could also just edit it manually afterwards).
 
-ENV_FILE="${PROJECT_ROOT_AT}"/installation/docker-amd64-cuda/dependencies/environment.yml
+ENV_FILE="${PROJECT_ROOT_AT}"/installation/docker-amd64-cuda/environment.yml
 # Export, but delete the package itself as it's installed at runtime.
 # This is because it is only available after mounting the code.
 mamba env export --no-builds | sed "/${PROJECT_NAME}==.*/d" >"$ENV_FILE"

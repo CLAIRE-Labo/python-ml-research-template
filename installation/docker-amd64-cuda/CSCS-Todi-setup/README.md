@@ -1,87 +1,120 @@
-# Guide for using the template with the EPFL SCITAS clusters (Kuma, Izar)
+# Guide for using the template with the CSCS Todi cluster
 
 ## Overview
 
-At this point, you should have the runtime image that can be deployed on multiple platforms.
-This guide will show you how to deploy your image on the EPFL SCITAS clusters supporting containers (Kuma, Izar)
-and use it for
+At this point, you should have edited the environment files and are ready to build or run the image.
+This guide will show you how to build and run your image on the CSCS Todi cluster and use it for
 
 1. Remote development.
 2. Running unattended jobs.
 
-## Prerequisites
 
-**SCITAS and Slurm**:
+## Building the environment (skip if already have access to the image)
 
-1. You should have access to the SCITAS clusters using containers (Kuma, Izar).
-2. You should have some knowledge of Slurm.
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> After saving your generic image, provide the image location to your teammates.
+> Ideally also push it to team registry and later on a public registry if you open-source your project.
+> Add it below in the TODO ADD IMAGE PATH.
 
-CLAIRE lab members can refer to our internal documentation on using the SCITAS clusters
-[here](https://prickly-lip-484.notion.site/Compute-and-Storage-CLAIRE-91b4eddcc16c4a95a5ab32a83f3a8294#1402ae1961ac4b3e86a6a3ee2d8602aa).
+### Prerequisites
+
+* `podman` (Already installed on the CSCS clusters). Configure it as described [here](https://confluence.cscs.ch/display/KB/LLM+Inference)
+  (step after "To use Podman, we first need to configure some storage ...")
+* `podman-compose` (A utility to run Docker compose files with Podman) [Install here](https://github.com/containers/podman-compose/tree/main)
+  or follow the steps below for an installation from scratch on CSCS.
+
+```bash
+# Install Miniconda
+curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh
+# Follow the instructions
+# Close and reopen your terminal
+bash
+# Create a new conda environment
+mamba create -n podman python=3.10
+mamba activate podman
+pip install podman-compose
+
+# Activate this environment whenever you use this template.
+```
+
+### Build the images
+
+All commands should be run from the `installation/docker-amd64-cuda/` directory.
+
+You should be on a compute node. If not already, get one with e.g.,
+```bash
+salloc -J setup -t 8:00:00
+```
+
+```bash
+cd installation/docker-amd64-cuda
+```
+
+1. Create an environment file for your personal configuration with
+   ```bash
+   ./template.sh env
+   ```
+   This creates a `.env` file with pre-filled values.
+    - Edit the `DOCKER` variable to `podman` and the `COMPOSE` variable to `podman-compose`.
+    - You can ignore the variables `USR, USRID, GRP, GRPID, and PASSW`.
+    - `LAB_NAME` will be the first element in name of the local images you get.
+      (**EPFL Note:** _If pushing to the IC or RCP registries this should be the name of your lab's project
+      in the registry. CLAIRE members should use `claire`._)
+    - You can ignore the rest of the variables after `## For running locally`.
+2. Edit the Dockerfile to make it compatible with Podman:
+   There are commented lines starting with `# Podman` which should be uncommented
+   and replace the corresponding lines above them.
+3. Build the generic image.
+   This is the image with root as user.
+   It will be named according to the image name in your `.env`.
+   It will be tagged with `<platform>-root-latest` and if you're building it,
+   it will also be tagged with the latest git commit hash `<platform>-root-<sha>` and `<platform>-root-<sha>`.
+   ```bash
+   # Make sure the Conda environment with podman-compose is activated.
+   # mamba activate podman
+   ./template.sh build_generic
+   ```
+4. Export the image to a file and move it to a directory where you keep the images.
+   ```bash
+   ./template.sh import_from_podman
+   # Move the images
+   # Make a directory where you store your images
+   # Add it to your bashrc as it'll be used often
+   CONTAINER_IMAGES=$SCRATCH/container-images
+   mkdir -p $CONTAINER_IMAGES
+   mv *.sqsh $CONTAINER_IMAGES
+   ```
+5. You can run quick checks on the image to check it that it has what you expect it to have.
+   When the example scripts are described later, run the `test-interactive.sh` example script before the other scripts.
 
 ## First steps
 
-### Getting your image on the SCITAS clusters
+### Prerequisites
 
-You only need to pull the generic image as SCITAS mounts namespaces to the containers.
+**CSCS and Slurm**:
 
-All the commands should be run on the SCITAS clusters.
-```bash
-ssh izar
-# or
-ssh kuma
-```
-Create an enroot config file in your home directory on the cluster if you don't have one yet.
-It will store your credentials for the registries.
-```bash
-export ENROOT_CONFIG_PATH=$HOME/.config/enroot/.credentials
-mkdir -p $(dirname $ENROOT_CONFIG_PATH)
-touch $ENROOT_CONFIG_PATH
-# Make sur the file is only readable by you
-chmod 600 $ENROOT_CONFIG_PATH
-```
-Write the following to the file.
-```bash
-# E.g. vim $ENROOT_CONFIG_PATH
-machine ic-registry.epfl.ch login <username> password <password>
-machine registry.rcp.epfl.ch login <username> password <password>
-```
+1. You should have access to the Todi cluster.
+2. You should have some knowledge of Slurm.
 
-Optionally if you want to use Apptainer
-```bash
-apptainer registry login --username <username> docker://registry.rcp.epfl.ch
-apptainer registry login --username <username> docker://ic-registry.epfl.ch
-```
+There is a great documentation provided by the SwissAI initiative [here](https://github.com/swiss-ai/documentation).
 
-Then you can pull your image with
+### Getting your image
+
+#### From a file
+
+You will find the image to use for this project in _TODO ADD IMAGE_PATH_.
+Copy it or create a symlink to it where you keep your images. E.g.,
 ```bash
-# On Izar
-SCRATCH=/scratch/izar/$USER
-# On Kuma
-SCRATCH=/scratch/$USER
 # Make a directory where you store your images
 # Add it to your bashrc as it'll be used often
 CONTAINER_IMAGES=$SCRATCH/container-images
 mkdir -p $CONTAINER_IMAGES
-
-# Pull the generic image (with tagged with root)
-# E.g.,
-cd $CONTAINER_IMAGES
-# Don't do this on a login node.
-# Replace with your image name
-
-srun --exclusive --partition h100 --time=4:00:00 \
-enroot import docker://registry.rcp.epfl.ch#claire/moalla/template-project-name:amd64-cuda-root-latest
-# This will create a squashfs file that you'll use to start your jobs.
+ln -s _TODO ADD IMAGE_PATH_ $CONTAINER_IMAGES/ADAPTED_NAME.sqsh
 ```
 
-Optionally if you want to use Apptainer
-```bash
-# Takes ages to convert to sif.
-# Don't do this on a login node.
-salloc --exclusive --partition h100 --time=4:00:00 \
-apptainer pull docker://registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-root-latest
-```
+#### From a registry (TODO)
 
 ### Clone your repository in your scratch directory
 
@@ -102,7 +135,7 @@ SCRATCH=/scratch/kuma/$USER
 # Or on Izar
 # SCRATCH=/scratch/izar/$USER
 cd $SCRATCH
-# Clone the repo twice with name dev and run.
+# Clone the repo twice with name dev and run (if you already have one, mv it to a different name)
 mkdir template-project-name
 git clone <HTTPS/SSH> template-project-name/dev
 git clone <HTTPS/SSH> template-project-name/run
@@ -119,14 +152,13 @@ cd template-project-name/dev/installation/docker-amd64-cuda
 
 ### Note about the examples
 
-The example files were made with username `moalla` and lab-name `claire`.
+The example files were made with username `smoalla` and lab-name `claire`.
 Adapt them accordingly to your username and lab name.
 Run
 ```bash
-# From the cluster this time.
 ./template.sh env
 # Edit the .env file with your lab name (you can ignore the rest).
-./template.sh get_scitas_scripts
+./template.sh get_cscs_scripts
 ```
 to get a copy of the examples in this guide with your username, lab name, etc.
 They will be in `./EPFL-SCITAS-setup/submit-scripts`.
@@ -135,15 +167,12 @@ They will be in `./EPFL-SCITAS-setup/submit-scripts`.
 
 Adapt the `submit-scripts/minimal.sh` with the name of your image and your cluster storage setup.
 
-The submission script gives two examples of how to run containers on SCITAS.
-Either with [`enroot`](https://github.com/NVIDIA/enroo)
+The submission script gives an example of how to run containers on Todi with [`enroot`](https://github.com/NVIDIA/enroo)
 and the [`pyxis`](https://github.com/NVIDIA/pyxis) plugin directly integrated in `srun`,
-or with `apptainer` inside tasks as a separate command.
-We recommend using Pyxis+enroot as it allows more remote development tools to be used.
 
 Run the script to see how the template works.
 ```bash
-cd installation/docker-amd64-cuda/EPFL-SCITAS-setup/submit-scripts
+cd installation/docker-amd64-cuda//CSCS-Todi-setup/submit-scripts
 bash minimal.sh
 ```
 
@@ -231,28 +260,29 @@ GitHub provides a guide for that
 Use the following configuration in your local `~/.ssh/config`
 
 ```bash
-Host kuma
-    HostName kuma.hpc.epfl.ch
-    User moalla
+Host todi
+    HostName todi.cscs.ch
+    User smoalla
+    ProxyJump ela
     ForwardAgent yes
 
 # EDIT THIS HOSTNAME WITH EVERY NEW JOB
-Host kuma-job
-    HostName kh021
-    User moalla
-    ProxyJump kuma
+Host todi-job
+    HostName nid005105
+    User smoalla
+    ProxyJump todi
     StrictHostKeyChecking no
-    UserKnownHostsFile=/dev/null
-    ForwardAgent yes
+	  UserKnownHostsFile=/dev/null
+	  ForwardAgent yes
 
-Host kuma-container
+Host todi-container
     HostName localhost
-    ProxyJump kuma-job
+    ProxyJump todi-job
     Port 2223
-    User moalla
-    StrictHostKeyChecking no
-    UserKnownHostsFile=/dev/null
-    ForwardAgent yes
+    User smoalla
+	  StrictHostKeyChecking no
+	  UserKnownHostsFile=/dev/null
+	  ForwardAgent yes
 ```
 
 The `StrictHostKeyChecking no` and `UserKnownHostsFile=/dev/null` allow bypass checking the identity
@@ -334,7 +364,7 @@ ls ${JETBRAINS_SERVER_AT}/dist
 The name of this directory will be what you should set the `PYCHARM_IDE_AT` variable to in the next submissions
 so that it starts automatically.
 ```bash
-PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
+PYCHARM_IDE_AT=744eea3d4045b_pycharm-professional-2024.1.6-aarch64
 ```
 
 **When you have the IDE in the storage**

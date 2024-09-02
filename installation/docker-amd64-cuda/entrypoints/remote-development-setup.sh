@@ -33,7 +33,7 @@ if [ -n "${SSH_SERVER}" ]; then
   # Configuration for ssh server.
   # This could be done without sudo if needed.
   # check if user is not root
- echo "[TEMPLATE INFO] Configuring ssh server."
+ echo "[TEMPLATE INFO] Configuring ssh server on port ${SSH_CONTAINER_PORT:-2223}."
   if [ "${EUID}" -eq 0 ] || [ -n "${NO_SUDO_NEEDED}" ]; then
     mkdir /var/run/sshd
     sed -i 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
@@ -47,7 +47,7 @@ if [ -n "${SSH_SERVER}" ]; then
     echo "${PASSWD}" | sudo -S sed -i "s/#Port 22/Port ${SSH_CONTAINER_PORT:-2223}/" /etc/ssh/sshd_config
   fi
 
-  echo "[TEMPLATE INFO] Starting ssh server."
+  echo "[TEMPLATE INFO] Starting ssh server on port ${SSH_CONTAINER_PORT:-2223}."
   # This runs in background, so the script will continue.
   if [ "${EUID}" -eq 0 ] || [ -n "${NO_SUDO_NEEDED}" ]; then
     /usr/sbin/sshd

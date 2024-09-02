@@ -7,6 +7,10 @@ ENV_TEXT=$(
 # All user-specific configurations are here.
 
 ## For building:
+# Which docker and compose binary to use
+# docker and docker compose in general or podman and podman-compose for CSCS todi
+DOCKER=docker
+COMPOSE="docker compose"
 # Use the same USRID and GRPID as on the storage you will be mounting.
 # USR is used in the image name and must be lowercase.
 # It's fine if your username is not lowercase, jut make it lowercase.
@@ -73,12 +77,8 @@ check() {
 edit_from_base() {
   FROM_BASE="${1}"
   if [ "${FROM_BASE}" == "from-python" ] || [ "${FROM_BASE}" == "from-scratch" ]; then
-    rm -rf dependencies
-    rm -f Dockerfile
-    rm -f compose-base.yaml
-    cp -r "${FROM_BASE}-template" dependencies
-    mv dependencies/Dockerfile .
-    mv dependencies/compose-base.yaml .
+    rm -f compose-base.yaml Dockerfile requirements.txt environment.yml update-env-file.sh
+    cp -r "${FROM_BASE}-template"/* .
   else
     echo "[TEMPLATE ERROR] Please specify a valid from-base: from-python or from-scratch."
     exit 1
@@ -96,8 +96,8 @@ pull_generic() {
     exit 1
   fi
 
-  docker pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
-  docker tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  $DOCKER pull "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  $DOCKER tag "${PULL_IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
 }
 
 build_generic() {
@@ -124,11 +124,11 @@ build_generic() {
 
   # Build the generic runtime and dev images and tag them with the current git commit.
   check
-  docker compose -p "${COMPOSE_PROJECT}" build image-root
+  $COMPOSE -p "${COMPOSE_PROJECT}" build image-root
 
   # Tag the images with the current git commit.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT}"
+  $DOCKER tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT}"
 }
 
 build_user() {
@@ -155,19 +155,29 @@ build_user() {
 
   # Build the user runtime and dev images and tag them with the current git commit.
   check
-  docker compose -p "${COMPOSE_PROJECT}" build image-user
+  $COMPOSE -p "${COMPOSE_PROJECT}" build image-user
 
   # If the generic image has the current git tag, then the user image has been build from that tag.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  if [[ $(docker images --format '{{.Repository}}:${IMAGE_PLATFORM}-{{.Tag}}' |\
+  if [[ $($DOCKER images --format '{{.Repository}}:${IMAGE_PLATFORM}-{{.Tag}}' |\
    grep -c "${GIT_COMMIT}") -ge 1 ]]; then
-    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-${GIT_COMMIT}"
+    $DOCKER tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-latest" "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR}-${GIT_COMMIT}"
   fi
 }
 
 build() {
   build_generic "$@"
   build_user "$@"
+}
+
+import_from_podman() {
+  check
+  enroot import -x mount "podman://${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  GIT_COMMIT=$(git rev-parse --short HEAD)
+  if [[ $($DOCKER images --format '{{.Repository}}:{{.Tag}}' |\
+    grep "root-${GIT_COMMIT}" -c) -ge 1 ]]; then
+    enroot import -x mount "podman://${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT}"
+  fi
 }
 
 push_usr_or_root() {
@@ -187,17 +197,17 @@ push_usr_or_root() {
     PUSH_IMAGE_NAME="registry.rcp.epfl.ch/${IMAGE_NAME}"
   fi
 
-  docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest" \
+  $DOCKER tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest" \
   "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest"
-  docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest"
+  $DOCKER push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-latest"
 
   # If the image has a git tag push it as well.
   GIT_COMMIT=$(git rev-parse --short HEAD)
-  if [[ $(docker images --format '{{.Repository}}:{{.Tag}}' |\
+  if [[ $($DOCKER images --format '{{.Repository}}:{{.Tag}}' |\
   grep "${USR_OR_ROOT}-${GIT_COMMIT}" -c) -ge 1 ]]; then
-    docker tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}" \
+    $DOCKER tag "${IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}" \
       "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}"
-    docker push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}"
+    $DOCKER push "${PUSH_IMAGE_NAME}:${IMAGE_PLATFORM}-${USR_OR_ROOT}-${GIT_COMMIT}"
   fi
 }
 
@@ -222,7 +232,7 @@ list_env() {
   echo "[TEMPLATE INFO] Listing the dependencies in an empty container (nothing mounted)."
   echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
   echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
-  docker run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" zsh -c \
+  $DOCKER run --rm "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest" zsh -c \
   "echo '[TEMPLATE INFO] Running mamba list';\
   if command -v mamba >/dev/null 2>&1; then mamba list -n ${PROJECT_NAME}; \
   else echo '[TEMPLATE INFO] conda not in the environment, skipping...'; fi;
@@ -235,7 +245,7 @@ empty_interactive() {
   echo "[TEMPLATE INFO] Starting an interactive shell in an empty container (nothing mounted)."
   echo "[TEMPLATE INFO] It's normal to see the warnings about missing PROJECT_ROOT_AT or acceleration options."
   echo "[TEMPLATE INFO] The idea is to see if all your dependencies have been installed."
-  docker run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  $DOCKER run --rm -it "${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
 }
 
 run() {
@@ -259,7 +269,7 @@ run() {
   done
 
   # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
+  $COMPOSE -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "run-local-${ACCELERATION}" "$@"
 }
 
 dev() {
@@ -289,7 +299,7 @@ dev() {
   done
 
   # Execute the docker command using array expansion for environment variables
-  docker compose -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
+  $COMPOSE -p "${COMPOSE_PROJECT}" run --rm "${detach[@]}" "${env_vars[@]}" "dev-local-${ACCELERATION}" "$@"
 }
 
 get_runai_scripts() {
@@ -297,11 +307,7 @@ get_runai_scripts() {
   # ./template.sh get_runai_scripts
   check
   cp -r "./EPFL-runai-setup/template-submit-examples/" "./EPFL-runai-setup/submit-scripts"
-  for file in \
-    "./EPFL-runai-setup/submit-scripts/first-steps.sh" \
-    "./EPFL-runai-setup/submit-scripts/minimal.sh" \
-    "./EPFL-runai-setup/submit-scripts/remote-development.sh" \
-    "./EPFL-runai-setup/submit-scripts/unattended.sh" ; do
+  for file in $(find "./EPFL-runai-setup/submit-scripts" -type f); do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
@@ -312,12 +318,19 @@ get_scitas_scripts() {
   # ./template.sh get_scitas_scripts
   check
   cp -r "./EPFL-SCITAS-setup/template-submit-examples/" "./EPFL-SCITAS-setup/submit-scripts"
-  for file in \
-    "./EPFL-SCITAS-setup/submit-scripts/minimal.sh" \
-    "./EPFL-SCITAS-setup/submit-scripts/remote-development.sh" \
-    "./EPFL-SCITAS-setup/submit-scripts/unattended-distributed.sh" \
-    "./EPFL-SCITAS-setup/submit-scripts/unattended.sh" ; do
+    for file in $(find "./EPFL-SCITAS-setup/submit-scripts" -type f); do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
+    sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
+  done
+}
+
+get_cscs_scripts() {
+  # Rename the scitas examples.
+  # ./template.sh get_scitas_scripts
+  check
+  cp -r "./CSCS-Todi-setup/template-submit-examples/" "./CSCS-Todi-setup/submit-scripts"
+  for file in $(find "./CSCS-Todi-setup/submit-scripts" -type f); do
+    sed -i.deleteme "s/smoalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
 }
@@ -331,6 +344,7 @@ usage() {
   echo "build_generic: Build the generic runtime and dev images."
   echo "build_user: Build the user runtime and dev images."
   echo "build: Build the generic and user runtime and dev images."
+  echo "import_from_podman: Import the podman image to enroot."
   echo "push_generic IMAGE_NAME: Push the generic runtime and dev images."
   echo "push_user IMAGE_NAME: Push the user runtime and dev images."
   echo "push IMAGE_NAME: Push the generic and user runtime and dev images."
@@ -339,6 +353,8 @@ usage() {
   echo "run -e VAR1=VAL1 -e VAR2=VAL2 ... COMMAND: Run a command in a new runtime container."
   echo "dev -e VAR1=VAL1 -e VAR2=VAL2 ... COMMAND: Run a command in a new development container."
   echo "get_runai_scripts: Rename the runai examples."
+  echo "get_scitas_scripts: Rename the scitas examples."
+  echo "get_cscs_scripts: Rename the cscs examples."
 }
 
 if [ $# -eq 0 ]; then

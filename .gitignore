@@ -144,3 +144,5 @@ outputs/*
 
 wandb
 slurm-*.out
+
+third-party

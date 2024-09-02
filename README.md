@@ -60,7 +60,9 @@ Remember to get back to this root one after finishing each step.
 1. Clone the repo with destination `PROJECT_NAME`.
     - If you plan to develop on your local computer, clone it there.
     - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
-    - If you plan to develop or deploy on a managed cluster (e.g., EPFL Run:ai clusters), clone on your local machine.
+    - If you plan to develop on CSCS Todi, clone it there (use an allocation with a compute node, not the login node)
+    - If you plan to develop or deploy on a managed cluster without a build engine
+      (e.g., EPFL Run:ai clusters, SCITAS clusters), clone on your local machine.
       (Docker allows cross-platform builds with emulation, but it can be slow.
       We would recommend that your local machine is of the same platform as the cluster (e.g. `amd64`, `arm64`),
       or that you have access to a remote Docker engine running on the same platform as the cluster.)

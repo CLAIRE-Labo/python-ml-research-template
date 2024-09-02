@@ -23,6 +23,7 @@ for your future users (and yourself).
    The default platform is Linux (fixed) on AMD64 CPUs `amd64` (can be changed to e.g. `arm64`)
    with support for NVIDIA GPUs.
    (reflected in the name of the directory `docker-amd64-cuda` by default).
+   (The EPFL Run:ai and the SCITAS clusters are on `amd64`, the CSCS Todi cluster is on `arm64`.)
    If this is good for you, you can skip this part.
    Otherwise, to edit it, run
    ```bash
@@ -92,6 +93,8 @@ for your future users (and yourself).
    If you change the dependency files commit so that you can track what worked and what didn't.
 6. Build the environment following the instructions to [build the environment](#obtainingbuilding-the-environment).
    (Obviously, you'll have to build the generic image not pull it.)
+   For CSCS todi, steps 6, 7, and 8 are described in `./CSCS-Todi-setup/README.md`.
+   Follow the instructions there.
 7. Follow the instructions to [run the environment](#the-environment) with your target
    deployment option.
    If everything goes well (we suggested checking that all your dependencies are there
@@ -130,7 +133,8 @@ and Docker Compose files to set build arguments in the Dockerfile and run it loc
 Most of these files are templates that should suit most use cases.
 They read project/user-specific information from the other files such as the project dependencies and user
 configuration.
-Typically, the files you will have to edit are `compose-base.yaml`, `.env`, and the `dependencies/` files,
+Typically, the files you will have to edit are `compose-base.yaml`, `.env`, and the `requirements.txt`
+or `environment.yml` files,
 
 Here's a summary of all the files in this directory.
 
@@ -143,36 +147,28 @@ docker-amd64-cuda/
 ├── compose.yaml                     # Docker Compose template. Edit if you have a custom local deployment or change the hardware acceleration.
 ├── template.sh                      # A utility script to help you interact with the template (build, deploy, etc.).
 ├── .env                             # Will contain your personal configuration. Edit to specify your personal configuration.
-├── dependencies/
-│   ├── environment.yml              # If chose the `from-scratch` option. Conda and pip dependencies.
-│   ├── requirements.txt             # If chose the `from-python` option. pip dependencies.
-│   ├── apt-build.txt                # System dependencies (from apt) for building python dependencies or other software.
-│   ├── apt-runtime.txt              # System dependencies (from apt) needed to run your code.
-│   └── update-env-file.sh           # Template file. A utility script to update the environment files.
+├── environment.yml                  # If chose the `from-scratch` option. Conda and pip dependencies.
+├── requirements.txt                 # If chose the `from-python` option. pip dependencies.
+├── apt.txt                          # Apt dependencies ("system" dependencies).
+├── update-env-file.sh               # Template file. A utility script to update the environment files.
 ├── entrypoints/
 │   ├── entrypoint.sh                # The main entrypoint that install the project and triggers other entrypoints.
 │   ├── pre-entrypoint.sh            # Runs the base entrypoint of the base image if it has one.
 │   ├── logins-setup.sh              # Manages logging into services like wandb.
 │   └── remote-development-setup.sh  # Contains utilities for setting up remote development with VSCode, PyCharm, Jupyter.
-└── EPFL-runai-setup/                # Template files to deploy on the EPFL Run:ai Kubernetes cluster.
+└── *-setup/                         # Template files to deploy on the * cluster.
     ├── ...
-    └── README.md                    # Instructions to deploy on the EPFL Run:ai Kubernetes cluster. Usesul for other managed clusters too.
+    └── README.md                    # Instructions to deploy on * cluster.
 ```
 
 ### Details on the main Dockerfile
 
 The Dockerfile specifies all the steps to build the environment in which your code will run.
-It makes efficient use of caching and multi-stage builds to speed up build time and keep final images small.
-
-Broadly, it has 3 main stages:
-
-1. A stage to download, install, and build dependencies.
-   It is used to build the Conda environment, for example, in the `from-scratch` option.
-   This stage typically requires build-time dependencies such as compilers, etc. which are not needed
-   at runtime.
-2. A stage to install runtime dependencies and copy dependencies from the previous stage.
-   Runtime dependencies are typically lighter than build-time dependencies.
-3. A stage to create the user. This is done in the `Dockerfile-user` file.
+It uses the files `apt.txt`, `requirements.txt`, and `environment.yml` to install the system and Python dependencies.
+You typically don't have to edit the Dockerfile directly, unless you need to install dependencies manually
+(not as a one time install from the dependencies files).
+The `Dockefile-user` is used to build the user layer on top of the generic image for OCI runtimes with limitations
+on user creation at container creation.
 
 ### Details on the Docker Compose files
 
@@ -222,6 +218,12 @@ We provide the following guides for obtaining/building and running the environme
   The guide also provides instructions to do remote development on the SCITAS cluster
   with VSCode, PyCharm, and Jupyter Lab.
   Other Slurm + enroot/Apptainer/Singularity cluster users can get inspiration from it too.
+- To run on the CSCS Todi cluster, follow the instructions in `./CSCS-Todi-setup/README.md`.
+
+  The guide also provides instructions to do remote development on the Todi cluster
+  with VSCode, PyCharm, and Jupyter Lab.
+  Other Slurm + enroot cluster users can get inspiration from it too.
+
 - We also provide an image with the dependencies needed to run the environment
   that you can use with your favorite OCI-compatible container runtime.
   Follow the instructions
@@ -290,8 +292,8 @@ cd installation/docker-amd64-cuda
       ```bash
       # Pull the generic image if available.
       ./template.sh pull_generic TODO ADD PULL_IMAGE_NAME (private or public).
-      ````
-    - Otherwise, build them.
+      ```
+    - Otherwise, build it.
       ```bash
       ./template.sh build_generic
       ```
@@ -315,8 +317,38 @@ cd installation/docker-amd64-cuda
    This will be the image that you run and deploy to match the permissions on your mounted storage in container
    setups that maintain the user namespace (e.g., rootful Docker, the EPFL runai cluster).
 
-For the local deployment option with Docker Compose, follow the instructions below,
-otherwise get back to the instructions of deployment option you're following.
+For the local deployment option with Docker Compose, follow the instructions below.
+
+For the EPFL Run:ai and SCITAS clusters you need to push the images to a registry, described below,
+then get back to the instructions of the deployment option you're following.
+
+### Push your image to the RCP or IC Docker registry
+
+Push the generic image if you built it (`LAB_NAME/USR/PROJECT_NAME:PLATFORM-root-latest`).
+
+```bash
+./template.sh push_generic IC
+# Or/and (both clusters can read from both registries)
+./template.sh push_generic RCP
+```
+
+Pro-tip: it will also push them with the git commit hash as a tag if the build is at the latest commit.
+You can rebuild the images with `./template.sh build` to tag them with the latest commit hash.
+
+> [!IMPORTANT]
+> **TEMPLATE TODO:**
+> Give the generic image name you just pushed
+> (e.g., `ic-registry.epfl.ch/LAB_NAME/USR/PROJECT_NAME`)
+> to your teammates so that they can directly build their user-configured images on top of it.
+> Replace the _TODO ADD PULL_IMAGE_NAME_ above with this name.
+
+Push the user-configured image for the Run:ai cluster (`LAB_NAME/USR/PROJECT_NAME:PLATFORM-USR-latest`)
+
+```bash
+./template.sh push_user IC
+# Or/and (both clusters can read from both registries)
+./template.sh push_user RCP
+```
 
 ## Running locally with Docker Compose
 
@@ -606,17 +638,15 @@ We describe how to do so in the Freeze the Environment section.
 
 ### Manual editing (before/while building)
 
-- To add `apt` dependencies, edit the `dependencies/apt-*.txt` files.
-  `apt` dependencies are separated into two files to help with multi-stage builds and keep final images small.
-    - In `apt-build.txt` put the dependencies needed to build the environment, e.g., compilers, build tools, etc.
-      We provide a set of minimal dependencies as an example.
-    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g., image processing libraries,
-      and the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
+- To add `apt` dependencies, edit the `apt.txt` file.
+  Put the dependencies needed to build the environment, e.g., compilers, build tools, etc.
+  and dependencies to run the environment, e.g., image processing libraries,
+  and the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
 
-  If you're not familiar with which dependencies are needed for each stage, you can start with the minimal set we
+  If you're not familiar with which dependencies are needed, you can start with the minimal set we
   give, and when you encounter errors during the image build, add the missing dependencies to the stage where the error
   occurred.
-- To edit `pip` dependencies, edit the `dependencies/requirements.txt` file.
+- To edit `pip` dependencies, edit the `requirements.txt` file.
 - To edit the more complex dependencies, edit the `Dockerfile`.
 
 When manually editing the dependency files,
@@ -626,7 +656,8 @@ You should just specify the major versions of specific dependencies you need.
 
 ### Interactively (while developing)
 
-* To add `apt`  dependencies run `sudo apt install <package>`
+* To add `apt`  dependencies run `sudo apt install <package>` (in a rootful container),
+  and `apt install <package>` (in a container with a mounted namespace where you are the new root user).
 * To add `pip` dependencies run `pip install <package>`
 
 ### Freeze the environment
@@ -637,7 +668,7 @@ This includes changes during a build and changes made interactively.
 This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
 
 To do so, run the following from a login shell in the container.
-The script overwrites the `dependencies/requirements.txt` file with the current environment specification,
+The script overwrites the `requirements.txt` file with the current environment specification,
 so it's a good idea to commit the changes to the environment file before/after running it.
 
 The script isn't just a `pip freeze` and the file it generates isn't made to recreate the environment from scratch,
@@ -659,7 +690,7 @@ update-env-file
 
 The script isn't perfect, and there are some caveats (e.g., packages installed from GitHub with pip),
 so have a look at the output file to make sure it does what you want.
-The `dependencies/update-env-file.sh` gives some hints for what to do,
+The `update-env-file.sh` gives some hints for what to do,
 and in any case you can always patch the file manually.
 
 For dependencies that require a custom installation or build, edit the `Dockerfile`.
@@ -703,18 +734,16 @@ We describe how to do so in the Freeze the Environment section.
 
 ### Manual editing (before/while building)
 
-- To edit the `apt` dependencies, edit the `dependencies/apt-*.txt` files.
-  `apt` dependencies are separated into two files to help with multi-stage builds and keep final images small.
-    - In `apt-build.txt` put the dependencies needed to build the environment, e.g., compilers, build tools, etc.
-      We provide a set of minimal dependencies as an example.
-    - In `apt-runtime.txt` put the dependencies needed to run the environment, e.g., image processing libraries,
-      and the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
+- To add `apt` dependencies, edit the `apt.txt` file.
+  Put the dependencies needed to build the environment, e.g., compilers, build tools, etc.
+  and dependencies to run the environment, e.g., image processing libraries,
+  and the utilities that will help you develop in the container, e.g. `htop`, `vim`, etc.
 
-  If you're not familiar with which dependencies are needed for each stage, you can start with the minimal set we
+  If you're not familiar with which dependencies are needed, you can start with the minimal set we
   give.
   When you encounter errors during the image build, add the missing dependencies to the stage where the error
   occurred.
-- To edit the `conda` and `pip` dependencies, edit the `dependencies/environment.yml` file.
+- To edit the `conda` and `pip` dependencies, edit the `environment.yml` file.
 - To edit the more complex dependencies, edit the `Dockerfile`.
 
 When manually editing the dependency files,
@@ -741,7 +770,7 @@ This includes changes during a build and changes made interactively.
 This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
 
 To do so, run the following from a login shell in the container.
-The script overwrites the `dependencies/environment.yml` file with the current environment specification,
+The script overwrites the `environment.yml` file with the current environment specification,
 so it's a good idea to commit the changes to the environment file before/after running it.
 
 The script isn't just a `mamba env export`
@@ -765,7 +794,7 @@ update-env-file
 
 The script isn't perfect, and there are some caveats (e.g., packages installed from GitHub with pip),
 so have a look at the output file to make sure it does what you want.
-The `dependencies/update-env-file.sh` gives some hints for what to do,
+The `update-env-file.sh` gives some hints for what to do,
 and in any case you can always patch the file manually.
 
 For dependencies that require a custom installation or build, edit the `Dockerfile`.

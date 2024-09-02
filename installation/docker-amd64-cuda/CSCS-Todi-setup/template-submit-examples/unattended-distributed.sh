@@ -2,7 +2,6 @@
 
 #SBATCH -J template-untattended-distributed
 #SBATCH -t 0:30:00
-#SBATCH --partition h100
 #SBATCH --nodes 2
 #SBATCH --ntasks-per-node 3
 
@@ -10,10 +9,6 @@
 # It has to run only once per node and the other tasks in the nodes have to wait for it to finish.
 # So you can either limit your jobs to 1 task per node or use a sleep command to wait for the entrypoint to finish.
 
-# Only for Kuma temporarily
-
-# If not done already in your bashrc (depends on the cluster so better write that logic there.)
-# export SCRATCH=/scratch/moalla
 
 # Variables used by the entrypoint script
 # Change this to the path of your project (can be the /dev or /run copy)
@@ -22,7 +17,8 @@ export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
 
 srun \
-  --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
+  --container-image=$CONTAINER_IMAGES/claire+smoalla+template-project-name+amd64-cuda-root-latest.sqsh \
+  --environment="${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/CSCS-Todi-setup/submit-scripts/edf.toml" \
   --container-mounts=\
 $SCRATCH,\
 $WANDB_API_KEY_FILE_AT \
