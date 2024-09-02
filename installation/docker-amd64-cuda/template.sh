@@ -172,11 +172,12 @@ build() {
 
 import_from_podman() {
   check
-  enroot import -x mount "podman://${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest"
+  # Import returns a non-zero exit code so we need to ignore it.
+  enroot import -x mount podman://${IMAGE_NAME}:${IMAGE_PLATFORM}-root-latest || true
   GIT_COMMIT=$(git rev-parse --short HEAD)
   if [[ $($DOCKER images --format '{{.Repository}}:{{.Tag}}' |\
     grep "root-${GIT_COMMIT}" -c) -ge 1 ]]; then
-    enroot import -x mount "podman://${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT}"
+    enroot import -x mount podman://${IMAGE_NAME}:${IMAGE_PLATFORM}-root-${GIT_COMMIT} || true
   fi
 }
 
