@@ -43,10 +43,7 @@ pip install podman-compose
 
 All commands should be run from the `installation/docker-amd64-cuda/` directory.
 
-You should be on a compute node. If not already, get one with e.g.,
-```bash
-salloc -J setup -t 8:00:00
-```
+You should be on a compute node. If not already, get one.
 
 ```bash
 cd installation/docker-amd64-cuda
