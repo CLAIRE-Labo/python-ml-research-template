@@ -19,7 +19,7 @@ export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
 export SSH_SERVER=1
 export NO_SUDO_NEEDED=1
 export JETBRAINS_SERVER_AT=$SCRATCH/jetbrains-server
-#export JETBRAINS_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
+#export PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 # or
 # export VSCODE_SERVER_AT=$SCRATCH/vscode-server
 
