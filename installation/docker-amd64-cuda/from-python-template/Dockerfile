@@ -55,12 +55,13 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
 # Podman: Comment the above and use this instead with podman as it doesn't support sharing mount modes.
 #RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
 #    pip install -r ${DEPENDENCIES_DIR}/requirements.txt
-RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install.txt
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-freeze-after-pip-install.txt
+RUN pip list --format freeze > ${DEPENDENCIES_DIR}/requirements-list-after-pip-install.txt
 
-# For reproducible requirements use the following
-COPY requirements-freeze.txt ${DEPENDENCIES_DIR}/requirements-freeze.txt
-RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
-    pip install --no-deps -r ${DEPENDENCIES_DIR}/requirements-freeze.txt
+# For reproducible requirements use the following after getting the requirements-freeze.txt file from the first build.
+#COPY requirements-freeze.txt ${DEPENDENCIES_DIR}/requirements-freeze.txt
+#RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
+#    pip install --no-deps -r ${DEPENDENCIES_DIR}/requirements-freeze.txt
 # For podman
 #RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
 #    pip install --no-deps -r ${DEPENDENCIES_DIR}/requirements-freeze.txt
