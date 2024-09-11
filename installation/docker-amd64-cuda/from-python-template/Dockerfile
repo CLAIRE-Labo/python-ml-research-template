@@ -3,23 +3,8 @@
 # BASE_IMAGE is the image that will be extended by this Dockerfile.
 # It is assumed to a well configured Python installation.
 # The reminaing packages will be installed with pip.
-
 ARG BASE_IMAGE
 ARG GIT_IMAGE
-
-########################################################################
-# Download Z-Shell enhancements.
-
-FROM ${GIT_IMAGE} AS get-pure
-
-ARG PURE_URL=https://github.com/sindresorhus/pure.git
-ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions.git
-ARG ZSHS_URL=https://github.com/zsh-users/zsh-syntax-highlighting.git
-
-RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
-RUN git clone --depth 1 ${ZSHA_URL} /opt/zsh/zsh-autosuggestions
-RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
-
 
 ########################################################################
 # Install apt packages.
@@ -48,7 +33,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
     rm -rf /var/lib/apt/lists/*
 
 # Podman: Comment the above and use this instead with podman as it doesn't support sharing mount modes.
-#RUN apt update && \
+#RUN --mount=type=cache,target=/var/cache/apt \
+#    --mount=type=cache,target=/var/lib/apt \
+#    apt update && \
 #    sed -e 's/#.*//g' -e 's/\r//g' ${DEPENDENCIES_DIR}/apt.txt | \
 #    xargs -t apt-get install -y --no-install-recommends && \
 #    rm -rf /var/lib/apt/lists/*
@@ -60,13 +47,23 @@ FROM runtime-apt-pkgs AS runtime-deps
 
 # Install pip packages.
 ENV PIP_CACHE_DIR=/root/.cache/pip
-RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-before-pip-install.txt
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-freeze-before-pip-install.txt
+RUN pip list --format freeze > ${DEPENDENCIES_DIR}/requirements-list-before-pip-install.txt
 COPY requirements.txt ${DEPENDENCIES_DIR}/requirements.txt
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
     pip install -r ${DEPENDENCIES_DIR}/requirements.txt
 # Podman: Comment the above and use this instead with podman as it doesn't support sharing mount modes.
-#RUN pip install -r ${DEPENDENCIES_DIR}/requirements.txt
+#RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
+#    pip install -r ${DEPENDENCIES_DIR}/requirements.txt
 RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-after-pip-install.txt
+
+# For reproducible requirements use the following
+COPY requirements-freeze.txt ${DEPENDENCIES_DIR}/requirements-freeze.txt
+RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
+    pip install --no-deps -r ${DEPENDENCIES_DIR}/requirements-freeze.txt
+# For podman
+#RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
+#    pip install --no-deps -r ${DEPENDENCIES_DIR}/requirements-freeze.txt
 
 # Optional optimizations.
 # Hack to enable Intel MKL optimizations on AMD CPUs.
@@ -84,6 +81,20 @@ ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
 ########################################################################
 # Here you can install other software
 
+
+########################################################################
+# Download Z-Shell enhancements.
+
+FROM ${GIT_IMAGE} AS get-pure
+
+ARG PURE_URL=https://github.com/sindresorhus/pure.git
+ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions.git
+ARG ZSHS_URL=https://github.com/zsh-users/zsh-syntax-highlighting.git
+
+RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
+RUN git clone --depth 1 ${ZSHA_URL} /opt/zsh/zsh-autosuggestions
+RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
+
 ########################################################################
 # This stage is the final user-agnostic (generic) stage.
 # This layer can be distributed so that subsequent users
@@ -97,7 +108,8 @@ ENV PACKAGE_NAME=${PACKAGE_NAME}
 ENV HYDRA_FULL_ERROR=1
 
 # A final record of the dependencies from pip freeze.
-RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-raw-final.txt
+RUN pip freeze > ${DEPENDENCIES_DIR}/requirements-freeze-final.txt
+RUN pip list --format freeze > ${DEPENDENCIES_DIR}/requirements-list-final.txt
 
 # Shell configuration.
 ENV ZSH_ENHANCE_DIR=/etc/zsh/enhance

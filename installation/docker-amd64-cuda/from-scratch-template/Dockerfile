@@ -3,23 +3,9 @@
 # CURL_IMAGE is used to download from the internet in independent layers.
 # GIT_IMAGE is used to clone git repositories in independent layers.
 # BASE_IMAGE is the base image for the project, likely the Ubuntu image.
-
 ARG CURL_IMAGE
 ARG GIT_IMAGE
 ARG BASE_IMAGE
-
-########################################################################
-# Download Z-Shell enhancements.
-
-FROM ${GIT_IMAGE} AS get-pure
-
-ARG PURE_URL=https://github.com/sindresorhus/pure.git
-ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions.git
-ARG ZSHS_URL=https://github.com/zsh-users/zsh-syntax-highlighting.git
-
-RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
-RUN git clone --depth 1 ${ZSHA_URL} /opt/zsh/zsh-autosuggestions
-RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
 
 ########################################################################
 # Download conda.
@@ -86,7 +72,7 @@ RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=private \
     mamba env create --file ${DEPENDENCIES_DIR}/environment.yml
 
 # Record the dependency file after conda install which may be useful.
-RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-after-env-create.yml
+RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-mamba-after-env-create.yml
 
 # Cleaning must be in a separate `RUN` command to preserve the Docker cache.
 RUN mamba clean -fya && \
@@ -118,6 +104,19 @@ ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
 # to have to package installed in the same location as the conda env of the project.
 
 ########################################################################
+# Download Z-Shell enhancements.
+
+FROM ${GIT_IMAGE} AS get-pure
+
+ARG PURE_URL=https://github.com/sindresorhus/pure.git
+ARG ZSHA_URL=https://github.com/zsh-users/zsh-autosuggestions.git
+ARG ZSHS_URL=https://github.com/zsh-users/zsh-syntax-highlighting.git
+
+RUN git clone --depth 1 ${PURE_URL} /opt/zsh/pure
+RUN git clone --depth 1 ${ZSHA_URL} /opt/zsh/zsh-autosuggestions
+RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
+
+########################################################################
 # This stage is the final user-agnostic (generic) stage.
 # This layer can be distributed so that subsequent users
 
@@ -130,7 +129,7 @@ ENV PACKAGE_NAME=${PACKAGE_NAME}
 ENV HYDRA_FULL_ERROR=1
 
 # A final record of the depedenencies from mamba (to record the any extra custom installs)
-RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-raw-final.yml
+RUN mamba env export -n ${PROJECT_NAME} > ${DEPENDENCIES_DIR}/environment-mamba-final.yml
 
 # Initialize conda for login and interactive shells, for a better development experience.
 # Although the environment is already in the PATH.
