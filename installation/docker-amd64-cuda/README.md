@@ -625,12 +625,13 @@ should have their instructions performed in the `Dockerfile` directly.
 
 There are two ways to add dependencies to the environment:
 
-1. **Manually edit the dependency files.**
+1. **Manually edit the loose dependency files.**
    This is used the first time you set up the environment.
    It will also be useful if you run into conflicts and have to restart from scratch.
-2. **Add/upgrade dependencies interactively** while running a shell in the container to experiment with which
+2. **Add/update dependencies interactively** while running a shell in the container to experiment with which
    dependency is needed.
    This is probably what you'll be doing after building the image for the first time.
+   Then you can add these to the
 
 In both cases, after any change, a snapshot of the full environment
 specification should be written to the dependency files.
