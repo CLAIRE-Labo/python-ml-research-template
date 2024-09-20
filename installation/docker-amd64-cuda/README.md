@@ -634,7 +634,8 @@ There are two ways to add dependencies to the environment:
    Then you can add these to the
 
 In both cases, after any change, a snapshot of the full environment
-specification should be written to the dependency files.
+specification should be captured in a copy of the dependency file (`requirements-freeze.txt`) that you
+can later inspect and reuse to build the image without changing the versions of all the dependencies.
 We describe how to do so in the Freeze the Environment section.
 
 ### Manual editing (before/while building)
@@ -652,7 +653,6 @@ We describe how to do so in the Freeze the Environment section.
 
 When manually editing the dependency files,
 you do not need to specify the specific version of all the dependencies,
-these will be written to the file when you freeze the environment.
 You should just specify the major versions of specific dependencies you need.
 
 ### Interactively (while developing)
@@ -663,14 +663,14 @@ You should just specify the major versions of specific dependencies you need.
 
 ### Freeze the environment
 
-After any change to the dependencies, a snapshot of the full environment specification should be written to the
-dependency files.
-This includes changes during a build and changes made interactively.
-This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
+After any change to the dependencies, it's good to record snapshot of the full environment specification in a
+frozen requirements file (`requirements-freeze.txt`).
+This is
+to ensure that the environment can be reproduced in other builds
+and that the dependencies are tracked at any point in time.
 
 To do so, run the following from a login shell in the container.
-The script overwrites the `requirements.txt` file with the current environment specification,
-so it's a good idea to commit the changes to the environment file before/after running it.
+The script writes a `requirements-freeze.txt` file with the current environment specification.
 
 The script isn't just a `pip freeze` and the file it generates isn't made to recreate the environment from scratch,
 it is tightly coupled to the Dockerfile and the base image it uses.
@@ -678,7 +678,7 @@ In this sense, packages that are already installed in the base image or installe
 may not be listed in the file or may be listed without a version
 (this is because that may have been installed from wheels not present anymore in the final image).
 
-The purpose of the generated `requirements.txt` is to be used always at the same stage of the Dockerfile
+The purpose of the generated `requirements-freeze.txt` is to be used always at the same stage of the Dockerfile
 to install the same set of missing dependencies between its previous stage and its next stage.
 (so not reinstall the dependencies already installed in the base image, for example).
 In any case,
@@ -695,9 +695,8 @@ The `update-env-file.sh` gives some hints for what to do,
 and in any case you can always patch the file manually.
 
 For dependencies that require a custom installation or build, edit the `Dockerfile`.
-If one of these complex dependencies shows in the `requirements.txt` after the freeze,
+If one of these complex dependencies shows in the `requirements-freeze.txt` after the freeze,
 you have to remove it, so that pip does not pick it up, and it is installed independently in the `Dockerfile`.
-(Something similar is done in the `update-env-file`.)
 
 For `apt` dependencies add them manually to the `apt-*.txt` files.
 
@@ -749,7 +748,6 @@ We describe how to do so in the Freeze the Environment section.
 
 When manually editing the dependency files,
 you do not need to specify the specific version of all the dependencies,
-these will be written to the file when you freeze the environment.
 You should just specify the major versions of specific dependencies you need.
 
 ### Interactively (while developing)
@@ -765,14 +763,17 @@ the environment by manually adding the dependencies before the build as describe
 
 ### Freeze the environment
 
-After any change to the dependencies, a snapshot of the full environment specification should be written to the
-dependency files.
-This includes changes during a build and changes made interactively.
-This is to ensure that the environment is reproducible and that the dependencies are tracked at any point in time.
+After any change to the dependencies, it's good to record snapshot of the full environment specification in a
+frozen requirements file (`environment-freeze.yml`).
+This is
+to ensure that the environment can be reproduced in other builds
+and that the dependencies are tracked at any point in time.
 
 To do so, run the following from a login shell in the container.
-The script overwrites the `environment.yml` file with the current environment specification,
-so it's a good idea to commit the changes to the environment file before/after running it.
+
+```bash
+update-env-file
+```
 
 The script isn't just a `mamba env export`
 and the file it generates isn't made to recreate the complete environment from scratch,
@@ -780,9 +781,7 @@ it is tightly coupled to the Dockerfile.
 In this sense, packages it installs may depend on system dependencies installed by the Dockerfile
 and dependencies installed at later stages will not be listed.
 
-**Note:** A strict `mamba env export` is recorded
-
-The purpose of the generated `environment.yml` is to be used always at the same stage of the Dockerfile
+The purpose of the generated `environment-freeze.yml` is to be used always at the same stage of the Dockerfile
 to install the initial set of dependencies.
 (and not install dependencies that the Dockerfile will build and install later).
 In any case,
@@ -799,7 +798,7 @@ The `update-env-file.sh` gives some hints for what to do,
 and in any case you can always patch the file manually.
 
 For dependencies that require a custom installation or build, edit the `Dockerfile`.
-If one of these complex dependencies shows in the `environment.yml` after the freeze,
+If one of these complex dependencies shows in the `environment-freeze.yml` after the freeze,
 you have to remove it, so that conda does not pick it up, and it is installed independently in the `Dockerfile`.
 
 For `apt` dependencies add them manually to the `apt-*.txt` files.
