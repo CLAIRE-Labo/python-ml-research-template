@@ -79,7 +79,8 @@ Optionally if you want to use Apptainer
 ```bash
 # Takes ages to convert to sif.
 # Don't do this on a login node.
-salloc --exclusive --partition h100 --time=4:00:00 \
+# In a tmux shell ideally.
+srun --exclusive --partition h100 --time=4:00:00 \
 apptainer pull docker://registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-root-latest
 ```
 
