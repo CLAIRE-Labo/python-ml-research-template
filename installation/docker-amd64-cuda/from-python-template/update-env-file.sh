@@ -4,5 +4,5 @@
 # In that case, you have to update this file to add commands that
 # will fix the environment file. (you could also just edit it manually afterwards).
 
-ENV_FILE="${PROJECT_ROOT_AT}"/installation/docker-amd64-cuda/requirements.txt
+ENV_FILE="${PROJECT_ROOT_AT}"/installation/docker-amd64-cuda/requirements-freeze.txt
 pip list --exclude-editable --format freeze > "${ENV_FILE}"

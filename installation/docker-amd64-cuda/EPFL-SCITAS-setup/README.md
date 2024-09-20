@@ -70,7 +70,7 @@ cd $CONTAINER_IMAGES
 # Don't do this on a login node.
 # Replace with your image name
 
-srun --exclusive --partition h100 --time=4:00:00 \
+srun --ntasks=1 --cpus-per-task=32 --partition h100 --time=0:30:00 \
 enroot import docker://registry.rcp.epfl.ch#claire/moalla/template-project-name:amd64-cuda-root-latest
 # This will create a squashfs file that you'll use to start your jobs.
 ```
@@ -79,7 +79,8 @@ Optionally if you want to use Apptainer
 ```bash
 # Takes ages to convert to sif.
 # Don't do this on a login node.
-salloc --exclusive --partition h100 --time=4:00:00 \
+# In a tmux shell ideally.
+srun --ntasks=1 --cpus-per-task=32 --partition h100 --time=1:00:00 \
 apptainer pull docker://registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-root-latest
 ```
 

@@ -26,10 +26,11 @@ export JETBRAINS_SERVER_AT=$SCRATCH/jetbrains-server
 srun \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --container-mounts=\
+/etc/slurm,\
 $SCRATCH,\
 $WANDB_API_KEY_FILE_AT,\
 $HOME/.gitconfig,\
-$HOME/.ssh/authorized_keys \
+$HOME/.ssh \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \

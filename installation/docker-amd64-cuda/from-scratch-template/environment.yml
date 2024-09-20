@@ -5,6 +5,8 @@ dependencies:
   - python=3.10
   - pip
   - pip:
+      - hatchling
+      - editables
       - hydra-core
       - tqdm
       - wandb

@@ -44,6 +44,9 @@ pip install podman-compose
 All commands should be run from the `installation/docker-amd64-cuda/` directory.
 
 You should be on a compute node. If not already, get one.
+```
+srun --partition=debug --time=0:30:00 --pty bash
+```
 
 ```bash
 cd installation/docker-amd64-cuda
@@ -126,11 +129,7 @@ This guide includes the steps to do it, and there are general details in `data/R
 
 ```bash
 # SSH to a cluster.
-ssh kuma
-# Somewhere in your home directory on the clusters
-SCRATCH=/scratch/kuma/$USER
-# Or on Izar
-# SCRATCH=/scratch/izar/$USER
+ssh todi
 cd $SCRATCH
 # Clone the repo twice with name dev and run (if you already have one, mv it to a different name)
 mkdir template-project-name
@@ -287,7 +286,7 @@ of the host [(ref)](https://linuxcommando.blogspot.com/2008/10/how-to-disable-ss
 which keeps changing every time a job is scheduled,
 so that you don't have to reset it each time.
 
-With this config you can then connect to your container with `ssh kuma-container`.
+With this config you can then connect to your container with `ssh todi-container`.
 
 **Limitations**
 
