@@ -44,6 +44,9 @@ pip install podman-compose
 All commands should be run from the `installation/docker-amd64-cuda/` directory.
 
 You should be on a compute node. If not already, get one.
+```
+srun --partition=debug --time=0:30:00 --pty bash
+```
 
 ```bash
 cd installation/docker-amd64-cuda

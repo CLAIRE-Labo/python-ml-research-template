@@ -18,7 +18,7 @@ srun \
   -G 1 --partition h100 \
   --pty \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
-  --container-mounts=$SCRATCH \
+  --container-mounts=/etc/slurm,$SCRATCH \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
   --no-container-remap-root \
