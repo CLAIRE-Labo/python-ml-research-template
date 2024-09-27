@@ -188,10 +188,10 @@ E.g.,
 ```bash
 
 # In my PVC.
-echo <my-wandb-api-key> > /claire-rcp-scratch/home/moalla/.wandb_api_key
+echo <my-wandb-api-key> > /claire-rcp-scratch/home/moalla/.wandb-api-key
 ```
 
-Then specify `-e WANDB_API_KEY_FILE_AT=/claire-rcp-scratch/home/moalla/.wandb_api_key` in my `runai submit` command.
+Then specify `-e WANDB_API_KEY_FILE_AT=/claire-rcp-scratch/home/moalla/.wandb-api-key` in my `runai submit` command.
 
 ### Remote development
 
