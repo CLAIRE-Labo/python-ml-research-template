@@ -84,12 +84,18 @@ if [ -n "${JETBRAINS_SERVER_AT}" ]; then
 fi
 
 if [ -n "${PYCHARM_IDE_AT}" ]; then
-  echo "[TEMPLATE INFO] Starting PyCharm remote development server."
-  REMOTE_DEV_NON_INTERACTIVE=1 \
-    "${JETBRAINS_SERVER_AT}/dist/${PYCHARM_IDE_AT}/bin/remote-dev-server.sh" run "${PROJECT_ROOT_AT}" \
-    --ssh-link-host 127.0.0.1 \
-    --ssh-link-user "${USER:-$(id -un)}" \
-    --ssh-link-port "${SSH_FORWARD_PORT:-2223}" &
+  # Check if directory exists.
+  if [ ! -d "${JETBRAINS_SERVER_AT}/dist/${PYCHARM_IDE_AT}" ]; then
+    echo "[TEMPLATE WARNING] The PyCharm IDE directory ${JETBRAINS_SERVER_AT}/dist/${PYCHARM_IDE_AT} does not exist."
+    echo "[TEMPLATE WARNING] The IDE will not be started. This is okay if you're installing an IDE manually."
+  else
+    echo "[TEMPLATE INFO] Starting PyCharm remote development server."
+    REMOTE_DEV_NON_INTERACTIVE=1 \
+      "${JETBRAINS_SERVER_AT}/dist/${PYCHARM_IDE_AT}/bin/remote-dev-server.sh" run "${PROJECT_ROOT_AT}" \
+      --ssh-link-host 127.0.0.1 \
+      --ssh-link-user "${USER:-$(id -un)}" \
+      --ssh-link-port "${SSH_FORWARD_PORT:-2223}" &
+  fi
 fi
 
 ####################

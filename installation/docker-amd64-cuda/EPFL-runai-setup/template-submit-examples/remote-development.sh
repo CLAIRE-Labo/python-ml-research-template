@@ -1,11 +1,10 @@
-## See README for additional features like
-# -e WANDB_API_KEY_FILE_AT=<>
-
 ## Go to the end of the file for useful commands and troubleshooting tips.
 
-## PyCharm example:
+# Minimal setup to just ssh into the container.
+# For additional options check the readme first, then use from below as examples.
 
-# Option 1. No PyCharm on the remote server. Launch PyCharm from your local machine.
+# For RCP use the --pvc claire-scratch:/claire-rcp-scratch
+# For IC use the runai-claire-moalla-scratch:/claire-rcp-scratch
 runai submit \
   --name example-remote-development \
   --interactive \
@@ -14,66 +13,37 @@ runai submit \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
   -e SSH_SERVER=1 \
-  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server \
-  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
-  -g 1 --cpu 8 --cpu-limit 8 --memory 64G --memory-limit 64G \
+   --allow-privilege-escalation \
+  -g 1 --cpu 8 --cpu-limit 8 --memory 64G --memory-limit 64G --large-shm \
   -- sleep infinity
 
-# Option 2 (preferred). PyCharm launched from the remote server.
-runai submit \
-  --name example-remote-development \
-  --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
-  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
-  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
-  -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
-  -e SSH_SERVER=1 \
-  -e PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4 \
-  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server \
-  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
-  -g 1 --cpu 8 --cpu-limit 8 --memory 64G --memory-limit 64G \
-  -- sleep infinity
+# To request more that the interactive quota add --preemptible to the submit command.
 
-## The new bits here are:
-# -e PYCHARM_IDE_AT=<> starts the IDE from the container directly.
+# To mount your gitconfig
+#  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
 
-## VS Code example:
-runai submit \
-  --name example-remote-development \
-  --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
-  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
-  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
-  -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
-  -e SSH_SERVER=1 \
-  -e VSCODE_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
-  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
-  -g 1 --cpu 8 --cpu-limit 8 --memory 64G --memory-limit 64G \
-  -- sleep infinity
+# For PyCharm
+#  -e JETBRAINS_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/jetbrains-server \
+#  -e PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4 \
 
-## The new bits here are:
-# -e VSCODE_SERVER_AT=<> will be mapped to ~/.vscode-server in the container
+# For VSCode
+#  -e VSCODE_SERVER_AT=/claire-rcp-scratch/home/moalla/remote-development/vscode-server \
 
-## Jupyter Lab example:
-runai submit \
-  --name example-remote-development \
-  --interactive \
-  --image registry.rcp.epfl.ch/claire/moalla/template-project-name:amd64-cuda-moalla-latest \
-  --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
-  --working-dir /claire-rcp-scratch/home/moalla/template-project-name/dev \
-  -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/dev \
-  -e GIT_CONFIG_AT=/claire-rcp-scratch/home/moalla/remote-development/gitconfig \
-  -e JUPYTER_SERVER=1 \
-  -g 1 --cpu 8 --cpu-limit 8 --memory 64G --memory-limit 64G \
-  -- sleep infinity
+# For Jupyter Lab
+#  -e JUPYTER_SERVER=1 \
 
-## The new bits here are:
-# -e JUPYTER_SERVER=1 will start a Jupyter Lab server in the container.
+# For W&B
+#  -e WANDB_API_KEY_FILE_AT=/claire-rcp-scratch/home/moalla/.wandb-api-key \
+
+# For HuggingFace
+#  -e HF_TOKEN_AT=/claire-rcp-scratch/home/moalla/.hf-token \
+#  -e HF_HOME=/claire-rcp-scratch/home/moalla/huggingface \
+
 
 ## Useful commands.
 # runai describe job example-remote-development
 # runai logs example-remote-development
-# kubectl port-forward example-remote-development-0-0  2222:22
+# kubectl port-forward example-remote-development-0-0  2222:2223
 # ssh runai
 # kubectl port-forward example-remote-development-0-0  8888:8888
 # runai logs example-remote-development

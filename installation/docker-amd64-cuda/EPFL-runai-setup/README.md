@@ -42,7 +42,7 @@ Run
 to get a copy of the examples in this guide with your username, lab name, etc.
 They will be in `.EPFL-runai-setup/submit-scripts`.
 
-### Clone your repository in your PVCs
+### Clone your repository in your PVC / shared storage
 
 We strongly suggest having two instances of your project repository on your PVCs.
 
@@ -54,41 +54,32 @@ This can be done by creating symlinks between them, in the same the way you can 
 say a shared PVC that has model weights, etc. All of this is described in the
 `data/README.md` and `outputs/README.md` files of the template and can be done later.
 
-Follow the steps below to clone your repository in your PVCs.
+Follow the steps below to clone your repository in your PVCs / shared storage.
 
-If you have access to the storage underlying your PVC, you can skip step 1 and 2.
-(E.g., CLAIRE members can use the `claire-build-machine` for this to access `claire-rcp-scratch`.
-RCP also provides a shared jump host `haas001.rcp.epfl.ch`).
-Otherwise, the template covers a deployment option that simply opens an ssh server
-on your container without setting up the project,
-forwards your ssh keys, and allows you to clone your repository on the container.
+Typically the storage underlying your PVC is also mounted on a permanent machine that you can access.
+CLAIRE members can use the `claire-build-machine` for this to access `claire-rcp-scratch`.
+RCP also provides a shared jump host `haas001.rcp.epfl.ch` that mounts most lab's shared storage.
 
-1. Submit your job in the same fashion as `submit-scripts/first-steps.sh`,
-   specifying your image name, and the PVC where you'll put your code (typically the scratch one).
-   Checking its logs will give:
-   ```text
-    $ runai logs example-first-steps
-   ...
-    [TEMPLATE INFO] Execing the template's entrypoint.
-    [TEMPLATE INFO] Running entrypoint.sh
-    [TEMPLATE WARNING] PROJECT_ROOT_AT is not set.
-    [TEMPLATE WARNING] It is expected to point to the location of your mounted project if you plan to run you code.
-    [TEMPLATE WARNING] Ignore if you only need the development environment.
-    [TEMPLATE WARNING] PROJECT_ROOT_AT has been defaulted to /
-    [TEMPLATE WARNING] The project installation will be skipped.
-    [TEMPLATE INFO] Expecting workdir to be /.
-    [TEMPLATE INFO] Skipping the installation of the project.
-    [TEMPLATE INFO] Environment variables have been written to /home/moalla/.docker-env-vars.
-    [TEMPLATE_INFO] And will be sourced in login shells to preserve environment variables in ssh connections.
-    [TEMPLATE INFO] If you change one at runtime and want it to be preserved in subsequence shell invocations, you need to write it to /home/moalla/.docker-env-vars as well.
-    [TEMPLATE INFO] Configuring ssh server.
-    [TEMPLATE INFO] Starting ssh server.
-    [TEMPLATE INFO] Executing the command sleep infinity
-   ```
-   You can ignore the warning, as you skipped the installation of the project.
-2. Follow the steps in the [SSH configuration section](#ssh-configuration-necessary-for-pycharm-and-vs-code)
-   and ssh to your container.
-3. Clone your repository in your PVC.
+Setup your SSH configuration so that your keys are forwarded during your ssh connection to machine
+so that you can clone your repository easily.
+For CLAIRE members you should have the `claire-build-machine` already setup.
+For other labs you can copy the config example below for `haas001.rcp.epfl.ch`.
+
+```bash
+# You need three things for your ssh keys to be forwarded during a connection:
+# an ssh agent running on your local machine,
+# the key added to the agent,
+# and a configuration file saying that the agent should be used with connection.
+# GitHub provides a guide for that (look at the troubleshooting section too)
+# https://docs.github.com/en/authentication/connecting-to-github-with-ssh/using-ssh-agent-forwarding
+# and for the ssh config file you can use the following:
+Host rcp-haas
+	HostName haas001.rcp.epfl.ch
+	User YOUR-GASPAR
+	ForwardAgent yes
+```
+
+SSH to the machine anc clone your repository in your PVC / shared storage.
    (Remember to push the changes you made on your local machine after initializing the template,
    to have the latest state of your repo.)
    ```bash
@@ -114,12 +105,13 @@ and the correct path to your project in the PVC.
 When the container starts, its entrypoint does the following:
 
 - It runs the entrypoint of the base image if you specified it in the `compose-base.yaml` file.
-- It expects you specify `PROJECT_ROOT_AT=<location to your project in the PVC>`.
-  and `PROJECT_ROOT_AT` to be the working directory of the container.
-  Otherwise, it will issue a warning and set it to the default working directory of the container.
-- It then tries to install the project in editable mode.
+- It expects you specify `PROJECT_ROOT_AT=<location to your project in the PVC>`
+  and to set `PROJECT_ROOT_AT` as the working directory of the container
+  and installs the project found at `PROJECT_ROOT_AT` in editable mode.
   This is a lightweight installation that allows to avoid all the hacky import path manipulations.
-  (This will be skipped if `PROJECT_ROOT_AT` has not been specified or if you specify `SKIP_INSTALL_PROJECT=1`.)
+  (You can skip this if you have a different project structure,
+  e.g.,
+  just copied the installation directory of the template by not specifying `PROJECT_ROOT_AT`).
 - It also handles all the remote development setups (VS Code, PyCharm, Jupyter, ...)
   that you specify with environment variables.
   These are described in the later sections of this README.
@@ -175,6 +167,12 @@ By performing the above first steps, you should have all the required setup to r
 An example of an unattended job can be found in `submit-scripts/unattended.sh`.
 Note the emphasis on having a frozen copy `run` of the repository for running unattended jobs.
 
+
+### Run:ai selectors
+
+Different clusters have different names for node pools and options to enable `sudo` usage etc.
+Refer to the `submit-scripts` for the main options, otherwise to the clusters' respective documentation.
+
 ### Weights&Biases
 
 Your W&B API key should be exposed as the `WANDB_API_KEY` environment variable.
@@ -188,14 +186,32 @@ E.g.,
 ```bash
 
 # In my PVC.
+# <my-wandb-api-key>
 echo <my-wandb-api-key> > /claire-rcp-scratch/home/moalla/.wandb-api-key
 ```
 
 Then specify `-e WANDB_API_KEY_FILE_AT=/claire-rcp-scratch/home/moalla/.wandb-api-key` in my `runai submit` command.
 
+### HuggingFace
+
+Same idea as for W&B, you should have your Hugging Face API key in your PVC and pass it with the
+`-e HF_TOKEN_AT` environment variable in your `runai submit` command.
+
+E.g.,
+
+```bash
+
+# In my PVC
+echo <my-hf-api-key> > /claire-rcp-scratch/home/moalla/.hf-token
+```
+
+Then specify
+`-e HF_TOKEN_AT=/claire-rcp-scratch/home/moalla/.hf-token` in my `runai submit` command.
+
+
 ### Remote development
 
-This would be the typical use case for a researcher at CLAIRE using the Run:ai cluster as their daily driver to do
+This would be the typical use case for a user at CLAIRE using the Run:ai cluster as their daily driver to do
 development, testing, and debugging.
 Your job would be running a remote IDE/code editor on the cluster, and you would only have a lightweight local client
 running on your laptop.
@@ -232,8 +248,8 @@ Connect with the user and password you specified in your `.env` file when you bu
 ssh -p 2222 <username>@localhost
 ```
 
-As the container will each time be on a different machine, you will have to reset the ssh key for the remote server.
-You can do this with
+As the container will each time be on a different machine, the ssh key for the remote server has to be reset or not stored..
+This is done for you in the ssh config below. If you face issues you can reset the key with:
 
 ```bash
 ssh-keygen -R '[localhost]:2222'
