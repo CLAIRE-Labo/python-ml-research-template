@@ -27,8 +27,8 @@ job_subdir: dev
 
 hydra:
   run:
-    # This is where the outputs of an individual run will be stored.
-    dir: outputs/${outputs_subdir}/${hydra.job.name}/${job_subdir}/${now:%Y-%m-%d_%H-%M-%S-%f}
+    # Finally, this is where the outputs of an individual run will be stored.
+    dir: outputs/${outputs_subdir}/${hydra.job.name}/${job_subdir}/${now:%Y-%m-%d--%H-%M-%S-%f}
   job:
     chdir: true
   verbose: false  # Set to true for logging at debug level.
@@ -42,3 +42,20 @@ wandb:
   anonymous: allow
   tags:
     - development
+  run_id: null
+
+run_dir: ${hydra:run.dir}
+resuming_dir: null
+
+resuming:
+  resume: False
+  use_commit: False
+  wandb_cache_bust: 0 # Limitation of wandb. Cannot create runs with the same ID if deleted previously.
+                      # Use this to refresh the id of the run and make it a "new" run.
+  exclude_keys: # Can be a deep key e.g. model.optimizer.lr
+    - run_dir
+    - data_dir      # To be able to resume by another user.
+    - outputs_dir   # To be able to resume by another user.
+    - resuming_dir  # To be able to force resume from anywhere.
+    - wandb         # To be able to move a run and resume it.
+    - resuming.exclude_keys # To be able to add keys on the fly and force resume.

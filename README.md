@@ -24,6 +24,7 @@ projects with hardware acceleration featuring:
   imports.
 - Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
   and [Weights & Biases](https://wandb.ai/site).
+- Checkpointing setup for research experiments compatible with Weights & Biases.
 - Code quality with [pre-commit](https://pre-commit.com) hooks.
 
 The template makes collaboration and open-sourcing straightforward, avoiding setup issues and
@@ -39,7 +40,7 @@ or [this paper](https://github.com/CLAIRE-Labo/no-representation-no-trust) whose
 
 Follow this README to get started with the template.
 
-For a brief discussion of the template's design choices and a Q&A check `template/README.md` file.
+For a brief discussion of the template's design choices, features, and a Q&A check `template/README.md` file.
 
 ## Getting started with the template
 

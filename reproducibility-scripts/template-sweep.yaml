@@ -11,7 +11,13 @@ parameters:
   wandb.mode:
     value: online
   job_subdir:
-    value: my-tagged-experiment
+    value: some-special-experiment
+  seed:
+    value: 1
+  resuming.resume:
+    value: True
+  resuming.use_commit:
+    value: True
   some_number:
     values: [1, 2, 3]
 
