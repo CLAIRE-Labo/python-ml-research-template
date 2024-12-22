@@ -102,7 +102,7 @@ def main(config: DictConfig) -> None:
         print(i)
         if i % 9 == 0:
             with open(f"file_{i}.txt", "w") as f:
-                f.write(f"Hello world {i}!")
+                f.write(f"some_metric={i + config.some_number * n}")
                 print(f"Checkpointing at {i}")
 
         if i % 15 == 0:
