@@ -45,7 +45,7 @@ wandb:
   run_id: null
 
 run_dir: ${hydra:run.dir}
-resuming_dir: ${hydra:run.dir}
+resuming_dir: null
 
 resuming:
   resume: False
@@ -53,8 +53,9 @@ resuming:
   wandb_cache_bust: 0 # Limitation of wandb. Cannot create runs with the same ID if deleted previously.
                       # Use this to refresh the id of the run and make it a "new" run.
   exclude_keys: # Can be a deep key e.g. model.optimizer.lr
-    - data_dir
-    - outputs_dir
     - run_dir
-    - resuming_dir
-    - wandb.run_id
+    - data_dir      # To be able to resume by another user.
+    - outputs_dir   # To be able to resume by another user.
+    - resuming_dir  # To be able to force resume from anywhere.
+    - wandb         # To be able to move a run and resume it.
+    - resuming.exclude_keys # To be able to add keys on the fly and force resume.

@@ -66,6 +66,9 @@ def setup_resuming_dir(config):
     If config.resuming.use_commit is True, the commit hash is appended to the identifier.
     I.e. the checkpoint directory is defined by: the config - the excluded config keys + the commit hash (if specified)
     """
+    if config.resuming_dir is not None:
+        return Path(config.resuming_dir), Path(config.resuming_dir).name
+
     resuming_hash = ""
     config_to_hash = config.copy()
 
