@@ -11,7 +11,7 @@ This template ensures the reproducibility of your results through 3 artifacts:
 2. The project code.
     - Recorded in the git repository that you keep up to date.
     - Made reproducible (to a desired degree) by you correctly seeding the random number generators and
-      optionally removing non-deterministic operations or replicable by running enough seeds.
+      optionally removing non-deterministic operations, or replicable by running enough seeds.
 3. The data, outputs, model weights and other artifacts.
     - Recorded and uploaded by you.
     - (Virtually) placed in the placeholder directories abstracting away the user storage system.
@@ -19,15 +19,15 @@ This template ensures the reproducibility of your results through 3 artifacts:
 ## Checkpointing
 
 The template provides an automatic setup of the checkpointing directory for an experiment.
-The unique identifier for the directory will be created by hashing the config file and optionally the git commit sha.
+The unique identifier for the directory is created by hashing the config used and optionally the git commit sha.
 Running the same experiment with the same config will thus set its working directory to the same checkpoint directory
-every time.
+every time (if the resuming option is enabled).
 
 To use this feature pass `resuming.resume=True` and `resuming.use_commit=True` to your script using a Hydra config
-that inherits form the `setup.yaml` config file like the `template_experiment.py` script.
+that inherits form the `setup.yaml` config file, like the `template_experiment.py` script.
 
 Even without using `resuming.use_commit=True`, the path to the checkpoint directory will be computed, and you could
-read from it, for example.
+for example, read from it.
 
 You can also force a resuming directory by passing `resuming.resume_dir=<path>` to your script.
 
@@ -41,7 +41,8 @@ the default step key of wandb will resume from the latest step and may be incons
 
 For a sweep run, it already has an id from the sweep, so to resume it you should manually get its id and restart
 the script with the same arguments the sweep agent started it, this way the config and the
-checkpoint directory will be the same.
+checkpoint directory will be the same
+(i.e. go to the wandb run UI, copy-paste the command it was run with and add `wandb.run_id=<id-of-the-run>`).
 This is a limitation of the wandb sweep system.
 See [this issue.](https://github.com/wandb/wandb/issues/9143)
 

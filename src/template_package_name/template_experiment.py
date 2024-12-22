@@ -77,7 +77,7 @@ def main(config: DictConfig) -> None:
 
     # Example experiment
     n = 100
-    # Loop from config.some_number*n to config.some_number*n + n and write 100 files to the disk.
+    # Loop from 0 to 99 and write 100 files to the disk.
 
     # Attempt to resume
     # Find the latest checkpoint of format file_{i}.txt
@@ -87,21 +87,27 @@ def main(config: DictConfig) -> None:
     if files:
         last_file = files[-1]
         logger.info(f"Resuming from {last_file}")
-        j = int(last_file.stem.split("_")[1])
+        j = int(last_file.stem.split("_")[1]) % (config.some_number * n)
     else:
-        j = config.some_number * n - 1
+        j = -1
 
-    for i in range(j + 1, config.some_number * n + 100 + 1):
-        wandb.log({"iteration": i, "file_written": i, "some_metric": i})
+    for i in range(j + 1, 100):
+        wandb.log(
+            {
+                "iteration": i,
+                "file_written": i,
+                "some_metric": i + config.some_number * n,
+            }
+        )
         print(i)
-        if i > config.some_number * n and i % 10 == 0:
+        if i % 9 == 0:
             with open(f"file_{i}.txt", "w") as f:
                 f.write(f"Hello world {i}!")
                 print(f"Checkpointing at {i}")
 
-        if i > config.some_number * n and i % 20 == 0:
+        if i % 15 == 0:
             # To test resuming.
-            raise ValueError("Crashing at 20")
+            raise ValueError("Crashing at i % 15 = 0")
             pass
         sleep(1)
 
