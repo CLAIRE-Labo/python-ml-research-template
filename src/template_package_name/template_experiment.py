@@ -1,5 +1,6 @@
-# An example file to run an experiment.
-# Keep this, it's used as an example to run the code after a user installs the project.
+"""An example file to run an experiment.
+Keep this, it's used as an example to run the code after a user installs the project.
+"""
 
 import logging
 import os
