@@ -105,8 +105,8 @@ def main(config: DictConfig) -> None:
                 f.write(f"some_metric={i + config.some_number * n}")
                 print(f"Checkpointing at {i}")
 
-        if i % 15 == 0:
-            # To test resuming.
+        if j == 0 and i % 15 == 0:
+            # Crash at first run to test resuming.
             raise ValueError("Crashing at i % 15 = 0")
             pass
         sleep(1)
