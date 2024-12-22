@@ -77,7 +77,7 @@ def main(config: DictConfig) -> None:
 
     # Example experiment
     n = 100
-    # Loop from 0 to 99 and write 100 files to the disk.
+    # Loop from 0 to 27 and write 28 files to the disk.
 
     # Attempt to resume
     # Find the latest checkpoint of format file_{i}.txt
@@ -91,7 +91,7 @@ def main(config: DictConfig) -> None:
     else:
         j = -1
 
-    for i in range(j + 1, 100):
+    for i in range(j + 1, 28):
         wandb.log(
             {
                 "iteration": i,
