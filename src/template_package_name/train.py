@@ -3,11 +3,14 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from time import sleep
 
 import hydra
+import torch
 import wandb
+from datasets import load_dataset
 from omegaconf import DictConfig, OmegaConf, omegaconf
+from transformers import AutoTokenizer
+from trl import SFTConfig, SFTTrainer
 
 from template_package_name import utils
 
@@ -15,7 +18,7 @@ utils.config.register_resolvers()
 logger = logging.getLogger(__name__)
 
 
-@hydra.main(version_base=None, config_path="configs", config_name="template_experiment")
+@hydra.main(version_base=None, config_path="configs", config_name="train")
 def main(config: DictConfig) -> None:
     logger.info(f"Init directory: {Path.cwd()}")
     resuming_dir, resuming_hash = utils.config.setup_resuming_dir(config)
@@ -52,6 +55,62 @@ def main(config: DictConfig) -> None:
     utils.seeding.seed_everything(config)
 
     # Your code here
+    model_kwargs = dict(
+        trust_remote_code=True,
+        torch_dtype=torch.float16,
+        use_cache=not config.gradient_checkpointing,
+    )
+    tokenizer = AutoTokenizer.from_pretrained(
+        config.model_name_or_path,
+        trust_remote_code=True,
+        use_fast=True,
+    )
+    tokenizer.pad_token = tokenizer.eos_token
+
+    ################
+    # Dataset
+    ################
+    dataset = load_dataset(config.dataset_name)
+
+    sft_config = SFTConfig(
+        packing=config.packing,
+        learning_rate=config.learning_rate,
+        num_train_epochs=config.num_train_epochs,
+        per_device_train_batch_size=config.per_device_train_batch_size,
+        gradient_accumulation_steps=config.gradient_accumulation_steps,
+        gradient_checkpointing=config.gradient_checkpointing,
+        logging_steps=config.logging_steps,
+        eval_strategy=config.eval_strategy,
+        eval_steps=config.eval_steps,
+        output_dir=resuming_dir,
+        seed=config.seed,
+        max_seq_length=config.max_seq_length,
+        remove_unused_columns=False,
+        per_device_eval_batch_size=config.per_device_train_batch_size,
+        report_to=config.report_to,
+        logging_first_step=True,
+        eval_on_start=config.eval_on_start,
+        save_strategy="steps",
+        save_steps=config.save_steps,
+        model_init_kwargs=model_kwargs,
+    )
+
+    trainer = SFTTrainer(
+        model=config.model_name_or_path,
+        args=sft_config,
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["test"] if config.eval_strategy != "no" else None,
+        processing_class=tokenizer,
+    )
+
+    # Train and save the model.
+    resume_from_checkpoint = (
+        config.resuming.resume
+        and len([item for item in Path(config.resuming_dir).iterdir() if item.is_dir()])
+        > 1  # counting the config dir.
+    )
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
+    trainer.save_model(resuming_dir)
 
 
 def postprocess_and_save_config(config):

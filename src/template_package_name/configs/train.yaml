@@ -1,0 +1,26 @@
+# An example config file for an experiment.
+# Keep this, it's used as an example to run the code after a user installs the project.
+
+defaults:
+  # Common setup.
+  - setup
+  # This file.
+  - _self_
+
+######################################################################
+
+model_name_or_path: Qwen/Qwen2-0.5B
+dataset_name: trl-lib/Capybara
+learning_rate: 1.0e-10
+num_train_epochs: 1
+packing: true
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 1
+gradient_checkpointing: true
+logging_steps: 5
+eval_strategy: steps
+eval_steps: 1000
+max_seq_length: 128
+report_to: wandb
+eval_on_start: false
+save_steps: 30
