@@ -1,1 +1,1 @@
-from template_package_name.utils import seeding
+from template_package_name.utils import config, seeding

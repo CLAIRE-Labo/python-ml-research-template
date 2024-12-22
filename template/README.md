@@ -16,6 +16,14 @@ This template ensures the reproducibility of your results through 3 artifacts:
     - Recorded and uploaded by you.
     - (Virtually) placed in the placeholder directories abstracting away the user storage system.
 
+## Checkpointing
+
+TODO
+
+### Compatibility with Weights & Biases
+
+TODO
+
 ## Template Q&A
 
 ### I started my project from an older version of the template, how do I get updates?
