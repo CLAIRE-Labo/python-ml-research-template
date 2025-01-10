@@ -69,15 +69,15 @@ RUN pip list --format freeze > ${DEPENDENCIES_DIR}/requirements-list-after-pip-i
 # Optional optimizations.
 # Hack to enable Intel MKL optimizations on AMD CPUs.
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
-ARG FAKEINTEL_PATH=/opt/fakeintel/libfakeintel.so
-ENV FAKEINTEL_PATH=${FAKEINTEL_PATH}
+# ARG FAKEINTEL_PATH=/opt/fakeintel/libfakeintel.so
+# ENV FAKEINTEL_PATH=${FAKEINTEL_PATH}
 # https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
 # Build.
-RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
-    mkdir -p /opt/fakeintel && \
-    gcc -shared -fPIC -o ${FAKEINTEL_PATH} /tmp/fakeintel.c
+# RUN echo 'int mkl_serv_intel_cpu_true() {return 1;}' > /tmp/fakeintel.c && \
+#    mkdir -p /opt/fakeintel && \
+#    gcc -shared -fPIC -o ${FAKEINTEL_PATH} /tmp/fakeintel.c
 # Enable.
-ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
+# ENV LD_PRELOAD=${FAKEINTEL_PATH}:${LD_PRELOAD}
 
 ########################################################################
 # Here you can install other software
