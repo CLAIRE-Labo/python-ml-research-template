@@ -18,7 +18,7 @@ parameters:
     value: True
   resuming.use_commit:
     value: True
-  some_number:
+  n:
     values: [1, 2, 3]
 
 command:

@@ -13,4 +13,5 @@ defaults:
 
 some_arg: "some_default_value"
 some_number: 10
+n: 10
 is_this_key_overridden: no

@@ -67,6 +67,7 @@ def main(config: DictConfig) -> None:
     # Re-log to capture log with wandb.
     logger.info(f"Running command: {subprocess.list2cmdline(sys.argv)}")
     logger.info(f"Init directory: {config.run_dir}")
+    logger.info(f"Run can be resumed from the directory: {resuming_dir}")
     logger.info(f"Working directory: {Path.cwd()}")
     logger.info(f"Running with config: \n{OmegaConf.to_yaml(config)}")
     if config.resuming.resume:
@@ -76,39 +77,37 @@ def main(config: DictConfig) -> None:
     utils.seeding.seed_everything(config)
 
     # Example experiment
-    n = 100
-    # Loop from 1 to 27 and write 27 files to the disk.
-
-    # Attempt to resume
-    # Find the latest checkpoint of format file_{i}.txt
-    path = Path.cwd()
-    files = path.glob("file_*.txt")
-    files = sorted(files, key=lambda x: int(x.stem.split("_")[1]))
+    files = sorted(
+        Path.cwd().glob("file_*.txt"), key=lambda x: int(x.stem.split("_")[1])
+    )
     if files:
         last_file = files[-1]
-        logger.info(f"Resuming from {last_file}")
-        j = int(last_file.stem.split("_")[1]) % (config.some_number * n)
+        logger.info(f"Resuming from {last_file.stem}")
+        i = int(last_file.stem.split("_")[1]) + 1
     else:
-        j = 0
+        i = 0
 
-    for i in range(j + 1, 28):
-        wandb.log(
-            {
-                "iteration": i,
-                "file_written": i,
-                "some_metric": i + config.some_number * n,
-            }
-        )
-        print(i)
-        if i % 9 == 0:
+    steps = 0
+    while i < 30:
+        # Compute and log x**n.
+        y = i * config.n
+        logs = {"i": i, "y": y}
+        print(logs)
+        wandb.log(logs)
+
+        # Checkpoint every 5 steps.
+        if i % 5 == 0:
             with open(f"file_{i}.txt", "w") as f:
-                f.write(f"some_metric={i + config.some_number * n}")
-                print(f"Checkpointing at {i}")
+                f.write(f"y={y}")
+                logger.info(f"Checkpointing at {i}")
 
-        if j == 0 and i % 15 == 0:
-            # Crash at first run to test resuming.
-            raise ValueError("Crashing at i % 15 = 0")
-            pass
+        i += 1
+        steps += 1
+
+        # Preempt every 13 steps.
+        if steps == 13:
+            raise InterruptedError("Preempt after 13 steps.")
+
         sleep(1)
 
     logger.info("Finished writing files")
