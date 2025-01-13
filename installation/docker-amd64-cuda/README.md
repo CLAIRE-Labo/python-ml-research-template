@@ -23,7 +23,7 @@ for your future users (and yourself).
    The default platform is Linux (fixed) on AMD64 CPUs `amd64` (can be changed to e.g. `arm64`)
    with support for NVIDIA GPUs.
    (reflected in the name of the directory `docker-amd64-cuda` by default).
-   (The EPFL Run:ai and the SCITAS clusters are on `amd64`, the CSCS Todi cluster is on `arm64`.)
+   (The EPFL Run:ai and the SCITAS clusters are on `amd64`, the CSCS Clariden cluster is on `arm64`.)
    If this is good for you, you can skip this part.
    Otherwise, to edit it, run
    ```bash
@@ -93,7 +93,7 @@ for your future users (and yourself).
    If you change the dependency files commit so that you can track what worked and what didn't.
 6. Build the environment following the instructions to [build the environment](#obtainingbuilding-the-environment).
    (Obviously, you'll have to build the generic image not pull it.)
-   For CSCS todi, steps 6, 7, and 8 are described in `./CSCS-Todi-setup/README.md`.
+   For CSCS clariden, steps 6, 7, and 8 are described in `./CSCS-Clariden-setup/README.md`.
    Follow the instructions there.
 7. Follow the instructions to [run the environment](#the-environment) with your target
    deployment option.
@@ -218,9 +218,9 @@ We provide the following guides for obtaining/building and running the environme
   The guide also provides instructions to do remote development on the SCITAS cluster
   with VSCode, PyCharm, and Jupyter Lab.
   Other Slurm + enroot/Apptainer/Singularity cluster users can get inspiration from it too.
-- To run on the CSCS Todi cluster, follow the instructions in `./CSCS-Todi-setup/README.md`.
+- To run on the CSCS Clariden cluster, follow the instructions in `./CSCS-Clariden-setup/README.md`.
 
-  The guide also provides instructions to do remote development on the Todi cluster
+  The guide also provides instructions to do remote development on the Clariden cluster
   with VSCode, PyCharm, and Jupyter Lab.
   Other Slurm + enroot cluster users can get inspiration from it too.
 

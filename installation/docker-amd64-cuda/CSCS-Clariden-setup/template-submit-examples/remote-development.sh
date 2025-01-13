@@ -17,7 +17,7 @@ export JETBRAINS_SERVER_AT=$SCRATCH/jetbrains-server
 
 srun \
   --container-image=$CONTAINER_IMAGES/claire+smoalla+template-project-name+amd64-cuda-root-latest.sqsh \
-  --environment="${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/CSCS-Todi-setup/submit-scripts/edf.toml" \
+  --environment="${PROJECT_ROOT_AT}/installation/docker-amd64-cuda/CSCS-Clariden-setup/submit-scripts/edf.toml" \
   --container-mounts=\
 $SCRATCH,\
 $WANDB_API_KEY_FILE_AT,\
