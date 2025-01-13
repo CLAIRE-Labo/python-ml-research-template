@@ -1,9 +1,9 @@
-# Guide for using the template with the CSCS Todi cluster
+# Guide for using the template with the CSCS Clariden cluster
 
 ## Overview
 
 At this point, you should have edited the environment files and are ready to build or run the image.
-This guide will show you how to build and run your image on the CSCS Todi cluster and use it for
+This guide will show you how to build and run your image on the CSCS Clariden cluster and use it for
 
 1. Remote development.
 2. Running unattended jobs.
@@ -44,8 +44,14 @@ pip install podman-compose
 All commands should be run from the `installation/docker-amd64-cuda/` directory.
 
 You should be on a compute node. If not already, get one.
-```
-srun --partition=debug --time=0:30:00 --pty bash
+```bash
+# Request a compute node
+sbatch -N  --time 4:00:00 -A a-a10 --wrap "sleep infinity" --output=/dev/null --error=/dev/null
+# Connect to it
+srun --overlap --pty --jobid=GET_THE_JOB_ID bash
+tmux
+# or if reconnecting
+tmux at
 ```
 
 ```bash
@@ -95,7 +101,7 @@ cd installation/docker-amd64-cuda
 
 **CSCS and Slurm**:
 
-1. You should have access to the Todi cluster.
+1. You should have access to the Clariden cluster.
 2. You should have some knowledge of Slurm.
 
 There is a great documentation provided by the SwissAI initiative [here](https://github.com/swiss-ai/documentation).
@@ -129,7 +135,7 @@ This guide includes the steps to do it, and there are general details in `data/R
 
 ```bash
 # SSH to a cluster.
-ssh todi
+ssh clariden
 cd $SCRATCH
 # Clone the repo twice with name dev and run (if you already have one, mv it to a different name)
 mkdir template-project-name
@@ -163,12 +169,12 @@ They will be in `./EPFL-SCITAS-setup/submit-scripts`.
 
 Adapt the `submit-scripts/minimal.sh` with the name of your image and your cluster storage setup.
 
-The submission script gives an example of how to run containers on Todi with [`enroot`](https://github.com/NVIDIA/enroo)
+The submission script gives an example of how to run containers on Clariden with [`enroot`](https://github.com/NVIDIA/enroo)
 and the [`pyxis`](https://github.com/NVIDIA/pyxis) plugin directly integrated in `srun`,
 
 Run the script to see how the template works.
 ```bash
-cd installation/docker-amd64-cuda//CSCS-Todi-setup/submit-scripts
+cd installation/docker-amd64-cuda//CSCS-Clariden-setup/submit-scripts
 bash minimal.sh
 ```
 
@@ -256,24 +262,24 @@ GitHub provides a guide for that
 Use the following configuration in your local `~/.ssh/config`
 
 ```bash
-Host todi
-    HostName todi.cscs.ch
+Host clariden
+    HostName clariden.cscs.ch
     User smoalla
     ProxyJump ela
     ForwardAgent yes
 
 # EDIT THIS HOSTNAME WITH EVERY NEW JOB
-Host todi-job
+Host clariden-job
     HostName nid005105
     User smoalla
-    ProxyJump todi
+    ProxyJump clariden
     StrictHostKeyChecking no
 	  UserKnownHostsFile=/dev/null
 	  ForwardAgent yes
 
-Host todi-container
+Host clariden-container
     HostName localhost
-    ProxyJump todi-job
+    ProxyJump clariden-job
     Port 2223
     User smoalla
 	  StrictHostKeyChecking no
@@ -286,7 +292,7 @@ of the host [(ref)](https://linuxcommando.blogspot.com/2008/10/how-to-disable-ss
 which keeps changing every time a job is scheduled,
 so that you don't have to reset it each time.
 
-With this config you can then connect to your container with `ssh todi-container`.
+With this config you can then connect to your container with `ssh clariden-container`.
 
 **Limitations**
 

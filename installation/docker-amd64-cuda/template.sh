@@ -8,7 +8,7 @@ ENV_TEXT=$(
 
 ## For building:
 # Which docker and compose binary to use
-# docker and docker compose in general or podman and podman-compose for CSCS todi
+# docker and docker compose in general or podman and podman-compose for CSCS Clariden
 DOCKER=docker
 COMPOSE="docker compose"
 # Use the same USRID and GRPID as on the storage you will be mounting.
@@ -329,8 +329,8 @@ get_cscs_scripts() {
   # Rename the scitas examples.
   # ./template.sh get_scitas_scripts
   check
-  cp -r "./CSCS-Todi-setup/template-submit-examples/" "./CSCS-Todi-setup/submit-scripts"
-  for file in $(find "./CSCS-Todi-setup/submit-scripts" -type f); do
+  cp -r "./CSCS-Clariden-setup/template-submit-examples/" "./CSCS-Clariden-setup/submit-scripts"
+  for file in $(find "./CSCS-Clariden-setup/submit-scripts" -type f); do
     sed -i.deleteme "s/smoalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
