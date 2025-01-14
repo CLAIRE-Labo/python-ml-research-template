@@ -8,6 +8,8 @@
 export PROJECT_ROOT_AT=$SCRATCH/template-project-name/dev
 export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
+export HF_TOKEN_AT=$HOME/.hf-token
+export HF_HOME=$SCRATCH/huggingface
 export SSH_SERVER=1
 export NO_SUDO_NEEDED=1
 export JETBRAINS_SERVER_AT=$SCRATCH/jetbrains-server
@@ -22,6 +24,7 @@ srun \
 $SCRATCH,\
 $WANDB_API_KEY_FILE_AT,\
 $HOME/.gitconfig,\
+$HF_TOKEN_AT,\
 $HOME/.ssh/authorized_keys \
   --container-workdir=$PROJECT_ROOT_AT \
   --no-container-mount-home \
