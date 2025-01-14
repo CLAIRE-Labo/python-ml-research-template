@@ -84,6 +84,9 @@ def main(config: DictConfig) -> None:
         last_file = files[-1]
         logger.info(f"Resuming from {last_file.stem}")
         i = int(last_file.stem.split("_")[1]) + 1
+        # Important:
+        # When resuming, you should recover the state of the experiment as it was when it was interrupted.
+        # I.e., the random state, the state of the model, the optimizer, etc.
     else:
         i = 0
 
