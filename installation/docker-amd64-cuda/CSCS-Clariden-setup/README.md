@@ -119,7 +119,7 @@ CONTAINER_IMAGES=$SCRATCH/container-images
 mkdir -p $CONTAINER_IMAGES
 # Symlink the image with an adapted name with your lab name and username
 # (it will be readily-usable by the submit scripts)
-ln -s _TODO ADD IMAGE_PATH_ $CONTAINER_IMAGES/ADAPTED_NAME.sqsh
+cp _TODO ADD IMAGE_PATH_ $CONTAINER_IMAGES/ADAPTED_NAME.sqsh
 ```
 
 #### From a registry (TODO)
