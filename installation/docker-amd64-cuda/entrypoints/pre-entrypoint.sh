@@ -6,13 +6,18 @@
 # In the end all variables exported should be present and the command given by the user should run with PID 1.
 
 # In distributed jobs the number of times the entrypoint is run should match the number of containers created.
-# On Slurm, if the entrypoint is called multiple times in the same container we can skip it with the following variables:
+# On Slurm, for example, with Pyxis a single container is created per node,
+# and if the entrypoint is called manually after srun, it will run multiple times in the same container (ntasks-per-node)
+# so we can skip it with the following variables:
+
+# If nodes share the same container:
 if [ -n "${SLURM_ONE_ENTRYPOINT_SCRIPT_PER_JOB}" ] && [ "${SLURM_PROCID}" -gt 0 ]; then
   echo "[TEMPLATE INFO] Running the entrypoing only once for the job."
   echo "[TEMPLATE INFO] Skipping entrypoints on SLURM_PROCID ${SLURM_PROCID}."
   echo "[TEMPLATE INFO] Executing the command" "$@"
   exec "$@"
 fi
+# If tasks on the same node share the same container:
 if [ -n "${SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE}" ] && [ "${SLURM_LOCALID}" -gt 0 ]; then
   echo "[TEMPLATE INFO] Running the entrypoint once per node."
   echo "[TEMPLATE INFO] Skipping entrypoints on SLURM_PROCID ${SLURM_PROCID}."
