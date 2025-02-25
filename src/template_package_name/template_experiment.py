@@ -20,7 +20,7 @@ utils.config.register_resolvers()
 logger = logging.getLogger(__name__)
 
 
-@hydra.main(version_base=None, config_path="configs", config_name="template_experiment")
+@hydra.main(version_base=None, config_path="configs", config_name="template-experiment")
 def main(config: DictConfig) -> None:
     # Using the template provides utilities for experiments:
 
