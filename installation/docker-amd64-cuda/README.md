@@ -248,8 +248,11 @@ We provide the following guides for obtaining/building and running the environme
 Clone the git repository.
 
 ```bash
-git clone <HTTPS/SSH> template-project-name
+# Keep a /dev copy for development and a /run copy for running unattended experiments.
+mkdir template-project-name
 cd template-project-name
+git clone <HTTPS/SSH> dev
+cd dev
 ```
 
 ### Obtain/build the images
@@ -710,6 +713,7 @@ Python dependencies are managed by both `conda` and `pip`.
 - Use `conda` for non-Python dependencies needed to run the project code (e.g. `mkl`, `swig`, `imageio`, etc.).
 - Use `conda` for Python dependencies packaged with more than just Python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
+  Note: new PyTorch versions are only distributed on PyPI (i.e., with `pip`).
 - Use `pip` for the rest of the Python dependencies.
 - For more complex dependencies that may require a custom installation or build, use the `Dockerfile` directly.
 

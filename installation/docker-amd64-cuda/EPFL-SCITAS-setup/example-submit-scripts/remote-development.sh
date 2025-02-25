@@ -13,12 +13,14 @@
 
 # Variables used by the entrypoint script
 # Change this to the path of your project (can be the /dev or /run copy)
-export PROJECT_ROOT_AT=$SCRATCH/template-project-name/dev
+export PROJECT_ROOT_AT=$HOME/projects/template-project-name/dev
+export PROJECT_NAME=template-project-name
+export PACKAGE_NAME=template_package_name
 export SLURM_ONE_ENTRYPOINT_SCRIPT_PER_NODE=1
 export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key
 export SSH_SERVER=1
 export NO_SUDO_NEEDED=1
-export JETBRAINS_SERVER_AT=$SCRATCH/jetbrains-server
+export JETBRAINS_SERVER_AT=$HOME/jetbrains-server
 #export PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
 # or
 # export VSCODE_SERVER_AT=$SCRATCH/vscode-server
@@ -27,8 +29,10 @@ srun \
   --container-image=$CONTAINER_IMAGES/claire+moalla+template-project-name+amd64-cuda-root-latest.sqsh \
   --container-mounts=\
 /etc/slurm,\
+$PROJECT_ROOT_AT,\
 $SCRATCH,\
 $WANDB_API_KEY_FILE_AT,\
+$JETBRAINS_SERVER_AT,\
 $HOME/.gitconfig,\
 $HOME/.ssh \
   --container-workdir=$PROJECT_ROOT_AT \
@@ -53,3 +57,6 @@ $HOME/.ssh \
 #   enroot list -f
 # Exec to the container
 #   enroot exec <container-pid> zsh
+
+# additional options
+# --container-env to override environment variables defined in the container

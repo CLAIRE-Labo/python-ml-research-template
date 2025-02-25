@@ -10,7 +10,7 @@ The template provides the `PROJECT_ROOT/outputs/` directory as a placeholder for
 (model weights, logs, etc.).
 This allows the experiment code to always refer to the same path for the outputs independently of the deployment method
 for better reproducibility between deployment options.
-The directory can be accessed in the experiments with `config.data_dir`.
+The directory can be accessed in the experiments with `config.outputs_dir`.
 The output directories in `PROJECT_ROOT/outputs/` don't need to be physically in the same directory
 as the project, you can create symlinks to them.
 The default setup config `src/template_package_name/configs/setup.yaml` defines an outputs subdirectory where it will

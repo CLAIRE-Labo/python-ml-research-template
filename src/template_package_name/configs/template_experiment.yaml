@@ -7,7 +7,7 @@ defaults:
   # This file.
   - _self_
   # Optional override (untracked by git, must not impact reproducibility).
-  - optional override: template_experiment
+  - optional override: template-experiment
 
 ######################################################################
 

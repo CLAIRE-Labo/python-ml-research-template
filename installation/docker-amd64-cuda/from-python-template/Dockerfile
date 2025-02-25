@@ -102,10 +102,6 @@ RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
 
 FROM runtime-deps AS runtime-generic
 
-ARG PROJECT_NAME
-ARG PACKAGE_NAME
-ENV PROJECT_NAME=${PROJECT_NAME}
-ENV PACKAGE_NAME=${PACKAGE_NAME}
 ENV HYDRA_FULL_ERROR=1
 
 # A final record of the dependencies from pip freeze.

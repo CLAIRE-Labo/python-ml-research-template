@@ -1,4 +1,8 @@
+import os
 import random
+
+# import numpy as np
+# import torch
 
 
 def generate_random_seed():
@@ -20,15 +24,17 @@ def seed_everything(config):
     ## For PyTorch:
     # torch.manual_seed(config.seed)
 
-    # Higher (e.g., on CUDA too) reproducibility with deterministic algorithms:
-    # https://pytorch.org/docs/stable/notes/randomness.html
-
-    # Not supported for all operations though:
-    # https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html
-    # torch.use_deterministic_algorithms(True)
-
-    #  A lighter version of the above otherwise as not all algorithms have a deterministic implementation
-    # torch.backends.cudnn.deterministic = True
-
-    # torch.backends.cudnn.benchmark = False
-    # os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+    # if config.cuda_deterministic:
+    #     # Higher (e.g., on CUDA too) reproducibility with deterministic algorithms:
+    #     # https://pytorch.org/docs/stable/notes/randomness.html
+    #
+    #     # Not supported for all operations though:
+    #     # https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html
+    #     if config.cuda_strong_deterministic:
+    #         torch.use_deterministic_algorithms(True)
+    #
+    #     #  A lighter version of the above otherwise as not all algorithms have a deterministic implementation
+    #     torch.backends.cudnn.deterministic = True
+    #
+    #     # torch.backends.cudnn.benchmark = False
+    #     os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"

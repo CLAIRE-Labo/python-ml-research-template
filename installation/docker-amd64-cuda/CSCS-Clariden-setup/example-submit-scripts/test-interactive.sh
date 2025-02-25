@@ -2,8 +2,6 @@
 
 # Enroot + Pyxis
 
-export PROJECT_ROOT_AT=$SCRATCH/template-project-name/dev
-
 srun \
   -J template-test \
   --pty \

@@ -42,6 +42,8 @@ services:
     environment:
       PROJECT_ROOT_AT: ${PROJECT_ROOT_AT}
       WANDB_API_KEY: ${WANDB_API_KEY}
+      PROJECT_NAME: ${PROJECT_NAME}
+      PACKAGE_NAME: ${PACKAGE_NAME}
     ipc: host                 # Edit as needed (NGC default recommendations, see /opt/nvidia/entrypoint.d/70-shm-check.sh).
     ulimits:                  # Edit as needed (NGC default recommendations, see /opt/nvidia/entrypoint.d/70-shm-check.sh).
       memlock: -1
