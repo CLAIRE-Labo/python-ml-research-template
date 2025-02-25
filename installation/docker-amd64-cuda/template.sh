@@ -23,7 +23,7 @@ GRP=$(id -gn)
 PASSWD=$(id -un)
 # LAB_NAME will be the first component in the image path.
 # It must be lowercase.
-LAB_NAME=$(id -un | tr "[:upper:]" "[:lower:]")
+LAB_NAME=$(id -gn | tr "[:upper:]" "[:lower:]")
 
 #### For running locally
 # You can find the acceleration options in the compose.yaml file
@@ -307,7 +307,7 @@ get_runai_scripts() {
   # Rename the runai examples.
   # ./template.sh get_runai_scripts
   check
-  cp -r "./EPFL-runai-setup/template-submit-examples/" "./EPFL-runai-setup/submit-scripts"
+  cp -r "./EPFL-runai-setup/example-submit-scripts/" "./EPFL-runai-setup/submit-scripts"
   for file in $(find "./EPFL-runai-setup/submit-scripts" -type f); do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
@@ -318,20 +318,9 @@ get_scitas_scripts() {
   # Rename the scitas examples.
   # ./template.sh get_scitas_scripts
   check
-  cp -r "./EPFL-SCITAS-setup/template-submit-examples/" "./EPFL-SCITAS-setup/submit-scripts"
+  cp -r "./EPFL-SCITAS-setup/example-submit-scripts/" "./EPFL-SCITAS-setup/submit-scripts"
     for file in $(find "./EPFL-SCITAS-setup/submit-scripts" -type f); do
     sed -i.deleteme "s/moalla/${USR}/g" "$file" && rm "${file}.deleteme"
-    sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
-  done
-}
-
-get_cscs_scripts() {
-  # Rename the scitas examples.
-  # ./template.sh get_scitas_scripts
-  check
-  cp -r "./CSCS-Clariden-setup/template-submit-examples/" "./CSCS-Clariden-setup/submit-scripts"
-  for file in $(find "./CSCS-Clariden-setup/submit-scripts" -type f); do
-    sed -i.deleteme "s/smoalla/${USR}/g" "$file" && rm "${file}.deleteme"
     sed -i.deleteme "s/claire/${LAB_NAME}/g" "$file" && rm "${file}.deleteme"
   done
 }
@@ -355,7 +344,6 @@ usage() {
   echo "dev -e VAR1=VAL1 -e VAR2=VAL2 ... COMMAND: Run a command in a new development container."
   echo "get_runai_scripts: Rename the runai examples."
   echo "get_scitas_scripts: Rename the scitas examples."
-  echo "get_cscs_scripts: Rename the cscs examples."
 }
 
 if [ $# -eq 0 ]; then

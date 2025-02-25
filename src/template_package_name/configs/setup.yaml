@@ -6,6 +6,9 @@
 # A random seed is generated for each run if you don't specify one.
 # This is good to avoid overfitting your dev runs to specific seeds.
 seed: ${generate_random_seed:}
+# Cuda deterministic settings.
+cuda_deterministic: false
+cuda_strong_deterministic: false
 
 # The root data and output directories to be used in experiments.
 data_dir: ${hydra:runtime.cwd}/data
@@ -28,28 +31,30 @@ job_subdir: dev
 hydra:
   run:
     # Finally, this is where the outputs of an individual run will be stored.
-    dir: outputs/${outputs_subdir}/${hydra.job.name}/${job_subdir}/${now:%Y-%m-%d--%H-%M-%S-%f}
+    dir: outputs/${outputs_subdir}/${hydra.job.name}/${job_subdir}/runs/${now:%Y-%m-%d--%H-%M-%S-%f}
   job:
     chdir: true
   verbose: false  # Set to true for logging at debug level.
 
 wandb:
   project: template-project-name
-  # Make outputs/wandb a symlink if you want to save the wandb summaries elsewhere.
-  # Same as with outputs_subdir.
-  dir: ${hydra:runtime.cwd}/outputs
   mode: online
   anonymous: allow
   tags:
     - development
   run_id: null
+  run_name: null
+  # Make outputs/wandb a symlink if you want to save the wandb summaries elsewhere.
+  # Same as with outputs_subdir.
+  global_dir: ${hydra:runtime.cwd}/outputs
+  use_global_dir: false # Otherwise, use the cwd of the experiment.
 
 run_dir: ${hydra:run.dir}
 resuming_dir: null
 
 resuming:
-  resume: False
-  use_commit: False
+  resume: false
+  use_commit: false
   wandb_cache_bust: 0 # Limitation of wandb. Cannot create runs with the same ID if deleted previously.
                       # Use this to refresh the id of the run and make it a "new" run.
   exclude_keys: # Can be a deep key e.g. model.optimizer.lr

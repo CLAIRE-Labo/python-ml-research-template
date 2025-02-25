@@ -56,7 +56,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=private \
 FROM runtime-apt-pkgs AS runtime-deps
 
 ARG PROJECT_NAME
-ENV PROJECT_NAME=${PROJECT_NAME}
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PIP_CACHE_DIR=/root/.cache/pip
@@ -123,9 +122,6 @@ RUN git clone --depth 1 ${ZSHS_URL} /opt/zsh/zsh-syntax-highlighting
 FROM runtime-deps AS runtime-generic
 
 ARG PROJECT_NAME
-ARG PACKAGE_NAME
-ENV PROJECT_NAME=${PROJECT_NAME}
-ENV PACKAGE_NAME=${PACKAGE_NAME}
 ENV HYDRA_FULL_ERROR=1
 
 # A final record of the depedenencies from mamba (to record the any extra custom installs)

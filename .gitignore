@@ -143,6 +143,6 @@ outputs/*
 !outputs/README.md
 
 wandb
-slurm-*.out
+**/*.out
 
 third-party

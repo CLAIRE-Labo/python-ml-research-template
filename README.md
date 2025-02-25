@@ -60,16 +60,23 @@ Remember to get back to this root one after finishing each step.
 
 1. Clone the repo with destination `PROJECT_NAME`.
     - If you plan to develop on your local computer, clone it there.
-    - If you plan to develop on your remote server (with direct access over say SSH, e.g. EPFL HaaS), clone it there.
-    - If you plan to develop on CSCS Clariden, clone it there (use an allocation with a compute node, not the login node)
-    - If you plan to develop or deploy on a managed cluster without a build engine
+    - If you plan to develop or deploy on a remote server/cluster without a build engine
       (e.g., EPFL Run:ai clusters, SCITAS clusters), clone on your local machine.
-      (Docker allows cross-platform builds with emulation, but it can be slow.
+      (You will build the image on your local machine then clone there for deployment.
+      Docker allows cross-platform builds with emulation, but it can be slow.
       We would recommend that your local machine is of the same platform as the cluster (e.g. `amd64`, `arm64`),
       or that you have access to a remote Docker engine running on the same platform as the cluster.)
+    - If you plan to develop on a remote server/cluster with a build enginewith direct access over say SSH, e.g. EPFL HaaS)) clone it there.
+      (e.g. EPFL HaaS, CSCS Clariden) clone it there.
     ```
-    git clone <HTTPS/SSH> PROJECT_NAME
+    # For your local machine clone anywhere.
+    # For clusters with scratch filesystems with a cleaning policy, clone in your home directory.
+    # The training artifacts will be later stored on the scratch filesystem and symlinked to this directory.
+    # Also note the creation of a `dev` instance of the repo (And later `run` instance for unattended jobs)
+    mkdir PROJECT_NAME
     cd PROJECT_NAME
+    git clone <HTTPS/SSH> dev
+    cd dev
     # The current directory is referred to as PROJECT_ROOT
     ```
    We will refer to the absolute path to the root of the repository as `PROJECT_ROOT`.

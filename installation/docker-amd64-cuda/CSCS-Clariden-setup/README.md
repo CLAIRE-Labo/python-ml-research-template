@@ -124,7 +124,7 @@ cp _TODO ADD IMAGE_PATH_ $CONTAINER_IMAGES/ADAPTED_NAME.sqsh
 
 #### From a registry (TODO)
 
-### Clone your repository in your scratch directory
+### Clone your repository in your home directory
 
 We strongly suggest having two instances of your project repository.
 
@@ -138,34 +138,25 @@ This guide includes the steps to do it, and there are general details in `data/R
 ```bash
 # SSH to a cluster.
 ssh clariden
-cd $SCRATCH
 # Clone the repo twice with name dev and run (if you already have one, mv it to a different name)
-mkdir template-project-name
-git clone <HTTPS/SSH> template-project-name/dev
-git clone <HTTPS/SSH> template-project-name/run
+mkdir -p $HOME/projects/template-project-name
+cd $HOME/projects/template-project-name
+git clone <HTTPS/SSH> dev
+git clone <HTTPS/SSH> run
 ```
 
 The rest of the instructions should be performed on the cluster from the dev instance of the project.
 ```bash
-cd $SCRATCH/template-project-name/dev/
+cd dev
 # It may also be useful to open a remote code editor on a login node to view the project. (The remote development will happen in another IDE in the container.)
 # Push what you did on your local machine so far (change project name etc) and pull it on the cluster.
 git pull
-cd template-project-name/dev/installation/docker-amd64-cuda
+cd installation/docker-amd64-cuda
 ```
 
-### Note about the examples
-
-The example files were made with username `smoalla` and lab-name `claire`.
-Adapt them accordingly to your username and lab name.
-Run
-```bash
-./template.sh env
-# Edit the .env file with your lab name (you can ignore the rest).
-./template.sh get_cscs_scripts
-```
-to get a copy of the examples in this guide with your username, lab name, etc.
-They will be in `./EPFL-SCITAS-setup/submit-scripts`.
+Example submit scripts are provided in the `example-submit-scripts` directory and are used in the following examples.
+You can copy them to the directory `submit-scripts` which is not tracked by git and edit them to your needs.
+Otherwise, we use shared scripts with shared configurations (including IDE, and shell setups) in `shared-submit-scripts`.
 
 ### A quick test to understand how the template works
 
@@ -176,14 +167,14 @@ and the [`pyxis`](https://github.com/NVIDIA/pyxis) plugin directly integrated in
 
 Run the script to see how the template works.
 ```bash
-cd installation/docker-amd64-cuda//CSCS-Clariden-setup/submit-scripts
+cd installation/docker-amd64-cuda/CSCS-Clariden-setup/submit-scripts
 bash minimal.sh
 ```
 
 When the container starts, its entrypoint does the following:
 
 - It runs the entrypoint of the base image if you specified it in the `compose-base.yaml` file.
-- It expects you specify `PROJECT_ROOT_AT=<location to your project in scratch (dev or run)>`.
+- It expects you specify `PROJECT_ROOT_AT=<location to your project (dev or run)>`.
   and `PROJECT_ROOT_AT` to be the working directory of the container.
   Otherwise, it will issue a warning and set it to the default working directory of the container.
 - It then tries to install the project in editable mode.
@@ -328,9 +319,9 @@ EOL
 We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remote-development-overview.html)
 feature of PyCharm that runs a remote IDE in the container.
 
-The first time connecting you will have to install the IDE in the server in a location mounted from `/scratch` so
-that is stored for future use.
-After that, or if you already have the IDE stored in `/scratch` from a previous project,
+The first time connecting you will have to install the IDE in the server in a location mounted in the container
+that is stored for future use (somewhere in you `$HOME` directory).
+After that, or if you already have the IDE stored in from a previous project,
 the template will start the IDE on its own at the container creation,
 and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
 
@@ -351,13 +342,13 @@ All the directories will be created automatically.
    variables
     - `JETBRAINS_SERVER_AT`: set it to the `jetbrains-server` directory described above.
     - `PYCHARM_IDE_AT`: don't include it as IDE is not installed yet.
-2. Enable port forwarding for the SSH port.
+2. Add `JETBRAINS_SERVER_AT` in the `--container-mounts`
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
    install the IDE in your `${JETBRAINS_SERVER_AT}/dist`
-   (something like `/scratch/moalla/jetbrains-server/dist`)
+   (something like `/users/smoalla/jetbrains-server/dist`)
    not in its default location **(use the small "installation options..." link)**.
    For the project directory, it should be in the same location where it was mounted (`${PROJECT_ROOT_AT}`,
-   something like `/scratch/moalla/template-project-name/dev`).
+   something like `/users/smoalla/projects/template-project-name/dev`).
 
 When in the container, locate the name of the PyCharm IDE installed.
 It will be at
@@ -424,7 +415,7 @@ to set up your ssh config file.
 1. In your submit command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
     - preserving your config `VSCODE_SERVER_AT`.
-2. Enable port forwarding for the SSH connection.
+2. Add `VSCODE_SERVER_AT` to the `--container-mounts`.
 3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
    extension on your local VS Code.
 4. Connect to the ssh host following the

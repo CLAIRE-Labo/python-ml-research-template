@@ -31,6 +31,7 @@ for your future users (and yourself).
    # https://anaconda.org/pytorch/pytorch
    # The hardware acceleration will be determined by the packages you install.
    # E.g. if you install PyTorch with CUDA, set the acceleration to cuda.
+   # Note: new PyTorch versions are only distributed on PyPI (i.e. with `pip`).
    ```
    If you plan to support multiple platforms or hardware accelerations,
    you can duplicate this installation method directory
@@ -61,8 +62,11 @@ for your future users (and yourself).
 Clone the git repository.
 
 ```bash
-git clone <HTTPS/SSH> template-project-name
+# Keep a /dev copy for development and a /run copy for running unattended experiments.
+mkdir template-project-name
 cd template-project-name
+git clone <HTTPS/SSH> dev
+cd dev
 ```
 
 We will refer the absolute path to the root of the repository as `PROJECT_ROOT`.
@@ -131,6 +135,7 @@ Python dependencies are managed by both conda and pip.
   If not available on conda use `brew`.
 - Use `conda` for Python dependencies packaged with more that just Python code (e.g. `pytorch`, `numpy`).
   These will typically be your main dependencies and will likely not change as your project grows.
+  Note: new PyTorch versions are only distributed on PyPI (i.e., with `pip`).
 - Use `pip` for the rest of the Python dependencies (e.g. `tqdm`).
 - For more complex dependencies that may require a custom installation or build,
   manually follow their installation steps.

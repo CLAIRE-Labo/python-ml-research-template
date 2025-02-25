@@ -10,6 +10,8 @@ metric:
 parameters:
   wandb.mode:
     value: online
+  wandb.use_global_dir:
+    value: True
   job_subdir:
     value: some-special-experiment
   seed:
