@@ -130,7 +130,8 @@ dmypy.json
 .pyre/
 
 # JetBrains
-.idea/
+.idea/*
+!.idea/runConfigurations/
 
 # macOS
 .DS_Store
