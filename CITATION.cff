@@ -1,0 +1,32 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Python Machine Learning Research Template
+message: >-
+  If you use this template or borrow some of its code, please
+  cite it as shown below.
+type: software
+authors:
+  - given-names: Skander
+    family-names: Moalla
+    email: skander.moalla@epfl.ch
+    affiliation: EPFL
+    orcid: 'https://orcid.org/0000-0002-8494-8071'
+repository-code: 'https://github.com/CLAIRE-Labo/python-ml-research-template'
+abstract: >-
+  A template for starting Python machine learning research
+  projects with hardware acceleration. It features reproducible
+  environments on major platforms, a great development experience,
+  Python project packaging following PyPA guidelines to avoid
+  hacky imports, experiment management and tracking with Hydra
+  and Weights & Biases, checkpointing for research experiments
+  compatible with Weights & Biases, and code quality enforcement
+  with pre-commit.
+keywords:
+  - python
+  - machine learning
+  - reproducibility
+  - containers
+  - template
+license: MIT

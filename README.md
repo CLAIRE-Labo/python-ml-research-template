@@ -1,8 +1,13 @@
+> [!TIP]
+> 🌟 If you like this template, please give it a star! 🌟
+>
+> 📜 If you use this template, borrow some of its code, or refer to it, please cite it as shown on GitHub! 📜
+
 > [!IMPORTANT]
 > **TEMPLATE TODO:**
 > Replace the title below with your project title, then delete this note.
 
-# Python Machine Learning Research Project Template
+# Python Machine Learning Research Template
 
 ## Overview
 
@@ -13,32 +18,33 @@
 A template for starting Python machine-learning research
 projects with hardware acceleration featuring:
 
-- Reproducible environments on major platforms with hardware acceleration with a great development experience
+- ✅ Reproducible environments on major platforms with hardware acceleration with a great development experience
   covering multiple use cases:
-    - local machines, e.g., macOS (+ Apple Silicon/MPS) and Linux/Windows WSL (+ NVIDIA GPU).
-    - Remote Linux servers with GPUs, e.g., VMs on cloud providers and IC and RCP HaaS at EPFL.
-    - Managed clusters supporting OCI containers with GPUs, e.g., the EPFL IC and RCP Run:ai (Kubernetes) clusters
+    - 💻 local machines, e.g., macOS (+ Apple Silicon/MPS) and Linux/Windows WSL (+ NVIDIA GPU).
+    - 🌐 Remote Linux servers with GPUs, e.g., VMs on cloud providers and IC and RCP HaaS at EPFL.
+    - ☁️ Managed clusters supporting OCI containers with GPUs, e.g., the EPFL IC and RCP Run:ai (Kubernetes) clusters
       and the SCITAS Slurm clusters.
-- Python project packaging following the
+- 📦 Python project packaging following the
   [PyPA packaging guidelines](https://packaging.python.org/en/latest/tutorials/packaging-projects/) to avoid hacky
   imports.
-- Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
+- 📊 Experiment management, tracking, and sharing with [Hydra](https://hydra.cc/)
   and [Weights & Biases](https://wandb.ai/site).
-- Checkpointing setup for research experiments compatible with Weights & Biases.
-- Code quality with [pre-commit](https://pre-commit.com) hooks.
+- 💾 Checkpointing setup for research experiments compatible with Weights & Biases.
+- 🧹 Code quality with [pre-commit](https://pre-commit.com) hooks.
 
-The template makes collaboration and open-sourcing straightforward, avoiding setup issues and
+🤝 The template makes collaboration and open-sourcing straightforward, avoiding setup issues and
 [maximizing impact](https://medium.com/paperswithcode/ml-code-completeness-checklist-e9127b168501#a826).
-The practices in this template earned its authors
+
+🏆 The practices in this template earned its authors
 an [Outstanding Paper (Honorable Mention)](https://openreview.net/forum?id=E0qO5dI5aEn)
 at the [ML Reproducibility Challenge 2022](https://paperswithcode.com/rc2022).
 
-Projects made with the template would look like
+📌 Projects made with the template would look like
 [this toy project](https://github.com/skandermoalla/pytoych-benchmark)
 or [this paper](https://github.com/CLAIRE-Labo/no-representation-no-trust) whose curves have been exactly reproduced
-(exact same numbers) on multiple different platforms (EPFL Kubernetes cluster, VM on GCP, HPC cluster with Apptainer),
+(exact same numbers) on multiple different platforms (EPFL Kubernetes cluster, VM on GCP, HPC cluster with Apptainer).
 
-Follow this README to get started with the template.
+📖 Follow this README to get started with the template.
 
 For a brief discussion of the template's design choices, features, and a Q&A check `template/README.md` file.
 
@@ -94,6 +100,7 @@ Remember to get back to this root one after finishing each step.
 4. Edit the `LICENSE` file, or delete it and remember to add one when open-sourcing your code.
    [(Some help here).](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)
    A simple change if you're fine with the MIT license is to replace the `2022 Skander Moalla` with your year and name.
+   Same for the `CITATION.cff` file.
    Commit.
 5. Set up and edit the development environment instructions for the methods and platforms you will use and support.
    Each method supports a group of use cases:
@@ -294,7 +301,7 @@ pre-commit run --all-files
 
 This project is licensed under the LICENSE file in the root directory of the project.
 
-The initial code of this repository has been initiated by the [Python Machine Learning Research Project Template](https://github.com/CLAIRE-Labo/python-ml-research-template)
+The initial code of this repository has been initiated by the [Python Machine Learning Research Template](https://github.com/CLAIRE-Labo/python-ml-research-template)
 with the LICENSE.ml-template file.
 
 Additional LICENSE files may be present in subdirectories of the project.
