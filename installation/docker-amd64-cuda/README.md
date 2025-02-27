@@ -601,6 +601,8 @@ apptainer run \
     -B $(pwd):${PROJECT_ROOT_AT} \
     --cwd ${PROJECT_ROOT_AT} \
     --env PROJECT_ROOT_AT=${PROJECT_ROOT_AT} \
+    --env PROJECT_NAME=template-project-name \
+    --env PACKAGE_NAME=template_package_name \
     --env WANDB_API_KEY="" \
     --nv template-project-name_amd64-cuda-root-latest.sif
 # --env PROJECT_ROOT_AT is used by the entrypoint to install the project

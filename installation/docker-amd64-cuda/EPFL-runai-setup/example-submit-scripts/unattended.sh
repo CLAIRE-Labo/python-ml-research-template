@@ -10,6 +10,8 @@ runai submit \
   --pvc runai-claire-moalla-scratch:/claire-rcp-scratch \
   --working-dir /claire-rcp-scratch/home/moalla/template-project-name/run \
   -e PROJECT_ROOT_AT=/claire-rcp-scratch/home/moalla/template-project-name/run \
+  -e PROJECT_NAME=template-project-name \
+  -e PACKAGE_NAME=template_package_name \
   -g 1 --cpu 8 --cpu-limit 8 --memory 64G --memory-limit 64G --large-shm \
   -- python -m template_package_name.template_experiment some_arg=2 wandb.mode=offline
 
