@@ -2,16 +2,51 @@
 
 ## Overview
 
-At this point, you should have edited the environment files and are ready to build or run the image.
 This guide will show you how to build and run your image on the CSCS Clariden cluster and use it for
 
 1. Remote development.
 2. Running unattended jobs.
 
+## Clone your repository in your home directory
+
+We strongly suggest having two instances of your project repository.
+
+1. One for development, which may have uncommitted changes, be in a broken state, etc.
+2. One for running unattended jobs, which is always referring to a commit at a working state of the code.
+
+The outputs and data directories of those two instances will be symlinked to the scratch storage
+and will be shared anyway.
+This guide includes the steps to do it, and there are general details in `data/README.md` and `outputs/README.md`.
+
+```bash
+# SSH to a cluster.
+ssh clariden
+mkdir -p $HOME/projects/template-project-name
+cd $HOME/projects/template-project-name
+git clone <git SSH URL> dev
+git clone <git SSH URL> run
+
+# To setup symlinks to the scratch storage you can run the following commands
+mkdir -p $SCRATCH/projects/template-project-name/data/dev
+mkdir -p $SCRATCH/projects/template-project-name/outputs/dev
+for instance in run dev; do
+  ln -s $SCRATCH/projects/template-project-name/data/dev $HOME/projects/template-project-name/$instance/data/dev
+  ln -s $SCRATCH/projects/template-project-name/outputs/dev $HOME/projects/template-project-name/$instance/outputs/dev
+done
+```
+
+The rest of the instructions should be performed on the cluster from the dev instance of the project.
+
+```bash
+cd dev
+# It may also be useful to open a remote code editor on a login node to view the project.
+# (The remote development will happen in another IDE in the container.)
+cd installation/docker-amd64-cuda
+```
 
 ## Building the environment (skip if already have access to the image)
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > After saving your generic image, provide the image location to your teammates.
 > Ideally also push it to team registry and later on a public registry if you open-source your project.
@@ -46,7 +81,7 @@ All commands should be run from the `installation/docker-amd64-cuda/` directory.
 You should be on a compute node. If not already, get one.
 ```bash
 # Request a compute node
-sbatch -N  --time 4:00:00 -A a-a10 --wrap "sleep infinity" --output=/dev/null --error=/dev/null
+sbatch --time 4:00:00 -A a-a10 --wrap "sleep infinity" --output=/dev/null --error=/dev/null
 # Connect to it
 srun --overlap --pty --jobid=GET_THE_JOB_ID bash
 tmux
@@ -64,10 +99,9 @@ cd installation/docker-amd64-cuda
    ```
    This creates a `.env` file with pre-filled values.
     - Edit the `DOCKER` variable to `podman` and the `COMPOSE` variable to `podman-compose`.
-    - You can ignore the variables `USR, USRID, GRP, GRPID, and PASSW`.
-    - `LAB_NAME` will be the first element in name of the local images you get.
-      (**EPFL Note:** _If pushing to the IC or RCP registries this should be the name of your lab's project
-      in the registry. CLAIRE members should use `claire`._)
+    - The rest of the variables are set correctly (`USR, USRID, GRP, GRPID, and PASSW`,
+      e.g.`LAB_NAME` will be the first element in name of the local images you get,
+      it's by default your horizontal/vertical)
     - You can ignore the rest of the variables after `## For running locally`.
 2. Edit the Dockerfile to make it compatible with Podman:
    There are commented lines starting with `# Podman` which should be uncommented
@@ -95,18 +129,7 @@ cd installation/docker-amd64-cuda
 5. You can run quick checks on the image to check it that it has what you expect it to have.
    When the example scripts are described later, run the `test-interactive.sh` example script before the other scripts.
 
-## First steps
-
-### Prerequisites
-
-**CSCS and Slurm**:
-
-1. You should have access to the Clariden cluster.
-2. You should have some knowledge of Slurm.
-
-There is a great documentation provided by the SwissAI initiative [here](https://github.com/swiss-ai/documentation).
-
-### Getting your image
+## Getting your image (if already built, or just built)
 
 #### From a file
 
@@ -117,50 +140,24 @@ Copy it or create a symlink to it where you keep your images. E.g.,
 # Add it to your bashrc as it'll be used often
 CONTAINER_IMAGES=$SCRATCH/container-images
 mkdir -p $CONTAINER_IMAGES
-# Symlink the image with an adapted name with your lab name and username
+# Copy the image with an adapted name with your horizontal/vertical name and username
 # (it will be readily-usable by the submit scripts)
 cp _TODO ADD IMAGE_PATH_ $CONTAINER_IMAGES/ADAPTED_NAME.sqsh
 ```
 
-#### From a registry (TODO)
+#### From a registry
 
-### Clone your repository in your home directory
-
-We strongly suggest having two instances of your project repository.
-
-1. One for development, which may have uncommitted changes, be in a broken state, etc.
-2. One for running unattended jobs, which is always referring to a commit at a working state of the code.
-
-The outputs and data directories of those two instances will be symlinked to the scratch storage
-and will be shared anyway.
-This guide includes the steps to do it, and there are general details in `data/README.md` and `outputs/README.md`.
-
-```bash
-# SSH to a cluster.
-ssh clariden
-# Clone the repo twice with name dev and run (if you already have one, mv it to a different name)
-mkdir -p $HOME/projects/template-project-name
-cd $HOME/projects/template-project-name
-git clone <HTTPS/SSH> dev
-git clone <HTTPS/SSH> run
-```
-
-The rest of the instructions should be performed on the cluster from the dev instance of the project.
-```bash
-cd dev
-# It may also be useful to open a remote code editor on a login node to view the project. (The remote development will happen in another IDE in the container.)
-# Push what you did on your local machine so far (change project name etc) and pull it on the cluster.
-git pull
-cd installation/docker-amd64-cuda
-```
+> [!NOTE]
+> **TEMPLATE TODO:**
+> You can push your image to a registry after building and provide the path to your teammates.
 
 Example submit scripts are provided in the `example-submit-scripts` directory and are used in the following examples.
 You can copy them to the directory `submit-scripts` which is not tracked by git and edit them to your needs.
-Otherwise, we use shared scripts with shared configurations (including IDE, and shell setups) in `shared-submit-scripts`.
 
 ### A quick test to understand how the template works
 
-Adapt the `submit-scripts/minimal.sh` with the name of your image and your cluster storage setup.
+Adapt the `submit-scripts/minimal.sh` with the name of your image and your cluster storage setup
+(should be correct by default).
 
 The submission script gives an example of how to run containers on Clariden with [`enroot`](https://github.com/NVIDIA/enroo)
 and the [`pyxis`](https://github.com/NVIDIA/pyxis) plugin directly integrated in `srun`,
@@ -219,7 +216,25 @@ echo <my-wandb-api-key> > $HOME/.wandb-api-key
 chmod 600 $HOME/.wandb-api-key
 ```
 
+
 Then `export WANDB_API_KEY_FILE_AT=$HOME/.wandb-api-key` in the submit script.
+You should also mount the file in the container.
+
+### Hugging Face
+
+Your HF API key should be exposed as the `HF_TOKEN` environment variable.
+You can export it or if you're sharing the script with others export a location to a file containing it with
+`export HF_TOKEN_AT` and let the template handle it.
+
+E.g.,
+
+```bash
+echo <my-huggingface-api-key> > $HOME/.hf-token
+chmod 600 $HOME/.hf-token
+```
+
+Then `export HF_TOKEN_AT=$HOME/.hf-token` in the submit script.
+You should also mount the file in the container.
 
 ### Remote development
 
@@ -263,21 +278,40 @@ Host clariden
 
 # EDIT THIS HOSTNAME WITH EVERY NEW JOB
 Host clariden-job
-    HostName nid005105
+    HostName nid007545
     User smoalla
     ProxyJump clariden
     StrictHostKeyChecking no
-	  UserKnownHostsFile=/dev/null
-	  ForwardAgent yes
+    UserKnownHostsFile=/dev/null
+    ForwardAgent yes
 
 Host clariden-container
     HostName localhost
     ProxyJump clariden-job
     Port 2223
     User smoalla
-	  StrictHostKeyChecking no
-	  UserKnownHostsFile=/dev/null
-	  ForwardAgent yes
+	StrictHostKeyChecking no
+	UserKnownHostsFile=/dev/null
+	ForwardAgent yes
+```
+
+To update the hostname of the `clariden-job` you can add this to your `~/.zshrc` on macOS for example:
+
+```bash
+# Tested on macos with zsh
+function update-ssh-config() {
+  local config_file="$HOME/.ssh/config"  # Adjust this path if needed
+  local host="$1"
+  local new_hostname="$2"
+
+  if [[ -z "$host" || -z "$new_hostname" ]]; then
+    echo "Usage: update-ssh-config <host> <new-hostname>"
+    return 1
+  fi
+
+  sed -i '' '/Host '"$host"'/,/Host / s/^[[:space:]]*HostName.*/    HostName '"$new_hostname"'/' "$config_file"
+  echo "Updated HostName for '${host}' to '${new_hostname}' in ~/.ssh/config"
+}
 ```
 
 The `StrictHostKeyChecking no` and `UserKnownHostsFile=/dev/null` allow bypass checking the identity
@@ -320,7 +354,7 @@ We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remot
 feature of PyCharm that runs a remote IDE in the container.
 
 The first time connecting you will have to install the IDE in the server in a location mounted in the container
-that is stored for future use (somewhere in you `$HOME` directory).
+that is stored for future use (somewhere in your `$HOME` directory).
 After that, or if you already have the IDE stored in from a previous project,
 the template will start the IDE on its own at the container creation,
 and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
@@ -338,11 +372,12 @@ All the directories will be created automatically.
 
 **First time only (if you don't have the IDE stored from another project), or if you want to update the IDE.**
 
-1. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
+1. `mkdir $HOME/jetbrains-server`
+2. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
    variables
     - `JETBRAINS_SERVER_AT`: set it to the `jetbrains-server` directory described above.
     - `PYCHARM_IDE_AT`: don't include it as IDE is not installed yet.
-2. Add `JETBRAINS_SERVER_AT` in the `--container-mounts`
+   And add `JETBRAINS_SERVER_AT` in the `--container-mounts`
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
    install the IDE in your `${JETBRAINS_SERVER_AT}/dist`
    (something like `/users/smoalla/jetbrains-server/dist`)
@@ -412,10 +447,11 @@ to set up your ssh config file.
 
 **Connecting VS Code to the container**:
 
-1. In your submit command, set the environment variables for
+1. `mkdir $HOME/vscode-server`
+2. In your submit command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
     - preserving your config `VSCODE_SERVER_AT`.
-2. Add `VSCODE_SERVER_AT` to the `--container-mounts`.
+   And add `VSCODE_SERVER_AT` in the `--container-mounts`.
 3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
    extension on your local VS Code.
 4. Connect to the ssh host following the

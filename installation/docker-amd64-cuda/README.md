@@ -2,7 +2,7 @@
 
 ## Template getting started
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Follow the instructions, then delete this section.
 
@@ -121,7 +121,7 @@ for your future users (and yourself).
 
 ## More details on the setup
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Read/skim over this section, then delete it.
 
@@ -186,7 +186,7 @@ and get examples from the `./template.sh` script.
 
 ## The environment
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > When open-sourcing your project, share the generic image you built on a public registry.
 > Otherwise, delete the last bullet below in the guides for running the environment.
@@ -194,36 +194,36 @@ and get examples from the `./template.sh` script.
 We provide the following guides for obtaining/building and running the environment:
 
 - To run the image locally (or on a remote server with SSH access) with Docker & Docker Compose, follow the instructions
-  to [obtain/build the environment](#obtainingbuilding-the-environment) then
-  the instructions [run locally with Docker Compose](#running-locally-with-docker-compose).
+  to [obtain/build the environment](#obtainingbuilding-the-environment) in this readme then
+  the instructions [run locally with Docker Compose](#running-locally-with-docker-compose) also in this readme.
 
   Perform the steps on the machine where the code will run, i.e., your local machine or the remote server.
 
   The guide also provides instructions to do remote development with VSCode, PyCharm, and Jupyter Lab.
 - To run on the EPFL Run:ai clusters, follow the instructions
-  to [obtain/build the environment](#obtainingbuilding-the-environment)
+  to [obtain/build the environment](#obtainingbuilding-the-environment) in this readme
   (perform them on your local machine)
-  then refer to the `./EPFL-runai-setup/README.md`.
+  then skip to the `./EPFL-runai-setup/README.md`.
 
   The guide also provides instructions to do remote development on the Run:ai cluster
   with VSCode, PyCharm, and Jupyter Lab.
   Other Run:ai cluster users can get inspiration from it too.
 - To run on the EPFL SCITAS clusters, follow the instructions
-  to [obtain/build the environment](#obtainingbuilding-the-environment)
-  (perform them on your local machine).
+  to [obtain/build the environment](#obtainingbuilding-the-environment) in this readme
+  (perform them on your local machine) then skip to the `./EPFL-SCIITAS-setup/README.md`.
   You don't need to build the user image,
   and you can skip building the generic image if you're reusing an existing one for the project.
-  Then, refer to the `./EPFL-SCIITAS-setup/README.md`.
+
 
   The guide also provides instructions to do remote development on the SCITAS cluster
   with VSCode, PyCharm, and Jupyter Lab.
   Other Slurm + enroot/Apptainer/Singularity cluster users can get inspiration from it too.
-- To run on the CSCS Clariden cluster, follow the instructions in `./CSCS-Clariden-setup/README.md`.
+- To run on the CSCS Clariden cluster, skip the rest of this readme and
+  directly follow the instructions in `./CSCS-Clariden-setup/README.md`.
 
   The guide also provides instructions to do remote development on the Clariden cluster
   with VSCode, PyCharm, and Jupyter Lab.
   Other Slurm + enroot cluster users can get inspiration from it too.
-
 - We also provide an image with the dependencies needed to run the environment
   that you can use with your favorite OCI-compatible container runtime.
   Follow the instructions
@@ -232,7 +232,7 @@ We provide the following guides for obtaining/building and running the environme
 
 ## Obtaining/building the environment
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > After pushing your generic image, provide the image name on your private registry to your teammates,
 > or later on a public registry if you open-source your project.
@@ -251,7 +251,7 @@ Clone the git repository.
 # Keep a /dev copy for development and a /run copy for running unattended experiments.
 mkdir template-project-name
 cd template-project-name
-git clone <HTTPS/SSH> dev
+git clone <git SSH URL> dev
 cd dev
 ```
 
@@ -338,7 +338,7 @@ Push the generic image if you built it (`LAB_NAME/USR/PROJECT_NAME:PLATFORM-root
 Pro-tip: it will also push them with the git commit hash as a tag if the build is at the latest commit.
 You can rebuild the images with `./template.sh build` to tag them with the latest commit hash.
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Give the generic image name you just pushed
 > (e.g., `ic-registry.epfl.ch/LAB_NAME/USR/PROJECT_NAME`)
@@ -355,7 +355,7 @@ Push the user-configured image for the Run:ai cluster (`LAB_NAME/USR/PROJECT_NAM
 
 ## Running locally with Docker Compose
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:** Adapt the compose.yaml file to your local deployment needs.
 > - Add the necessary container options (ipc=host, network, additional mounts, etc)
 >   to the run-local and dev-local services in the compose.yaml file.
@@ -432,7 +432,7 @@ mv template-project-name template-project-name-tmp
 mkdir template-project-name
 mv template-project-name-tmp template-project-name/dev
 # Make sure to rerun your .env so that the new paths are correct.
-git clone <HTTPS/SSH> template-project-name/run
+git clone <git SSH URL> template-project-name/run
 # Then you can follow the same steps for .../run to run your experiments.
 # Remember to generate and edit the .env file there as well.
 ```
@@ -565,7 +565,7 @@ ssh -N -L 8887:localhost:8887 <USER@HOST> # or anything specified in your ssh co
 
 ## Running with your favorite container runtime
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Provide the images and fill the TODO link and PULL_IMAGE_NAME, or delete this section.
 
@@ -613,7 +613,7 @@ apptainer run \
 
 Return to the root README for the rest of the instructions to run our experiments.
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Remove the [FROM-PYTHON] or [FROM-SCRATCH] prefix of the method you use and delete the other method's section.
 

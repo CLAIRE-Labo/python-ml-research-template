@@ -79,14 +79,14 @@ Host rcp-haas
 	ForwardAgent yes
 ```
 
-SSH to the machine anc clone your repository in your PVC / shared storage.
+SSH to the machine and clone your repository in your PVC / shared storage.
    (Remember to push the changes you made on your local machine after initializing the template,
    to have the latest state of your repo.)
    ```bash
    # Somewhere in your PVC, say your personal directory there.
    mkdir template-project-name
-   git clone <HTTPS/SSH> template-project-name/dev
-   git clone <HTTPS/SSH> template-project-name/run
+   git clone <git SSH URL> template-project-name/dev
+   git clone <git SSH URL> template-project-name/run
    ```
 
    We also recommend that you make Git ignore the executable bit as the repo is moved across filesystems.

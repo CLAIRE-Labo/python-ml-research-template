@@ -1,4 +1,4 @@
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO**
 > This directory should contain the commands run to reproduce the results in the paper.
 > E.g. the commands to train, evaluate, and produce the plots in the paper.

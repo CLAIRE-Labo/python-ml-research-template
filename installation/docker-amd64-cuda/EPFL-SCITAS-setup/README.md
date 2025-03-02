@@ -100,8 +100,8 @@ This guide includes the steps to do it, and there are general details in `data/R
 ssh kuma
 mkdir -p $HOME/projects/template-project-name
 cd $HOME/projects/template-project-name
-git clone <HTTPS/SSH> dev
-git clone <HTTPS/SSH> run
+git clone <git SSH URL> dev
+git clone <git SSH URL> run
 ```
 
 The rest of the instructions should be performed on the cluster from the dev instance of the project.
@@ -250,13 +250,31 @@ Host kuma-container
     UserKnownHostsFile=/dev/null
     ForwardAgent yes
 ```
+To update the hostname of the `clariden-job` you can add this to your `~/.zshrc` on macOS for example:
+
+```bash
+# Tested on macos with zsh
+function update-ssh-config() {
+  local config_file="$HOME/.ssh/config"  # Adjust this path if needed
+  local host="$1"
+  local new_hostname="$2"
+
+  if [[ -z "$host" || -z "$new_hostname" ]]; then
+    echo "Usage: update-ssh-config <host> <new-hostname>"
+    return 1
+  fi
+
+  sed -i '' '/Host '"$host"'/,/Host / s/^[[:space:]]*HostName.*/    HostName '"$new_hostname"'/' "$config_file"
+  echo "Updated HostName for '${host}' to '${new_hostname}' in ~/.ssh/config"
+}
+```
 
 The `StrictHostKeyChecking no` and `UserKnownHostsFile=/dev/null` allow bypass checking the identity
 of the host [(ref)](https://linuxcommando.blogspot.com/2008/10/how-to-disable-ssh-host-key-checking.html)
 which keeps changing every time a job is scheduled,
 so that you don't have to reset it each time.
 
-With this config you can then connect to your container with `ssh kuma-container`.
+With this config you can then connect to your container with `ssh clariden-container`.
 
 **Limitations**
 
@@ -291,7 +309,7 @@ We support the [Remote Development](https://www.jetbrains.com/help/pycharm/remot
 feature of PyCharm that runs a remote IDE in the container.
 
 The first time connecting you will have to install the IDE in the server in a location mounted in the container
-that is stored for future use (somewhere in you `$HOME` directory).
+that is stored for future use (somewhere in your `$HOME` directory).
 After that, or if you already have the IDE stored in from a previous project,
 the template will start the IDE on its own at the container creation,
 and you will be able to directly connect to it from the JetBrains Gateway client on your local machine.
@@ -309,17 +327,18 @@ All the directories will be created automatically.
 
 **First time only (if you don't have the IDE stored from another project), or if you want to update the IDE.**
 
-1. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
+1. `mkdir $HOME/jetbrains-server`
+2. Submit your job as in the example `submit-scripts/remote-development.sh` and in particular edit the environment
    variables
     - `JETBRAINS_SERVER_AT`: set it to the `jetbrains-server` directory described above.
     - `PYCHARM_IDE_AT`: don't include it as IDE is not installed yet.
-2. Add `JETBRAINS_SERVER_AT` in the `--container-mounts`
+   And add `JETBRAINS_SERVER_AT` in the `--container-mounts`
 3. Then follow the instructions [here](https://www.jetbrains.com/help/pycharm/remote-development-a.html#gateway) and
    install the IDE in your `${JETBRAINS_SERVER_AT}/dist`
-   (something like `/home/moalla/jetbrains-server/dist`)
+   (something like `/users/smoalla/jetbrains-server/dist`)
    not in its default location **(use the small "installation options..." link)**.
    For the project directory, it should be in the same location where it was mounted (`${PROJECT_ROOT_AT}`,
-   something like `/home/moalla/projects/template-project-name/dev`).
+   something like `/users/smoalla/projects/template-project-name/dev`).
 
 When in the container, locate the name of the PyCharm IDE installed.
 It will be at
@@ -330,7 +349,7 @@ ls ${JETBRAINS_SERVER_AT}/dist
 The name of this directory will be what you should set the `PYCHARM_IDE_AT` variable to in the next submissions
 so that it starts automatically.
 ```bash
-PYCHARM_IDE_AT=e632f2156c14a_pycharm-professional-2024.1.4
+PYCHARM_IDE_AT=744eea3d4045b_pycharm-professional-2024.1.6-aarch64
 ```
 
 **When you have the IDE in the storage**
@@ -383,10 +402,11 @@ to set up your ssh config file.
 
 **Connecting VS Code to the container**:
 
-1. In your submit command, set the environment variables for
+1. `mkdir $HOME/vscode-server`
+2. In your submit command, set the environment variables for
     - Opening an ssh server `SSH_SERVER=1`.
     - preserving your config `VSCODE_SERVER_AT`.
-2. Add `VSCODE_SERVER_AT` to the `--container-mounts`.
+   And add `VSCODE_SERVER_AT` in the `--container-mounts`.
 3. Have the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
    extension on your local VS Code.
 4. Connect to the ssh host following the

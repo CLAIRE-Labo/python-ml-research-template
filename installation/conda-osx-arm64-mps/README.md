@@ -2,7 +2,7 @@
 
 ## Template getting started
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Follow the instructions then delete this section.
 
@@ -65,7 +65,7 @@ Clone the git repository.
 # Keep a /dev copy for development and a /run copy for running unattended experiments.
 mkdir template-project-name
 cd template-project-name
-git clone <HTTPS/SSH> dev
+git clone <git SSH URL> dev
 cd dev
 ```
 

@@ -3,7 +3,7 @@
 >
 > 📜 If you use this template, borrow some of its code, or refer to it, please cite it as shown on GitHub! 📜
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Replace the title below with your project title, then delete this note.
 
@@ -11,7 +11,7 @@
 
 ## Overview
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Replace the description below with a description of your project, then delete this note.
 
@@ -50,7 +50,7 @@ For a brief discussion of the template's design choices, features, and a Q&A che
 
 ## Getting started with the template
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO:**
 > Delete this whole section when you're done with the template getting started.
 
@@ -64,29 +64,31 @@ It's useful to commit after some checkpoints to be able to go back if you make a
 Some instructions will send you to different READMEs in the template that will compile nicely together in the end.
 Remember to get back to this root one after finishing each step.
 
-1. Clone the repo with destination `PROJECT_NAME`.
+1. Clone the repo with destination `PROJECT_NAME. See where and how below:
     - If you plan to develop on your local computer, clone it there.
-    - If you plan to develop or deploy on a remote server/cluster without a build engine
-      (e.g., EPFL Run:ai clusters, SCITAS clusters), clone on your local machine.
-      (You will build the image on your local machine then clone there for deployment.
+    - If you plan to develop or deploy on a remote server/cluster without access to a build engine
+      (e.g., EPFL Run:ai/Kubernetes clusters, SCITAS clusters), clone on your local machine.
+      (You will build the image on your local machine, then clone on your server for deployment.
       Docker allows cross-platform builds with emulation, but it can be slow.
       We would recommend that your local machine is of the same platform as the cluster (e.g. `amd64`, `arm64`),
       or that you have access to a remote Docker engine running on the same platform as the cluster.)
-    - If you plan to develop on a remote server/cluster with a build enginewith direct access over say SSH, e.g. EPFL HaaS)) clone it there.
-      (e.g. EPFL HaaS, CSCS Clariden) clone it there.
-    ```
-    # For your local machine clone anywhere.
-    # For clusters with scratch filesystems with a cleaning policy, clone in your home directory.
-    # The training artifacts will be later stored on the scratch filesystem and symlinked to this directory.
-    # Also note the creation of a `dev` instance of the repo (And later `run` instance for unattended jobs)
-    mkdir PROJECT_NAME
-    cd PROJECT_NAME
-    git clone <HTTPS/SSH> dev
-    cd dev
-    # The current directory is referred to as PROJECT_ROOT
-    ```
-   We will refer to the absolute path to the root of the repository as `PROJECT_ROOT`.
+    - If you plan to develop on a remote server/cluster with access to a build engine
+      (e.g. EPFL HaaS, CSCS Clariden), clone it there.
+   ```bash
+   # For your local machine clone anywhere
 
+   # For clusters with scratch filesystems with a cleaning policy, clone in your home directory (no cleaning policy).
+   # The training artifacts will be later stored on the scratch filesystem and symlinked to this directory.
+
+   # Note the creation of a `dev` instance of the repo (And later `run` instance for unattended jobs)
+   # This allows to run unattended jobs in the `run` while changing the code in the `dev`.
+   mkdir PROJECT_NAME
+   cd PROJECT_NAME
+   git clone <Git SSH URL> dev
+   cd dev
+   # The current directory is referred to as PROJECT_ROOT
+   ```
+   We will refer to the absolute path to the root of the repository as `PROJECT_ROOT`.
 2. Fill the template variables in `template/template-variables.env` by
    editing the ones with the `$NEW_` prefix, then run the script
    ```bash
@@ -187,7 +189,7 @@ Here are a few tips for keeping your project in good shape.
 
 ### Code and development environment
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO**:
 > Update the installation methods and platforms you support, delete the rest, and delete this note.
 > I.e. keep either Docker or Conda, or both, or multiple of each if you support multiple platforms.
@@ -223,7 +225,7 @@ We support the following methods and platforms for installing the project depend
 
 ### Data
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO**:
 > Fill `data/README.md` or delete this section, then delete this note.
 
@@ -240,7 +242,7 @@ Otherwise, the runs will be anonymous (you don't need to be logged in).
 
 ### Reproducing our results
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO**:
 > Keep these scripts up to date and run your experiments using them.
 > Do provide the W&B runs and trained models or update this section.
@@ -263,7 +265,7 @@ You can get examples of how to do so in the `reproducibility-scripts/` directory
 
 ## Repository structure
 
-> [!IMPORTANT]
+> [!NOTE]
 > **TEMPLATE TODO**:
 > Provide a quick overview of the main files in the repo for users to understand your code,
 > then delete this note.
