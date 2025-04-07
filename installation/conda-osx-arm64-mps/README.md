@@ -128,7 +128,7 @@ Return to the root README for the rest of the instructions to run our experiment
 ## Maintaining the environment
 
 System dependencies are managed by conda, otherwise when not available, by brew.
-(We try to keep everything self-container as much as possible.)
+(We try to keep everything self-contained as much as possible.)
 Python dependencies are managed by both conda and pip.
 
 - Use `conda` for system and non-Python dependencies needed to run the project code (e.g., image libraries, etc.).
@@ -144,7 +144,7 @@ Here are references and reasons to follow the above claims:
 
 * [A guide for managing conda + `pip` environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment).
 * [Reasons to use conda for not-Python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
-* [Ways of combining conda and `pip`](https://towardsdatascience.com/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
+* [Ways of combining conda and `pip`](https://medium.com/data-science/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
 
 There are two ways to add dependencies to the environment:
 
