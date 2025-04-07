@@ -144,7 +144,7 @@ Here are references and reasons to follow the above claims:
 
 * [A guide for managing conda + `pip` environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment).
 * [Reasons to use conda for not-Python-only dependencies](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries).
-* [Ways of combining conda and `pip`](https://medium.com/data-science/conda-essential-concepts-and-tricks-e478ed53b5b).
+* [Ways of combining conda and `pip`](https://medium.com/data-science/conda-essential-concepts-and-tricks-e478ed53b5b#42cb).
 
 There are two ways to add dependencies to the environment:
 
