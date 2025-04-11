@@ -112,7 +112,7 @@ When the container starts, its entrypoint does the following:
   (You can skip this if you have a different project structure,
   e.g.,
   just copied the installation directory of the template by not specifying `PROJECT_ROOT_AT`).
-- It also handles all the remote development setups (VS Code, PyCharm, Jupyter, ...)
+- It also handles all the remote development setups (VS Code, Cursor, PyCharm, Jupyter, ...)
   that you specify with environment variables.
   These are described in the later sections of this README.
 - Finally, it executes a provided command (e.g. `sleep infinity`), otherwise by default will run a shell and stop.
@@ -222,7 +222,7 @@ An example of an interactive job submission can be found in `submit-scripts/remo
 
 Below, we list and describe in more detail the tools and IDEs supported for remote development.
 
-### SSH Configuration (Necessary for PyCharm and VS Code)
+### SSH Configuration (Necessary for PyCharm, VS Code, and Cursor)
 
 Your job will open an ssh server when you set the environment variable `SSH_SERVER=1`.
 This is necessary for some remote IDEs like PyCharm to work and can be beneficial
@@ -399,10 +399,11 @@ You can find an example in `submit-scripts/remote-development.sh`.
   So far, it seems like the SSH env variables workaround works fine for this.
 - Support for programs with graphical interfaces (i.g. forwarding their interface) has not been tested yet.
 
-### VSCode
+### VSCode / Cursor
 
 We support the [Remote Development using SSH ](https://code.visualstudio.com/docs/remote/ssh)
-feature of VS code that runs a remote IDE in the container via SSH.
+feature of VS code that runs a remote IDE in the container via SSH. To set this up for Cursor, simply replace `VSCODE` by `CURSOR` and `vscode` by `cursor` in all instructions below. For example, `VSCODE_SERVER_AT` becomes `CURSOR_SERVER_AT`, and `~/.vscode-server` becomes `~/.cursor-server`.
+
 
 **Preliminaries: saving the IDE configuration**
 
