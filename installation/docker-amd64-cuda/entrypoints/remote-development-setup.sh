@@ -111,6 +111,19 @@ if [ -n "${VSCODE_SERVER_AT}" ]; then
   ln -s "${PROJECT_VSCODE_SERVER_AT}" "${HOME}/.vscode-server"
 fi
 
+####################
+## Cursor remote development server.
+# Same as VSCode up to naming
+
+if [ -n "${CURSOR_SERVER_AT}" ]; then
+  echo "[TEMPLATE INFO] Sym-linking to Cursor server config files."
+  # Per-project server.
+  # Create if doesn't exist.
+  PROJECT_CURSOR_SERVER_AT="${CURSOR_SERVER_AT}/projects${PROJECT_ROOT_AT}"
+  mkdir -p "${PROJECT_CURSOR_SERVER_AT}"
+  ln -s "${PROJECT_CURSOR_SERVER_AT}" "${HOME}/.cursor-server"
+fi
+
 #####################
 # Jupyter Lab server.
 # Jupyter must be installed in the environment.
